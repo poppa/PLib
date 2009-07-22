@@ -1,0 +1,172 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Flickr&#160;Photoset&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.2</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Web</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Flickr</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Load&#160;Flickr</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;<span style='color: #008800;'>&#39;Flickr.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Flickr&#160;Photoset&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Web</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Flickr</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;FlickrPhotoset&#160;<span style='color: #000099;'><b>extends</b></span>&#160;FlickrMethod&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;Photoset&#160;ID</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$id</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;Flickr&#160;$api</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$photosetID</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span>Flickr&#160;<span style='color: #990000;'><b>$api</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$photosetID</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$api</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$photosetID</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;a&#160;list&#160;of&#160;all&#160;available&#160;photosets</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$useCache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Override&#160;the&#160;default&#160;set&#160;in&#160;@see{Flickr}.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;FlickrResponse</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetList<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$useCache</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>execute<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;flickr.photosets.getList&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$useCache</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;a&#160;list&#160;of&#160;the&#160;photos</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;http://www.flickr.com/services/api/flickr.photosets.getPhotos.html</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;FlickrException</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$extras</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$privacyFilter</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$perPage</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$page</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Overrides&#160;the&#160;default&#160;cacheability</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;FlickrResponse</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetPhotos<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$extras</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$privacyFilter</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$perPage</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$page</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cache</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_null</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;FlickrException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Missing&#160;Photoset&#160;ID!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$params</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;photoset_id&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$extras</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;extras&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$extras</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$privacyFilter</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;privacy_filter&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$privacyFilter</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$perPage</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;per_page&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$perPage</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$page</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;page&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$page</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>execute<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;flickr.photosets.getPhotos&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cache</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;info&#160;about&#160;the&#160;current&#160;photoset</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;http://www.flickr.com/services/api/flickr.photosets.getInfo.html</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;FlickrException</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Overrides&#160;the&#160;default&#160;cacheability</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;FlickrResponse</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetInfo<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cache</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_null</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;FlickrException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Missing&#160;Photoset&#160;ID!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$params</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;photoset_id&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>execute<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;flickr.photosets.getInfo&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cache</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;next&#160;and&#160;previous&#160;photos&#160;for&#160;a&#160;photo&#160;in&#160;a&#160;set.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;http://www.flickr.com/services/api/flickr.photosets.getContext.html</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$photoID</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Override&#160;default&#160;cacheability</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;FlickrResponse</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetContext<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$photoID</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cache</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_null</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;FlickrException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Missing&#160;Photoset&#160;ID!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$params</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;photoset_id&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;photo_id&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$photoID</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>execute<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;flickr.photosets.getContext&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cache</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;full&#160;path&#160;to&#160;the&#160;plain&#160;photo</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array|object&#160;$photo</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetSrc<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$photo</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>getPhotoSrc<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$photo</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Download&#160;the&#160;given&#160;photo</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$src</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$saveTo</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Download<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$src</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$saveTo</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>download<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$src</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$saveTo</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;URL&#160;to&#160;the&#160;photoset&#160;on&#160;Flickr.com</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@since&#160;0.2</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;stdClass&#160;$obj</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;This&#160;should&#160;be&#160;an&#160;photoset&#160;object&#160;of&#160;a&#160;result&#160;set&#160;from&#160;a&#160;call&#160;to</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;@see{FlickrPhotoset::GetList()}&#160;for&#160;instance.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetURL<span style='color: #0000FF;'>(</span>stdClass&#160;<span style='color: #990000;'><b>$photoset</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$url</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;Flickr<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>FLICKR_ENPOINT<span style='color: #0000FF;'>.</span><span style='color: #008800;'>&#39;/photos/&#39;</span><span style='color: #0000FF;'>.</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>api<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>UserID<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>.</span><span style='color: #008800;'>&#39;/sets/&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$url</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$photoset</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

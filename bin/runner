@@ -1,0 +1,38 @@
+#!/usr/bin/php
+<?php
+/* This script is only used for testing purposes
+ */
+ 
+setlocale(LC_ALL, 'sv_SE');
+require_once 'PLib.php';
+PLib::Import('Web.Feed');
+
+$feed = RssFeed::Create(null, 'iso-8859-1');
+$chnl = $feed->SetChannel(new RssChannel());
+
+$chnl->SetTitle('My fabulous feed!');
+$chnl->SetLink('http://plib.poppa.se');
+$chnl->SetDescription(utf8_decode('Lök på laxen och annat smått och gott hittar du här'));
+$chnl->SetData('image', array('src' => 'http://plib.poppa.se/inc/gfx/plib.png',
+                              'link' => 'http://plib.poppa.se',
+                              'width' => 107,
+                              'height' => 99));
+
+$item = new RssItem();
+$item->SetTitle('The first item');
+$item->SetDescription('A longer description of the first item comes here!');
+$item->SetLink('http://poppa.se/blog/item-1/');
+$item->SetDate('2009-02-25 08:10:58');
+
+$chnl->AddItem($item);
+
+$item = new RssItem();
+$item->SetTitle('The second item so far');
+$item->SetDescription('A description of the second item comes here!');
+$item->SetLink('http://poppa.se/blog/item-2/');
+$item->SetDate('2009-02-23 12:32:12');
+
+$chnl->AddItem($item);
+
+echo $feed;
+?>

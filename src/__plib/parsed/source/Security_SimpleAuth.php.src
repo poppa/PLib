@@ -1,0 +1,861 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Simple&#160;authentication&#160;module</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Security</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;We&#160;use&#160;the&#160;SQLite&#160;or&#160;MySQL&#160;class.</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/DB/Database.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;We&#160;might&#160;need&#160;the&#160;Cookie&#160;class</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Web/Cookie.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;SimpleAuth&#160;authentication&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;This&#160;class&#160;provides&#160;a&#160;simple&#160;authentication&#160;mechanism.&#160;It&#160;uses&#160;either&#160;a</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;SQLite&#160;or&#160;MySQL&#160;database&#160;table&#160;to&#160;store&#160;the&#160;users&#160;and&#160;it&#160;can&#160;use&#160;an&#160;already</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;existing&#160;{@see&#160;DB}&#160;object&#160;or&#160;create&#160;one.&#160;It&#160;can&#160;either&#160;do&#160;a&#160;&#34;basic</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;authentication&#34;&#160;or&#160;you&#160;can&#160;create&#160;a&#160;web&#160;form&#160;and&#160;tell&#160;SimpleAuth&#160;to&#160;store</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;the&#160;authentication&#160;in&#160;a&#160;cookie&#160;instead.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;__Here&#39;s&#160;how&#160;to&#160;use&#160;a&#160;basic&#160;authentication__</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;$auth&#160;=&#160;new&#160;SimpleAuth(&#39;sqlite:///path/to/db.sqlite&#39;,&#160;&#39;myapp&#39;);</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;if&#160;(!$auth-&#62;IsAuthenticated())&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;$auth-&#62;BasicAuth();</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;echo&#160;&#34;&#60;h1&#62;401&#160;Unauthorized&#60;/h1&#62;&#34;;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;die;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;echo&#160;&#34;Hi&#160;there&#160;&#34;&#160;.&#160;$auth-&#62;Get(&#39;realname&#39;);</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;__And&#160;this&#160;is&#160;how&#160;a&#160;cookie&#160;authentication&#160;could&#160;look&#160;like__</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;$auth&#160;=&#160;new&#160;SimpleAuth(&#39;sqlite:///path/to/db.sqlite&#39;,&#160;&#39;myapp&#39;);</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;$auth-&#62;SetAuthMethod(SimpleAuth::AUTH_COOKIE);</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;if&#160;(!$auth-&#62;IsAuthenticated())&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;if&#160;(isset($_POST[&#39;login&#39;]))&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;if&#160;($auth-&#62;Authenticate($_POST[&#39;username&#39;],&#160;$_POST[&#39;password&#39;])</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;&#160;&#160;Redirect($_SERVER[&#39;PHP_SELF&#39;]);</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;echo&#160;&#34;&#60;p&#62;Bad&#160;username&#160;or&#160;password.&#160;Try&#160;again!&#60;/p&#62;&#34;;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;require_once&#160;&#39;login-form.php&#39;;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;die;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;echo&#160;&#34;Hi&#160;there&#160;&#34;&#160;.&#160;$auth-&#62;Get(&#39;realname&#39;);</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Security</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;SimpleAuth&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Flag&#160;for&#160;using&#160;basic&#160;authentication</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;AUTH_BASIC&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Flag&#160;for&#160;using&#160;cookie&#160;authentication</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;AUTH_COOKIE&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;No&#160;level&#160;matching&#160;will&#160;be&#160;done</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;LEVEL_VOID&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;User&#39;s&#160;level&#160;must&#160;be&#160;greater&#160;than&#160;the&#160;level&#160;specified</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;LEVEL_GT&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>2</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;User&#39;s&#160;level&#160;must&#160;be&#160;less&#160;than&#160;the&#160;level&#160;specified</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;LEVEL_LT&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>4</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;User&#39;s&#160;level&#160;must&#160;be&#160;equal&#160;to&#160;the&#160;level&#160;specified</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;LEVEL_EQ&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>8</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Flag&#160;to&#160;tell&#160;we&#39;re&#160;using&#160;SQLite</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;DB_SQLITE&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Flag&#160;to&#160;tell&#160;we&#39;re&#160;using&#160;MySQL</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;DB_MYSQL&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Salt&#160;that&#39;s&#160;used&#160;when&#160;creating&#160;a&#160;password&#160;and&#160;logging&#160;on</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$salt</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;plIB1siMP6LEauTH312pASS42wor421DsA217LT&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;DB&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;DB</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Database&#160;mode.&#160;MySQL&#160;or&#160;SQLite</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$dbmode</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;table&#160;layout&#160;for&#160;SQLite</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$sqliteTableLayout</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;CREATE&#160;TABLE&#160;%s&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;uid&#160;INTEGER&#160;AUTOINCREMENT&#160;PRIMARY&#160;KEY,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;username&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;password&#160;BLOB,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;realname&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;appname&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;level&#160;INTEGER,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;email&#160;VARCHAR(255)</span><br/>
+<span style='color: #008800;'>&#160;&#160;);&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;table&#160;layout&#160;for&#160;MySQL</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$mysqlTableLayout</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;CREATE&#160;TABLE&#160;IF&#160;NOT&#160;EXISTS&#160;%s&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;uid&#160;INT(11)&#160;AUTO_INCREMENT&#160;PRIMARY&#160;KEY,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;username&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;password&#160;BLOB,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;realname&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;appname&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;level&#160;TINYINT(3),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;email&#160;VARCHAR(255)</span><br/>
+<span style='color: #008800;'>&#160;&#160;)&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;name&#160;of&#160;the&#160;DB&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$tableName</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;simpleauth&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;name&#160;of&#160;the&#160;authentication&#160;cookie</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$authCookieName</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;simpleauth&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Are&#160;we&#160;authenticated&#160;or&#160;not?</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$isAuthenticated</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;user&#160;object&#160;when&#160;authenticated</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;SimpleAuthUser</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$user</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Authentication&#160;mode.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Default&#160;is&#160;SimpleAuth::AUTH_BASIC</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$authmode</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>AUTH_BASIC<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Realm&#160;of&#160;the&#160;authentication&#160;if&#160;basic&#160;authentication&#160;is&#160;being&#160;used</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$realm</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;PLib&#160;SimpleAuth&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Name&#160;of&#160;the&#160;application&#160;the&#160;authentication&#160;is&#160;valid&#160;for.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Useful&#160;if&#160;the&#160;same&#160;table&#160;should&#160;act&#160;as&#160;authentication&#160;resource&#160;for&#160;more</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;than&#160;one&#160;site/application</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$appname</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;How&#160;to&#160;compare&#160;a&#160;user�s&#160;level&#160;agains&#160;required&#160;level.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$reqLevelRule</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;SimpleAuth<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_VOID<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Required&#160;level&#160;to&#160;authenticate.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$requiredLevel</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;DBException</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;DBDriverNotFound</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$dbcon</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;This&#160;can&#160;already&#160;be&#160;an&#160;existing&#160;database&#160;object&#160;derived&#160;from&#160;{@see&#160;DB}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;or&#160;a&#160;connection&#160;string&#160;according&#160;to&#160;{@see&#160;DB::Create()}.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$appname</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Is&#160;used&#160;to&#160;separate&#160;users&#160;of&#160;different&#160;sites/applications.&#160;The&#160;same</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;database&#160;and&#160;table&#160;can&#160;be&#160;used&#160;for&#160;multiple&#160;sites/application&#160;if&#160;the</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;$appname&#160;is&#160;set.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$reqLevel</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;A&#160;level&#160;to&#160;match&#160;a&#160;user&#39;s&#160;level&#160;against.&#160;How&#160;to&#160;match&#160;it&#160;is&#160;determined</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;by&#160;$reqLevelRule.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$reqLevelRule</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Sets&#160;the&#160;rule&#160;for&#160;how&#160;to&#160;match&#160;user&#39;s&#160;levels&#160;againt&#160;$reqLevel.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Use&#160;the&#160;class&#160;constants&#160;`LEVEL_*`&#160;(bit&#160;flags)&#160;to&#160;set&#160;the&#160;rule.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;*&#160;SimpleAuth::LEVEL_VOID&#60;br/&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;Means&#160;I&#160;don&#39;t&#160;give&#160;a&#160;crap&#160;about&#160;levels</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;*&#160;SimpleAuth::LEVEL_EQ&#60;br/&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;Means&#160;the&#160;user&#39;s&#160;level&#160;must&#160;match&#160;the&#160;given&#160;level.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;*&#160;SimpleAuth::LEVEL_GT&#60;br/&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;The&#160;user&#39;s&#160;level&#160;must&#160;be&#160;greater&#160;than&#160;the&#160;given&#160;level.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;*&#160;SimpleAuth::LEVEL_LT&#60;br/&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;The&#160;user&#39;s&#160;level&#160;must&#160;be&#160;less&#160;than&#160;the&#160;given&#160;level.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Since&#160;the&#160;constants&#160;are&#160;bitflags&#160;you&#160;can&#160;combine&#160;`LEVEL_EQ`&#160;with</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;`LEVEL_GT`&#160;or&#160;`LEVEL_LT`&#160;if&#160;a&#160;user&#39;s&#160;level&#160;must&#160;be&#160;equal&#160;to&#160;OR&#160;greater</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;than,&#160;or&#160;equal&#160;to&#160;OR&#160;less&#160;than.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbcon</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$appname</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$reqLevel</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$reqLevelRule</b></span><span style='color: #0000FF;'>=</span>SimpleAuth<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_VOID<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_object</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbcon</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #ff0000;'>is_a</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbcon</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;DB&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$dbcon</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_string</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbcon</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db&#160;<span style='color: #0000FF;'>=</span>&#160;DB<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Create<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbcon</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;\$dbcon&#160;must&#160;be&#160;an&#160;object&#160;or&#160;a&#160;string!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_a</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;Mysql&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbmode&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>DB_MYSQL<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_a</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;Sqlite&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbmode&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>DB_SQLITE<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;Unsupported&#160;database&#160;driver&#160;given&#160;to&#160;SimpleAuth!&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$appname</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authCookieName&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;_&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$appname</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>requiredLevel&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$reqLevel</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>reqLevelRule&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$reqLevelRule</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;the&#160;authentication&#160;mode</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$mode</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Either&#160;SimpleAuth::AUTH_BASIC&#160;or&#160;SimpleAuth::AUTH_COOKIE</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetAuthMethod<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$mode</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$mode</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>AUTH_BASIC&#160;<span style='color: #0000FF;'>|</span><span style='color: #0000FF;'>|</span>&#160;<span style='color: #990000;'><b>$mode</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>AUTH_COOKIE<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authmode&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$mode</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Setter/getter&#160;for&#160;the&#160;table&#160;name</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$tablename</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;TableName<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tablename</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tablename</b></span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #ff0000;'>is_string</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tablename</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$tablename</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;up&#160;the&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetupTable<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbmode&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>DB_SQLITE<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;SELECT&#160;*&#160;FROM&#160;sqlite_master&#160;WHERE&#160;name&#160;=&#160;&#39;simpleauth&#39;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;AND&#160;type&#160;=&#160;&#39;table&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sqliteTableLayout<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>mysqlTableLayout<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Couldn&#39;t&#160;setup&#160;database&#160;table&#160;for&#160;SimpleAuth:&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Plib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PrintException<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;the&#160;realm&#160;for&#160;a&#160;basic&#160;authentication.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$realm</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetRealm<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$realm</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>realm&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$realm</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;the&#160;password&#160;salt&#160;to&#160;use&#160;when&#160;storing&#160;passwords&#160;in&#160;the&#160;database.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$salt</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetSalt<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$salt</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$salt</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$salt</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;password&#160;salt</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetSalt<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$salt</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Check&#160;if&#160;we&#39;ve&#160;got&#160;an&#160;authentication&#160;or&#160;not</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;IsAuthenticated<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$authed</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>switch</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authmode<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>AUTH_COOKIE<span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cookie</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Cookie<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authCookieName<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cookie</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$cookie</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Get<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$cookie</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cookie</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$cookie</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>SetDB<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>AUTH_BASIC<span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$u</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;issetor<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SERVER</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;PHP_AUTH_USER&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$p</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;issetor<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SERVER</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;PHP_AUTH_PW&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$u</b></span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$p</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Authenticate<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$u</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$p</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$authed</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Invoke&#160;a&#160;basic&#160;authentication</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;You&#160;can&#160;take&#160;care&#160;of&#160;the&#160;logic&#160;behind&#160;an&#160;aborted&#160;authentication:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;$auth&#160;=&#160;new&#160;SimpleAuth(&#39;sqlite:///path/to/db.sqlite&#39;,&#160;&#39;myapp&#39;);</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;if&#160;(!$auth-&#62;IsAuthenticated())&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;$auth-&#62;BasicAuth();</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;echo&#160;&#34;&#60;h1&#62;401&#160;Unauthorized!&#60;/h1&#62;&#34;;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;die;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;echo&#160;&#34;You&#39;r&#160;in&#34;;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;BasicAuth<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>IsAuthenticated<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>header</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;WWW-Authenticate:&#160;Basic&#160;realm=&#34;&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>realm&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;&#34;&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>header</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;HTTP/1.0&#160;401&#160;Unauthorized&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Authenticate&#160;a&#160;user</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$username</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$password</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Authenticate<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$username</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$password</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;SELECT&#160;*&#160;FROM&#160;%s</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;WHERE&#160;username&#160;=&#160;&#39;%s&#39;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;AND&#160;password&#160;=&#160;&#39;%s&#39;&#160;AND&#160;appname&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$pw</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sha1</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$password</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$salt</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$username</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$pw</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;SimpleAuthUser<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>reqLevelRule&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;SimpleAuth<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_VOID<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$auth</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>reqLevelRule&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;SimpleAuth<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_EQ<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>level&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>requiredLevel<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$auth</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>reqLevelRule&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_EQ<span style='color: #0000FF;'>|</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_LT<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>level&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>requiredLevel<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$auth</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>reqLevelRule&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_EQ<span style='color: #0000FF;'>|</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_GT<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>level&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>requiredLevel<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$auth</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>reqLevelRule&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_GT<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>level&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>requiredLevel<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$auth</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>reqLevelRule&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LEVEL_LT<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>level&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>requiredLeve<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$auth</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$auth</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authmode&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>AUTH_COOKIE<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cookie</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Cookie<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authCookieName<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cookie</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Set<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Error&#160;in&#160;SimpleAuth:&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PrintException<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Drop&#160;the&#160;authentication.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Only&#160;works&#160;for&#160;cookie&#160;authentication.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;UnAuthenticate<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authmode&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>AUTH_COOKIE<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cookie</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Cookie<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>authCookieName<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cookie</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Delete<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Add&#160;a&#160;user&#160;to&#160;the&#160;database</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$username</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$password</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$realname</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$email</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$level</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Authentication&#160;level.&#160;This&#160;has&#160;no&#160;meaning&#160;if&#160;you&#160;don&#39;t&#160;give&#160;it&#160;one</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;AddUser<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$username</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$password</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$realname</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$email</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$level</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$appname</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$appname</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$appname</b></span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$appname</b></span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;uid&#160;FROM&#160;%s&#160;WHERE&#160;username=&#39;%s&#39;&#160;AND&#160;appname=&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$username</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$appname</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SimpleAuth:&#160;A&#160;user&#160;with&#160;the&#160;username&#160;\&#34;$username\&#34;&#160;&#34;</span><span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;already&#160;exist!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;INSERT&#160;INTO&#160;%s&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;uid,&#160;username,&#160;password,&#160;realname,&#160;email,&#160;appname,&#160;level</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;)</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;VALUES&#160;(NULL,&#160;&#39;%s&#39;,&#160;&#39;%s&#39;,&#160;&#39;%s&#39;,&#160;&#39;%s&#39;,&#160;&#39;%s&#39;,&#160;%d)&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$pw</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sha1</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$password</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$salt</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$username</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$pw</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$realname</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$email</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$appname</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>int</b></span><span style='color: #0000FF;'>)</span><span style='color: #990000;'><b>$level</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SimpleAuth:&#160;Couldn&#39;t&#160;add&#160;the&#160;user&#160;\&#34;$username\&#34;!\n&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PrintException<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>InsertID<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Delete&#160;a&#160;user</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string|int&#160;$userId</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;DropUser<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$userId</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$userId</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>int</b></span><span style='color: #0000FF;'>)</span><span style='color: #990000;'><b>$userId</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;DELETE&#160;FROM&#160;%s&#160;WHERE&#160;uid&#160;=&#160;%d&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$userId</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SipleAuth:&#160;Couldn&#39;t&#160;remove&#160;user&#160;with&#160;id&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\&#34;$userId\&#34;!\n&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PrintException<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Getter&#160;for&#160;user&#160;fields</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;field&#160;to&#160;get.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>{</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>}</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;any&#160;of&#160;the&#160;user&#160;database&#160;fields</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Set<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>user<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>{</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>}</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;a&#160;@see{SimpleAuthUser}&#160;object&#160;if&#160;the&#160;user&#160;exists</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;DBQueryFail</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string|int&#160;$handle</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Can&#160;either&#160;be&#160;the&#160;username&#160;or&#160;the&#160;user&#160;id.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$tieToAppname</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Only&#160;allow&#160;users&#160;of&#160;the&#160;current&#160;appname</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;SimpleAuthUser|bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetUser<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$handle</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$tieToAppname</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;*&#160;FROM&#160;%s&#160;WHERE&#160;%s&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$field</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>is_numeric</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$handle</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #008800;'>&#39;uid&#39;</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #008800;'>&#39;username&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tieToAppname</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sprintf</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;&#160;AND&#160;appname&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Quote<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$field</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$handle</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;SimpleAuthUser<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>DBQueryFail&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Just&#160;prints&#160;out&#160;the&#160;contents&#160;of&#160;the&#160;database&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Inspect<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tieToAppname</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;*&#160;FROM&#160;%s&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tieToAppname</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#160;WHERE&#160;appname&#160;=&#160;&#39;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Escape<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>class_exists</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;SQLTablify&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/DB/SQLTablify.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$tablify</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$tablify</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$tablify</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;SQLTablify<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;HeaderRow&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;Linkify&#39;</span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;Interactive&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>true</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$tablify</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Sort<span style='color: #0000FF;'>(</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;SORT_ASC<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$tablify</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Parse<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>echo</b></span>&#160;<span style='color: #990000;'><b>$tablify</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Render<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;wbr<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SimpleAuth&#160;has&#160;no&#160;users!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;a&#160;result&#160;set&#160;of&#160;the&#160;entire&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$tieToAppName</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Only&#160;list&#160;users&#160;belongs&#160;to&#160;the&#160;current&#160;appname</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;DBResult</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Iterator<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tieToAppname</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;*&#160;FROM&#160;%s&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tieToAppname</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#160;WHERE&#160;appname&#160;=&#160;&#39;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Escape<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;number&#160;of&#160;users&#160;in&#160;the&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$tieToAppName</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;If&#160;&#34;false&#34;&#160;all&#160;users&#160;will&#160;be&#160;counted.&#160;Default&#160;is&#160;to&#160;count&#160;only&#160;the&#160;users</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;beloning&#160;to&#160;the&#160;current&#160;appname</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;NumberOfUsers<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tieToAppName</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ret</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;COUNT(uid)&#160;FROM&#160;%s&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tieToAppName</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sprintf</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;&#160;WHERE&#160;appname&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Quote<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;SimpleAuth<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tableName</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ret</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Result<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$ret</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;full&#160;path&#160;to&#160;the&#160;DB&#160;file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetDbPath<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbfullpath<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;A&#160;class&#160;representing&#160;a&#160;user&#160;in&#160;{@see&#160;SimpleAuth}.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Security</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;SimpleAuthUser&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Keys&#160;in&#160;this&#160;array&#160;is&#160;not&#160;settable</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$unsettable</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;uid&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Keys&#160;in&#160;this&#160;array&#160;must&#160;be&#160;unique</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$unique</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;username&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Keys&#160;in&#160;this&#160;array&#160;must&#160;not&#160;be&#160;empty.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$nonempty</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;password&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>4</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;DB&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;DB</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Container&#160;for&#160;the&#160;object&#160;members&#160;connected&#160;to&#160;the&#160;user</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$members</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Creates&#160;a&#160;new&#160;{@see&#160;SimpleAuth}&#160;user&#160;object.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;This&#160;class&#160;should&#160;not&#160;be&#160;instatiated&#160;directly.&#160;Call</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;{@see&#160;SimpleAuth::GetUser()}&#160;instead.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;DBResult&#160;$res</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;DB&#160;$db</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span>DBResult&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>,</span>&#160;DB&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>members<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;the&#160;DB&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;DB&#160;$db</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetDB<span style='color: #0000FF;'>(</span>DB&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Getter&#160;for&#160;user&#160;fields</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;field&#160;to&#160;get.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;issetor<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>members<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;any&#160;of&#160;the&#160;user&#160;database&#160;fields</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Set<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #FF7777;'>__set</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Getter.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;mixed</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__get</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;issetor<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>members<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Setter</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__set</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>members<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unsettable<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>array_keys</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>nonempty<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$minlen</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>nonempty<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>strlen</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: #990000;'><b>$minlen</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;$key&#160;in&#160;SimpleAuthUser&#160;must&#160;be&#160;at&#160;least&#160;$minlen&#160;&#34;</span><span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;characters&#160;long!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>updateField<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Update&#160;field&#160;$which&#160;with&#160;the&#160;value&#160;of&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;updateField<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;SimpleAuth<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>TableName<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unique<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;SELECT&#160;%s&#160;FROM&#160;%s</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;WHERE&#160;%s&#160;=&#160;&#39;%s&#39;&#160;AND&#160;appname&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>appname<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$oldname</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$oldname</b></span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>{</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>}</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SimpleAuth:&#160;The&#160;$which&#160;\&#34;$$what\&#34;&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;already&#160;exist!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SimpleAuth:&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PrintException<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;password&#39;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$what</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sha1</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$what</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;SimpleAuth<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>GetSalt<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;UPDATE&#160;%s&#160;SET&#160;%s&#160;=&#160;&#39;%s&#39;&#160;WHERE&#160;uid&#160;=&#160;%d&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>db<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>uid<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SimpleAuth:&#160;Couldn&#39;t&#160;update&#160;\&#34;$which\&#34;&#160;for&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\&#34;{$this-&#62;username}\&#34;!\n&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PrintException<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>members<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;For&#160;the&#160;serialization&#160;of&#160;this&#160;object&#160;to&#160;work&#160;properly</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;__sleep<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;unsettable&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;unique&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;nonempty&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;members&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

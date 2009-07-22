@@ -1,0 +1,1023 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;ID3&#160;tag&#160;reader</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Media</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;StreamReader</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;StringReader</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;File</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;Version</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;This&#160;file&#160;requires&#160;the&#160;{@link&#160;StremReader}&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/IO/StreamReader.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;This&#160;file&#160;requires&#160;the&#160;{@link&#160;StringReader}&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/String/String.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;This&#160;file&#160;requires&#160;the&#160;{@link&#160;File}&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/IO/StdIO.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Need&#160;the&#160;{@link&#160;Version}&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Core/Version.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Base&#160;class&#160;of&#160;media&#160;file&#160;tags&#160;(ID3...)</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Media</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>abstract</b></span>&#160;<span style='color: #000099;'><b>class</b></span>&#160;TagLib&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;No&#160;tag&#160;type</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;TYPE_NONE&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;ID3&#160;version&#160;1&#160;tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;TYPE_ID3V1&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>2</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;ID3&#160;version&#160;2&#160;tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;TYPE_ID3V2&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>4</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Type&#160;of&#160;tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$type</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>TYPE_NONE<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;ID3&#160;genre&#160;list.&#160;Genres&#160;beyond&#160;79&#160;are&#160;Winamp&#160;extensions</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$GENRES</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>0</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Blues&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>1</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Classic&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>2</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Country&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>3</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Dance&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>4</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Disco&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>5</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Funk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>6</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Grunge&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>7</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Hip-Hop&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>8</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Jazz&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>9</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Metal&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>10</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;New&#160;Age&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>11</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Oldies&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>12</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Other&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>13</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Pop&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>14</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;R&#38;B&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>15</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Rap&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>16</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Reggae&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>17</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>18</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Techno&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>19</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Industrial&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>20</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Alternative&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>21</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Ska&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>22</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Death&#160;Metal&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>23</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Pranks&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>24</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Soundtrack&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>25</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Euro-Techno&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>26</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Ambient&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>27</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Trip-Hop&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>28</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Vocal&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>29</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Jazz+Funk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>30</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Fusion&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>31</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Trance&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>32</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Classical&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>33</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Instrumental&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>34</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Acid&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>35</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;House&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>36</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Game&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>37</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Sound&#160;Clip&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>38</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Gospel&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>39</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Noise&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>40</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;AlternRock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>41</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Bass&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>42</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Soul&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>43</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Punk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>44</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Space&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>45</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Meditative&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>46</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Instrumental&#160;Pop&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>47</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Instrumental&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>48</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Ethnic&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>49</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Gothic&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>50</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Darkwave&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>51</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Techno-Industrial&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>52</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Electronic&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>53</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Pop-Folk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>54</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Eurodance&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>55</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Dream&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>56</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Southern&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>57</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Comedy&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>58</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Cult&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>59</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Gangsta&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>60</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Top&#160;40&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>61</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Christian&#160;Rap&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>62</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Pop/Funk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>63</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Jungle&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>64</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Native&#160;American&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>65</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Cabaret&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>66</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;New&#160;Wave&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>67</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Psychadelic&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>68</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Rave&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>69</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Showtunes&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>70</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Trailer&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>71</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Lo-Fi&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>72</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Tribal&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>73</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Acid&#160;Punk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>74</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Acid&#160;Jazz&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>75</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Polka&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>76</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Retro&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>77</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Musical&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>78</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Rock&#160;&#38;&#160;Roll&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>79</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Hard&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;Winamp&#160;extension</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>80</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Folk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>81</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Folk-Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>82</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;National&#160;Folk&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>83</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Swing&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>84</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Fast&#160;Fusion&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>85</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Bebob&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>86</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Latin&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>87</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Revival&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>88</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Celtic&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>89</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Bluegrass&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>90</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Avantgarde&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>91</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Gothic&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>92</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Progressive&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>93</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Psychedelic&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>94</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Symphonic&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>95</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Slow&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>96</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Big&#160;Band&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>97</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Chorus&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>98</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Easy&#160;Listening&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>99</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Acoustic&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>100</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Humour&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>101</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Speech&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>102</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Chanson&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>103</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Opera&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>104</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Chamber&#160;Music&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>105</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Sonata&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>106</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Symphony&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>107</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Booty&#160;Bass&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>108</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Primus&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>109</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Porn&#160;Groove&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>110</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Satire&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>111</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Slow&#160;Jam&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>112</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Club&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>113</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Tango&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>114</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Samba&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>115</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Folklore&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>116</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Ballad&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>117</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Power&#160;Ballad&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>118</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Rhythmic&#160;Soul&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>119</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Freestyle&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>120</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Duet&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>121</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Punk&#160;Rock&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>122</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Drum&#160;Solo&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>123</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;A&#160;capella&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: purple;'>124</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Euro-House&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>125</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Dance&#160;Hall&#39;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;string&#160;reprentation&#160;of&#160;genre&#160;with&#160;id&#160;`$id`</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$id</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetGenreById<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$id</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$id</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$GENRES</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$GENRES</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$id</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;ID&#160;of&#160;`$genre`</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$genre</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetIdOfGenre<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$genre</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>array_search</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$genre</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$GENRES</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Perform&#160;&#34;unsynchronization&#34;&#160;on&#160;the&#160;data.&#160;&#160;This&#160;takes&#160;things&#160;that</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;look&#160;like&#160;mpeg&#160;syncs,&#160;11111111&#160;111xxxxx,&#160;and&#160;stuffs&#160;a&#160;zero</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;in&#160;between&#160;the&#160;bytes.&#160;&#160;In&#160;addition,&#160;it&#160;stuffs&#160;a&#160;zero&#160;after&#160;every</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;ff&#160;00&#160;combination.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Note&#160;that&#160;this&#160;is&#160;A.F.U.,&#160;because&#160;the&#160;standard&#160;doesn&#39;t&#160;say&#160;to&#160;stuff</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;an&#160;extra&#160;zero&#160;in&#160;11111111&#160;00000000&#160;111xxxxx.&#160;&#160;It&#160;says&#160;to&#160;stuff&#160;it</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;after&#160;11111111&#160;00000000.&#160;&#160;That&#39;s&#160;broken.&#160;&#160;Seems&#160;to&#160;be&#160;what&#160;id3lib</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;does&#160;also,&#160;though.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;This&#160;is&#160;a&#160;port&#160;of&#160;the&#160;same&#160;method&#160;in&#160;the&#160;PERL&#160;module.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;unsyncronize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/\xff\0/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;\xff\0\0&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/\xff(?=[\xe0-\xff])/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;\xff\x00&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;oposit&#160;of&#160;{@see&#160;TagLib::unsynchronize()}.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;unUnsynchronize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/\xff\x00([\xe0-\xff])/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;\xff$1&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/\xff\x00\x00/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;\xff\x00&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Takes&#160;an&#160;ID3&#160;size&#160;field&#160;and&#160;returns&#160;an&#160;integer</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$size</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;unmungeSize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$newsize</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>for</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: purple;'>4</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #990000;'><b>$pos</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$mask</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0xff</span>&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>*</span>&#160;<span style='color: purple;'>8</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$val</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$size</b></span>&#160;<span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #990000;'><b>$mask</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>*</span>&#160;<span style='color: purple;'>8</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$newsize</b></span>&#160;<span style='color: #0000FF;'>|</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$val</b></span>&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>*</span>&#160;<span style='color: purple;'>7</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$newsize</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Takes&#160;an&#160;integer&#160;and&#160;returns&#160;an&#160;ID3&#160;size&#160;field</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$size</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;mungeSize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$newsize</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>for</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: purple;'>4</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #990000;'><b>$pos</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$val</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$size</b></span>&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>*</span>&#160;<span style='color: purple;'>7</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: purple;'>0x7f</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$newsize</b></span>&#160;<span style='color: #0000FF;'>|</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$val</b></span>&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pos</b></span>&#160;<span style='color: #0000FF;'>*</span>&#160;<span style='color: purple;'>8</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$newsize</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Base&#160;class&#160;for&#160;ID3&#160;tags</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Media</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;ID3&#160;<span style='color: #000099;'><b>extends</b></span>&#160;TagLib&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Title</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$title</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Album&#160;title</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$album</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Artist</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$artist</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Year</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$year</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Comment</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$comment</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;track&#160;number</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$track</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Genre</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$genre</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;File&#160;identifier</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$fileIdentifier</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;TAG&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Stream&#160;reader</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;StreamReader</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$stream</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Head,&#160;first&#160;10&#160;bytes</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$head</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;ID3&#160;tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$tag</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;real&#160;file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;File</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$file</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;version</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;Version</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$version</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Hidden&#160;constructor.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;This&#160;class&#160;must&#160;be&#160;instantiated&#160;from&#160;a&#160;derived&#160;class.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;File&#160;$file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$head</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span>File&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>head&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #ff0000;'>file</span>&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stream&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StreamReader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>version&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Version<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;majorver&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;minorver&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;song&#160;title</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Title<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>title<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;artist</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Artist<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>artist<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;album&#160;name</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Album<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>album<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;year&#160;of&#160;the&#160;album/song</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Year<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>year<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;comment</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Comment<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>comment<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;track&#160;number</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Track<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>track<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;genre.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$asInt</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;set&#160;the&#160;integer&#160;value&#160;of&#160;the&#160;genre&#160;will&#160;be&#160;returned</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int|string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Genre<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$asInt</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>genre<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$asInt</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>genre<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>GetGenreById<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>genre<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Factory&#160;method&#160;for&#160;reading&#160;ID3&#160;information&#160;from&#160;a&#160;media&#160;file.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;ID3Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;no&#160;tag&#160;is&#160;found&#160;or&#160;the&#160;tag&#160;is&#160;unsupported</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string|File&#160;$file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;ID3v1|ID3v2</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>final</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Create<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span>&#160;instanceof&#160;File<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #990000;'><b>$file</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;File<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>error_log</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>getMessage<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StreamReader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$head</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: purple;'>10</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$head</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>unpack</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;a3tag/Cmajorver/Cminorver/Cflags/Nsize&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>switch</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;tag&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;ID3&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;majorver&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>3</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3v2<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3v1<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;Unknown&#160;ID3&#160;major&#160;version:&#160;&#39;</span><span style='color: #0000FF;'>.</span><span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;majorver&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>break</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>default</b></span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$h2</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ReadBlock<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>size<span style='color: #0000FF;'>-</span><span style='color: purple;'>128</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>128</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span>String<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>StartsWith<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$h2</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;TAG&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3v1<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Unhandled&#160;tag&#160;type:&#160;{$head[&#39;tag&#39;]}&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Destructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__destruct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stream<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;ID3v2&#160;class.</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Don&#39;t&#160;instantiate&#160;this&#160;class&#160;directly.&#160;Use&#160;{@see&#160;ID3::Create()}&#160;instead.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;ID3v2&#160;<span style='color: #000099;'><b>extends</b></span>&#160;ID3&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$type</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>TYPE_ID3V2<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Available&#160;frame&#160;id&#39;s</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$frameids</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;AENC&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.20&#160;Audio&#160;encryption]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;APIC&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.15&#160;Attached&#160;picture]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;COMM&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.11&#160;Comments]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;COMR&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.25&#160;Commercial&#160;frame]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;ENCR&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.26&#160;Encryption&#160;method&#160;registration]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;EQUA&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.13&#160;Equalization]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;ETCO&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.6&#160;Event&#160;timing&#160;codes]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;GEOB&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.16&#160;General&#160;encapsulated&#160;object]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;GRID&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.27&#160;Group&#160;identification&#160;registration]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;IPLS&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.4&#160;Involved&#160;people&#160;list]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;LINK&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.21&#160;Linked&#160;information]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;MCDI&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.5&#160;Music&#160;CD&#160;identifier]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;MLLT&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.7&#160;MPEG&#160;location&#160;lookup&#160;table]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;OWNE&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.24&#160;Ownership&#160;frame]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;PRIV&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.28&#160;Private&#160;frame]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;PCNT&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.17&#160;Play&#160;counter]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;POPM&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.18&#160;Popularimeter]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;POSS&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.22&#160;Position&#160;synchronisation&#160;frame]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;RBUF&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.19&#160;Recommended&#160;buffer&#160;size]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;RVAD&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.12&#160;Relative&#160;volume&#160;adjustment]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;RVRB&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.14&#160;Reverb]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;SYLT&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.10&#160;Synchronized&#160;lyric/text]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;SYTC&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.8&#160;Synchronized&#160;tempo&#160;codes]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TALB&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TALB&#160;Album/Movie/Show&#160;title]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TBPM&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TBPM&#160;BPM&#160;(beats&#160;per&#160;minute)]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TCOM&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TCOM&#160;Composer]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TCON&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TCON&#160;Content&#160;type]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TCOP&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TCOP&#160;Copyright&#160;message]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TDAT&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TDAT&#160;Date]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TDLY&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TDLY&#160;Playlist&#160;delay]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TENC&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TENC&#160;Encoded&#160;by]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TEXT&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TEXT&#160;Lyricist/Text&#160;writer]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TFLT&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TFLT&#160;File&#160;type]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TIME&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TIME&#160;Time]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TIT1&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TIT1&#160;Content&#160;group&#160;description]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TIT2&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TIT2&#160;Title/songname/content&#160;description]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TIT3&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TIT3&#160;Subtitle/Description&#160;refinement]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TKEY&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TKEY&#160;Initial&#160;key]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TLAN&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TLAN&#160;Language(s)]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TLEN&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TLEN&#160;Length]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TMED&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TMED&#160;Media&#160;type]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TOAL&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TOAL&#160;Original&#160;album/movie/show&#160;title]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TOFN&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TOFN&#160;Original&#160;filename]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TOLY&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TOLY&#160;Original&#160;lyricist(s)/text&#160;writer(s)]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TOPE&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TOPE&#160;Original&#160;artist(s)/performer(s)]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TORY&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TORY&#160;Original&#160;release&#160;year]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TOWN&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TOWN&#160;File&#160;owner/licensee]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TPE1&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TPE1&#160;Lead&#160;performer(s)/Soloist(s)]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TPE2&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TPE2&#160;Band/orchestra/accompaniment]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TPE3&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TPE3&#160;Conductor/performer&#160;refinement]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TPE4&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TPE4&#160;Interpreted,&#160;remixed,&#160;or&#160;otherwise&#160;modified&#160;by]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TPOS&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TPOS&#160;Part&#160;of&#160;a&#160;set]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TPUB&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TPUB&#160;Publisher]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TRCK&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TRCK&#160;Track&#160;number/Position&#160;in&#160;set]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TRDA&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TRDA&#160;Recording&#160;dates]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TRSN&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TRSN&#160;Internet&#160;radio&#160;station&#160;name]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TRSO&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TRSO&#160;Internet&#160;radio&#160;station&#160;owner]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TSIZ&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TSIZ&#160;Size]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TSRC&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TSRC&#160;ISRC&#160;(international&#160;standard&#160;recording&#160;code)]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TSSE&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TSEE&#160;Software/Hardware&#160;and&#160;settings&#160;used&#160;for&#160;encoding]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TYER&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TYER&#160;Year]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TXXX&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#TXXX&#160;User&#160;defined&#160;text&#160;information&#160;frame]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;UFID&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.1&#160;Unique&#160;file&#160;identifier]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;USER&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.23&#160;Terms&#160;of&#160;use]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;USLT&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#sec4.9&#160;Unsychronized&#160;lyric/text&#160;transcription]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WCOM&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WCOM&#160;Commercial&#160;information]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WCOP&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WCOP&#160;Copyright/Legal&#160;information]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WOAF&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WOAF&#160;Official&#160;audio&#160;file&#160;webpage]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WOAR&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WOAR&#160;Official&#160;artist/performer&#160;webpage]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WOAS&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WOAS&#160;Official&#160;audio&#160;source&#160;webpage]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WORS&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WORS&#160;Official&#160;internet&#160;radio&#160;station&#160;homepage]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WPAY&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WPAY&#160;Payment]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WPUB&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WPUB&#160;Publishers&#160;official&#160;webpage]</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;WXXX&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0099CC;'>//&#160;[#WXXX&#160;User&#160;defined&#160;URL&#160;link&#160;frame]</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Number&#160;of&#160;tracks</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$tracks</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Storage&#160;for&#160;frames</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Asscociative.&#160;frameid&#160;=&#62;&#160;value</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$frames</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Unparsed&#160;frames</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;StringReader</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$sframes</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;File&#160;$file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$head</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span>File&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$flags</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;flags&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$flags</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>object</b></span><span style='color: #0000FF;'>)</span><span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;unsync&#39;</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$flags</b></span>&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>7</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;extended&#39;</span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$flags</b></span>&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>6</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;experimental&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$flags</b></span>&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>5</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: purple;'>1</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$tag</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stream<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ReadBlock<span style='color: #0000FF;'>(</span><span style='color: purple;'>10</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;size&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sframes&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StringReader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tag</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>readFrames<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>title&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frameOrNull<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;TIT2&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>artist&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frameOrNull<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;TPE1&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>album&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frameOrNull<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;TALB&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;TRCK&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>sscanf</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;TRCK&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;%d/%d&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$t</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$to</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>track&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$t</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tracks&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$to</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;TDRC&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>year&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;TDRC&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;TCON&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>genre&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>GetIdOfGenre<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;TCON&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//rprint($this-&#62;frames);</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;frame&#160;`$which`&#160;or&#160;`null`&#160;if&#160;the&#160;frame&#160;is&#160;not&#160;set</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;ID3v2Frame|ID3v2ImageFrame</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;frameOrNull<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Read&#160;the&#160;ID3&#160;frames</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;readFrames<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sframes<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Position<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>-</span><span style='color: purple;'>10</span>&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>head<span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;size&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$h</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sframes<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: purple;'>10</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>preg_match</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/^[A-Z0-9]{4}/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$h</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>unpack</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;a4id/Nsize/Cflags&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>strlen</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;id&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sframes<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;size&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;id&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;APIC&#39;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;id&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3v2ImageFrame<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$d</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>version<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;id&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3v2Frame<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$h</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$d</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>version<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>readFrames<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;frames</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Frames<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;true&#160;if&#160;at&#160;least&#160;one&#160;frame&#160;was&#160;found</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Valid<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frames<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;number&#160;of&#160;tracks.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Tracks<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tracks<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;image&#160;if&#160;existing</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Image<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>frameOrNull<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;APIC&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Representation&#160;of&#160;a&#160;ID3v2&#160;frame</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Media</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;ID3v2Frame&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Frame&#160;header</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$head</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Frame&#160;data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$data</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Normalized&#160;frame&#160;data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$cdata</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Version&#160;of&#160;owning&#160;tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;Version</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$version</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$head</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;Version&#160;$version</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;version&#160;of&#160;the&#160;owning&#160;tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>,</span>&#160;Version&#160;<span style='color: #990000;'><b>$version</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>head&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>version&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$version</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;data&#160;normalized,&#160;i.e&#160;all&#160;binary&#160;data&#160;removed.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Data<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>normalize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;raw&#160;data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;RawData<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;frame&#160;ID</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;ID<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>head<span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;id&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Is&#160;the&#160;frame&#160;a&#160;text&#160;frame&#160;or&#160;not</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;IsTextual<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>head<span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;id&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>[</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;T&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Cast&#160;to&#160;string.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;noramlized&#160;data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;__toString<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>normalize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Removes&#160;binary&#160;shit&#160;in&#160;the&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$str</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Converted&#160;to&#160;ISO-8859-1</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;normalize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$str</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>IsTextual<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StringReader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;00&#160;=&#160;iso-8859-1</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;01&#160;=&#160;Unicode&#160;(ucs-2?)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;ID3v2.4.0</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;00&#160;=&#160;iso-8859-1</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;01&#160;=&#160;UTF-16</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;02&#160;=&#160;UTF-16BE</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;03&#160;=&#160;UTF-8</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$enc</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>ord</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>head<span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;size&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>-</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$enc</b></span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>version<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Less<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>new</b></span>&#160;Version<span style='color: #0000FF;'>(</span><span style='color: purple;'>4</span><span style='color: #0000FF;'>,</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mb_convert_encoding</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$d</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;ISO-8859-1&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;UCS-2&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$enc</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mb_convert_encoding</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$d</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;ISO-8859-1&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;Unicode&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$enc</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>2</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mb_convert_encoding</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$d</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;ISO-8859-1&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;UTF-16BE&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$enc</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>3</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>utf8_decode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$d</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Dispose<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>unset</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$d</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$d</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Representation&#160;of&#160;a&#160;ID3v2&#160;frame&#160;containing&#160;an&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Media</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;ID3v2ImageFrame&#160;<span style='color: #000099;'><b>extends</b></span>&#160;ID3v2Frame&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Picture&#160;types</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$pictypes</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;00&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Other&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;01&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;32x32&#160;pixels&#160;\&#39;file&#160;icon\&#39;&#160;(PNG&#160;only)&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;02&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Other&#160;file&#160;icon&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;03&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Cover&#160;(front)&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;04&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Cover&#160;(back)&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;05&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Leaflet&#160;page&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;06&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Media&#160;(e.g.&#160;lable&#160;side&#160;of&#160;CD)&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;07&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Lead&#160;artist/lead&#160;performer/soloist&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;08&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Artist/performer&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;09&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Conductor&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;0A&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Band/Orchestra&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;0B&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Composer&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;0C&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Lyricist/text&#160;writer&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;0D&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Recording&#160;Location&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;0E&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;During&#160;recording&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;0F&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;During&#160;performance&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;10&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Movie/video&#160;screen&#160;capture&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;11&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;A&#160;bright&#160;coloured&#160;fish&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;12&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Illustration&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;13&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Band/artist&#160;logotype&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;14&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;Publisher/Studio&#160;logotype&#39;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Image&#39;s&#160;mime&#160;type</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$mime</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Type&#160;of&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@see&#160;ID3v2ImageFrame::$pictype</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$type</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Image&#160;encoding</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$enc</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$head</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;Version&#160;$version</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;version&#160;of&#160;the&#160;owning&#160;tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>,</span>&#160;Version&#160;<span style='color: #990000;'><b>$version</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$version</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;encoding</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Encoding<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>normalize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>enc<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;mime&#160;type</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;MimeType<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>normalize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>mime<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;type&#160;of&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Type<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>normalize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>type<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Normalizes&#160;the&#160;data,&#160;i.e.&#160;parses&#160;the&#160;image&#160;frame&#160;and&#160;pulls&#160;out&#160;the</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;encoding,&#160;mimetype&#160;etc.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Returns&#160;the&#160;image&#160;data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;normalize<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StringReader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>enc&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>bin2hex</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>mime&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ReadToChar<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;\0&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>type&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>bin2hex</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\0&#34;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ReadToEnd<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Dispose<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>unset</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cdata<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;ID3v1&#160;class.</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Don&#39;t&#160;instantiate&#160;this&#160;class&#160;directly.&#160;Use&#160;{@see&#160;ID3::Create()}&#160;instead.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;ID3v1&#160;<span style='color: #000099;'><b>extends</b></span>&#160;ID3&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$type</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>TYPE_ID3V1<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Tag&#160;size</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$size</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>128</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Creates&#160;an&#160;ID3v1&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;File&#160;$file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$head</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;first&#160;10&#160;bytes&#160;of&#160;the&#160;file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span>File&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$head</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stream<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Seek<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>size&#160;<span style='color: #0000FF;'>-</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>size<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tag&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stream<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>size<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ParseTag<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tag<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Parse&#160;the&#160;ID3v1&#160;tag&#160;-&#160;the&#160;last&#160;`128`&#160;bytes&#160;of&#160;the&#160;file.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;ID3Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;the&#160;ID3&#160;tag&#160;is&#160;malformed</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;ID3v2AsID3v1</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;the&#160;tag&#160;isn&#39;t&#160;a&#160;version&#160;1&#160;tag&#160;but&#160;rather&#160;a&#160;misversioned&#160;version&#160;2&#160;tag.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$tag</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;ParseTag<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tag</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tag</b></span><span style='color: #0000FF;'>,</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span><span style='color: #ff0000;'>strlen</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fileIdentifier<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fileIdentifier<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$file</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3v2<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #ff0000;'>file</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>head<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Valid<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3v2AsID3v1<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;ID3v2&#160;file&#160;encoded&#160;as&#160;ID3v1&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;ID3Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Malformed&#160;ID3v1&#160;tag&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$tag</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tag</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>3</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StringReader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tag</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;If&#160;track&#160;info&#160;is&#160;embedded&#160;the&#160;29th&#160;byte&#160;of&#160;the&#160;comment&#160;is&#160;a&#160;binary&#160;0</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;and&#160;the&#160;30th&#160;byte&#160;is&#160;the&#160;track&#160;info&#160;it&#160;self</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$trackbyte</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>ord</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$tag</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: purple;'>30</span><span style='color: #0000FF;'>*</span><span style='color: purple;'>3</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>+</span><span style='color: purple;'>4</span><span style='color: #0000FF;'>+</span><span style='color: purple;'>29</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>title&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: purple;'>30</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>artist&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: purple;'>30</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>album&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: purple;'>30</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>year&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>int</b></span><span style='color: #0000FF;'>)</span><span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: purple;'>4</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>comment&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$trackbyte</b></span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: purple;'>28</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: purple;'>30</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$trackbyte</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0099CC;'>//&#160;Skip&#160;the&#160;29th&#160;byte&#160;of&#160;the&#160;comment</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$track</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>ord</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$track</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>track&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>ord</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$track</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>genre&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>ord</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sr</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Read<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Exception&#160;for&#160;when&#160;a&#160;tag&#160;is&#160;misversioned&#160;as&#160;version&#160;1&#160;but&#160;really&#160;is</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;a&#160;version&#160;2&#160;tag.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Media</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;ID3v2AsID3v1&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Exception&#160;<span style='color: #0000FF;'>{</span><span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;General&#160;ID3&#160;exception&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Media</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;ID3Exception&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Exception&#160;<span style='color: #0000FF;'>{</span><span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

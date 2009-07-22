@@ -1,0 +1,303 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Simple&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Cache</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;DB</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;Date</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;The&#160;cache&#160;is&#160;saved&#160;in&#160;either&#160;a&#160;{@see&#160;Mysql}&#160;or&#160;{@see&#160;Sqlite}&#160;database</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/DB/Database.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;The&#160;cache&#160;needs&#160;the&#160;{@see&#160;Date}&#160;class.</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Calendar/Date.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;A&#160;class&#160;for&#160;handling&#160;simple&#160;cacheing.</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;This&#160;is&#160;a&#160;static&#160;class.&#160;It&#160;uses&#160;SQLite&#160;to&#160;store&#160;the&#160;cache&#160;or&#160;MySQL&#160;if&#160;set</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;expicitly.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Cache</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;Cache&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;If&#160;returned&#160;from&#160;a&#160;remove&#160;callback&#160;function&#160;the&#160;cached&#160;entry&#160;will&#160;be&#160;kept.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>const</b></span>&#160;KEEP_CACHE&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;path&#160;where&#160;to&#160;save&#160;the&#160;SQLite&#160;file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$SQLITE_PATH</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;PLIB_TMP_DIR<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;name&#160;of&#160;the&#160;SQLite&#160;file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$SQLITE_FILE</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;cache.db&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;What&#160;backend&#160;to&#160;use.&#160;Valid&#160;values&#160;are&#160;sqlite&#160;or&#160;mysql</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$backend</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;sqlite&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Has&#160;the&#160;db&#160;connection&#160;been&#160;initialized&#160;or&#160;not</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;db&#160;connection&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;DB</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;name&#160;of&#160;the&#160;db&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;cache&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;SQLite&#160;table&#160;layout</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$ctable</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;CREATE&#160;TABLE&#160;%s&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;ckey&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;data&#160;TEXT,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;created&#160;DATE,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;expires&#160;DATE,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;hash&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;remove_callback&#160;VARCHAR(255)</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;)&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;MySQL&#160;table&#160;layout</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$mtable</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;CREATE&#160;TABLE&#160;IF&#160;NOT&#160;EXISTS&#160;%s&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;id&#160;INT(11)&#160;PRIMARY&#160;KEY&#160;AUTO_INCREMENT,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;ckey&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;data&#160;TEXT,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;created&#160;DATETIME,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;expires&#160;DATETIME,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;hash&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;remove_callback&#160;VARCHAR(255)</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;)&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Initialize&#160;a&#160;MySQL&#160;backend</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;Mysql&#160;$db</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$init</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;the&#160;DB&#160;user&#160;don&#39;t&#160;have&#160;CREATE&#160;priviliges&#160;the&#160;table&#160;must&#160;be&#160;created</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;manually&#160;and&#160;if&#160;so&#160;is&#160;done&#160;we&#160;don&#39;t&#160;want&#160;to&#160;run&#160;{@see&#160;Cache::initDB()}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;which&#160;will&#160;cause&#160;an&#160;exception.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;UseMySQL<span style='color: #0000FF;'>(</span>Mysql&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$init</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$backend</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;mysql&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$init</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>initDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Initializes&#160;the&#160;db&#160;connection.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;initDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$backend</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;sqlite&#39;</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$SQLITE_PATH</b></span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$SQLITE_FILE</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$f</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$SQLITE_PATH</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;/&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$SQLITE_FILE</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;DB<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Create<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;sqlite://$f&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>GetDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SELECT&#160;*&#160;FROM&#160;sqlite_master&#160;WHERE&#160;name&#160;=&#160;&#39;$table&#39;&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;AND&#160;type&#160;=&#160;&#39;table&#39;&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$createTable</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$createTable</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$createTable</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$ctable</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$backend</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;mysql&#39;</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$mtable</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Add&#160;to&#160;the&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;lookup&#160;key&#160;also&#160;used&#160;to&#160;fetch&#160;from&#160;the&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$value</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;actual&#160;value&#160;to&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$time</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;A&#160;unix&#160;timestamp&#160;defining&#160;for&#160;how&#160;long&#160;the&#160;cache&#160;should&#160;last</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$hash</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;A&#160;user&#160;defined&#160;hash&#160;to&#160;validate&#160;against.&#160;This&#160;hash&#160;can&#160;then&#160;be&#160;sent</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;to&#160;{@see&#160;Cache::Get()}&#160;which&#160;then&#160;also&#160;will&#160;check&#160;the&#160;hash&#160;and&#160;not&#160;just</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;the&#160;timestamp&#160;do&#160;validate&#160;the&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$rmCallback</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;set&#160;this&#160;function&#160;will&#160;be&#160;called&#160;prior&#160;to&#160;the&#160;deletion&#160;of&#160;the</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;cache.&#160;The&#160;function&#160;will&#160;be&#160;called&#160;with&#160;the&#160;`cachekey`&#160;as&#160;first</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;argument&#160;and&#160;the&#160;entire&#160;db&#160;result&#160;row&#160;as&#160;second&#160;argument.&#160;(This&#160;will&#160;be</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;an&#160;instance&#160;of&#160;{@see&#160;SQLite_DBResult}&#160;or&#160;{@see&#160;Mysql_DBResult}&#160;depending</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;on&#160;what&#160;backend&#160;is&#160;being&#160;used.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;you&#160;wish&#160;to&#160;keep&#160;the&#160;cache,&#160;i.e.&#160;abort&#160;the&#160;deletion,&#160;return</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;{@see&#160;Cache::KEEP_CACHE}&#160;from&#160;the&#160;callback&#160;function.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$time</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$hash</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$rmCallback</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>initDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$hash</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$hash</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>md5</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$date</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$time</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$date</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$date</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ymd<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$now</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$now</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$now</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ymd<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Remove<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;INSERT&#160;INTO&#160;$table&#160;(ckey,&#160;data,&#160;created,&#160;expires,&#160;hash,&#160;remove_callback)</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;VALUES&#160;(&#39;%s&#39;,&#39;%s&#39;,&#39;%s&#39;,&#39;%s&#39;,&#39;%s&#39;,&#39;%s&#39;)&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$now</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$date</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$hash</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>serialize</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$rmCallback</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;cached&#160;item&#160;or&#160;false&#160;if&#160;the&#160;cache&#160;has&#160;expired&#160;or&#160;doesn&#39;t</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;exist.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;A&#160;key&#160;associated&#160;with&#160;this&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$hash</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;See&#160;{@see&#160;Cache::Add()}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$returnObject</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;set&#160;to&#160;true&#160;the&#160;SQL&#160;result&#160;set&#160;will&#160;be&#160;returned&#160;rather&#160;than</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;the&#160;actual&#160;cache&#160;data.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string|DBResult</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$hash</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$returnObject</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>initDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;*&#160;FROM&#160;$table&#160;WHERE&#160;ckey&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$hash</b></span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #990000;'><b>$hash</b></span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>hash<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Remove<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$old</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>expires<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$new</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$old</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: #990000;'><b>$new</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Remove<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$returnObject</b></span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Remove&#160;the&#160;item&#160;with&#160;key&#160;`$key`&#160;from&#160;the&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;DBResult&#160;$dbrow</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;This&#160;param&#160;is&#160;only&#160;used&#160;internally</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Remove<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$dbrow</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>initDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$dbrow</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SELECT&#160;*&#160;FROM&#160;$table&#160;WHERE&#160;ckey&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$dbrow</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbrow</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>remove_callback<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cb</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>unserialize</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbrow</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>remove_callback<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cb</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>|</span><span style='color: #0000FF;'>|</span>&#160;<span style='color: #ff0000;'>is_string</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cb</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #ff0000;'>strlen</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cb</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>call_user_func</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cb</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$dbrow</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;DELETE&#160;FROM&#160;$table&#160;WHERE&#160;ckey&#160;=&#160;&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Clears&#160;the&#160;entire&#160;cache&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Clear<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>initDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;DELETE&#160;FROM&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;entire&#160;cache</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;DBResult</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetAll<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$isInit</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>initDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;SELECT&#160;*&#160;FROM&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

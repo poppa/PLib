@@ -1,0 +1,571 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Graphics&#160;text</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.2</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Graphics</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;Graphics</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@depends&#160;{@link&#160;http://php.net/gd&#160;The&#160;PHP&#160;Image&#160;module}</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Generic&#160;graphics&#160;stuff</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;<span style='color: #008800;'>&#39;_Graphics.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Class&#160;for&#160;generating&#160;text&#160;images</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Graphics</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;GText&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Graphics&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Default&#160;background&#160;color</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$bgcolor</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;fff&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Default&#160;text&#160;color</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$fgcolor</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;000&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Default&#160;font&#160;size</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$fontsize</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>14</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Use&#160;transparent&#160;background.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;0&#160;means&#160;no&#160;transparency,&#160;127&#160;means&#160;full&#160;transparency</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$alpha</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Image&#160;format</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$format</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;png&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;If&#160;greater&#160;than&#160;0&#160;the&#160;text&#160;will&#160;be&#160;wrapped&#160;at&#160;column&#160;$wordwrap</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$wordwrap</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;directory&#160;in&#160;which&#160;to&#160;save&#160;the&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$imagedir</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;.&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;font</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;File</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;path&#160;to&#160;the&#160;font</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$fontpath</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Publically&#160;settable&#160;members</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$settable</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;bgcolor&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;fgcolor&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;fontsize&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;alpha&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;format&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;wordwrap&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;imagedir&#39;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;font&#39;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;generated&#160;file&#160;name</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$filename</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Number&#160;of&#160;generated&#160;images</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$instances</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$font</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$imagedir</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Where&#160;to&#160;save&#160;the&#160;generated&#160;images</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$imagedir</b></span><span style='color: #0000FF;'>=</span><span style='color: #008800;'>&#39;.&#39;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>font&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;File<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fontpath&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>imagedir&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>rtrim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$imagedir</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Create&#160;the&#160;text&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$text</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$output</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;if&#160;set&#160;to&#160;true&#160;the&#160;file&#160;will&#160;not&#160;be&#160;saved&#160;but&#160;rather&#160;just&#160;written</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;to&#160;the&#160;output&#160;buffer.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Render<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$output</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$text</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$alpha</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>alpha<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$alpha</b></span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format<span style='color: #0000FF;'>,</span>&#160;Graphics<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$ALPHA_SUPPORT</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;gif&#39;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$alpha</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>127</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #ff0000;'>wordwrap</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$text</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>wordwrap</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #ff0000;'>wordwrap</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$fontsize</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>float</b></span><span style='color: #0000FF;'>)</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fontsize<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$fontpath</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fontpath<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$bc</b></span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Hex2RGB<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>bgcolor<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$fc</b></span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Hex2RGB<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fgcolor<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$size</b></span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>imagettfbbox</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$fontsize</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fontpath</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$size</b></span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>ConvertBoundingBox<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xoffset</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;xoffset&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$yoffset</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;yoffset&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$img</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>imagecreatetruecolor</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;width&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;height&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$alpha</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;imagesavealpha<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;GraphicsException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Couldn&#39;t&#160;create&#160;image!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$alpha</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$bc</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;imagecolorallocatealpha<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;r&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;g&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;b&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$alpha</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$bc</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>imagecolorallocate</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;r&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;g&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;b&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$fc</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>imagecolorallocate</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;r&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;g&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fc</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;b&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>imagefill</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bc</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>imagettftext</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fontsize</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$xoffset</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$yoffset</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fc</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fontpath</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$filename</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$hash</b></span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$output</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$hash</b></span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ToMD5<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>utf8_decode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$filename</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>getFilePath<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>utf8_decode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>header</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;Content-Type:&#160;&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>MimeType<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>switch</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;png&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>imagepng</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$filename</b></span><span style='color: #0000FF;'>,</span>&#160;Graphics<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$PNG_QUALITY</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>break</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;gif&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>imagegif</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$filename</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>break</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;jpg&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;jpeg&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>imagejpeg</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$filename</b></span><span style='color: #0000FF;'>,</span>&#160;Graphics<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$JPEG_QUALITY</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>break</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>imagedestroy</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$img</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>filename&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$instances</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;path&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$filename</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;width&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;width&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;height&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$size</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;height&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;hash&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$hash</b></span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$hash</b></span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ToMD5<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>utf8_decode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;mimetype&#160;for&#160;the&#160;current&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;MimeType<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #008800;'>&#34;image/$this-&#62;format&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Generates&#160;a&#160;unique&#160;filename</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;generateFileName<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #008800;'>&#39;gtext-&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ToMD5<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;full&#160;path&#160;of&#160;the&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;getFilePath<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$fn</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>generateFileName<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>imagedir&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$fn</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;.&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;a&#160;md5&#160;hash&#160;of&#160;the&#160;object.&#160;All&#160;members&#160;will&#160;be&#160;used&#160;as&#160;salt.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Useful&#160;if&#160;cacheing&#160;the&#160;images&#160;in&#160;a&#160;dynamic&#160;environment&#160;where&#160;the&#160;hash</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;can&#160;be&#160;used&#160;to&#160;invalidate&#160;the&#160;cache.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$text</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;ToMD5<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>md5</span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fgcolor&#160;&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fontpath&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fontsize&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format&#160;&#160;&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>bgcolor&#160;&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>alpha&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #ff0000;'>wordwrap</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$text</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Setter.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$value</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__set</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>settable<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>switch</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;font&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$value</b></span>&#160;instanceof&#160;File<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$value</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;File<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>font&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fontpath&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>font<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>break</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;alpha&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span>&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: purple;'>0</span>&#160;<span style='color: #0000FF;'>|</span><span style='color: #0000FF;'>|</span>&#160;<span style='color: #990000;'><b>$value</b></span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>127</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;GraphicsException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;Alpha&#160;needs&#160;to&#160;be&#160;between&#160;0&#160;and&#160;127!&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>alpha&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>break</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>case</b></span>&#160;<span style='color: #008800;'>&#39;format&#39;</span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>IsSupported<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;GraphicsException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Images&#160;of&#160;type&#160;$value&#160;is&#160;not&#160;supported&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>strtolower</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>break</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>default</b></span><span style='color: #0000FF;'>:</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>{</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>}</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Implements&#160;cacheable&#160;text&#160;images</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Graphics</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@depends&#160;Cache</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;GTextCacheable&#160;<span style='color: #000099;'><b>extends</b></span>&#160;GText&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Is&#160;the&#160;cache&#160;class&#160;loaded&#160;or&#160;not?</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$cacheloaded</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@see&#160;GText::__construct()</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$font</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$imgdir</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$imgdir</b></span><span style='color: #0000FF;'>=</span><span style='color: #008800;'>&#39;.&#39;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$imgdir</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$cacheloaded</b></span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>class_exists</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;Cache&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Import<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;Cache.Cache&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$cacheloaded</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Render&#160;the&#160;graphics&#160;text</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$text</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Render<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$output</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cachekey</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>generateFileName<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$md5</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ToMD5<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;It&#39;s&#160;an&#160;assignment</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>false</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;Cache<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cachekey</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$md5</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Render<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;Cache<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cachekey</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>serialize</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>UnixYear<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$md5</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>file_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>getFilePath<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Render<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Cache<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cachekey</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>serialize</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>UnixYear<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$md5</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>unserialize</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$instances</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$output</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>header</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;Content-Type:&#160;&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>MimeType<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>echo</b></span>&#160;<span style='color: #ff0000;'>file_get_contents</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;path&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>die</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Like&#160;{@see&#160;GText}&#160;and&#160;{@see&#160;GTextCacheable}&#160;except&#160;this&#160;class&#160;utilize</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;a&#160;special&#160;database&#160;table.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;__The&#160;table&#160;structure__</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;#&#160;MySQL</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;CREATE&#160;TABLE&#160;&#160;`dbname`.`gtext`&#160;(</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`ckey`&#160;varchar(255)&#160;default&#160;NULL,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`created`&#160;datetime&#160;default&#160;NULL,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`hash`&#160;varchar(255)&#160;default&#160;NULL,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`width`&#160;int(11)&#160;default&#160;NULL,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`height`&#160;int(11)&#160;default&#160;NULL,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`remove_callback`&#160;varchar(255)&#160;default&#160;NULL,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`id`&#160;int(11)&#160;NOT&#160;NULL&#160;auto_increment,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`type`&#160;varchar(100)&#160;default&#160;NULL,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`data`&#160;longblob,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;PRIMARY&#160;KEY&#160;&#160;(`id`)</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;)&#160;ENGINE=MyISAM</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;#SQLite</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;CREATE&#160;TABLE&#160;`gtext`&#160;(</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`ckey`&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;VARCHAR(255),</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`created`&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;DATE,</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`hash`&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;VARCHAR(255),</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`width`&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;INT(11),</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`height`&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;INT(11),</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`remove_callback`&#160;VARCHAR(255),</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`type`&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;VARCHAR(100),</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;`data`&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;LONGBLOB</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;)</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Graphics</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@example&#160;GTextDB.xmpl</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@depends&#160;DB</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@depends&#160;Mysql</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;GTextDB&#160;<span style='color: #000099;'><b>extends</b></span>&#160;GText&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;DB&#160;connection&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;Mysql|SQLite</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Name&#160;of&#160;the&#160;database&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;gtext&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$sqlite_table</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<br/>
+&#160;&#160;<span style='color: #008800;'>&#34;CREATE&#160;TABLE&#160;%s&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;ckey&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;created&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;DATE,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;hash&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;width&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;INT(11),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;height&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;INT(11),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;remove_callback&#160;VARCHAR(255),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;type&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;VARCHAR(100),</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;data&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;LONGBLOB</span><br/>
+<span style='color: #008800;'>&#160;&#160;)&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$font</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;full&#160;path&#160;to&#160;the&#160;font&#160;to&#160;use</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;GraphicsException</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Initialize<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//throw&#160;new&#160;GraphicsException(&#34;GTextDB&#160;is&#160;not&#160;initialized&#34;);</span><br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$font</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;/tmp&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Initialize&#160;the&#160;database&#160;object&#160;to&#160;use.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;DB&#160;$db</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;A&#160;database&#160;driver&#160;extending&#160;{@see&#160;DB}.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Initialize<span style='color: #0000FF;'>(</span>DB&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #000099;'><b>return</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>GetDB<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$db</b></span>&#160;instanceof&#160;SQLite<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>TableExists<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$sqlite_table</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Create&#160;the&#160;image</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$text</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Render<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cachekey</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>generateFileName<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$md5</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ToMD5<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;rowid&#160;AS&#160;id,&#160;ckey,&#160;width,&#160;height,&#160;hash,&#160;data,&#160;type&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;FROM&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#160;WHERE&#160;ckey=&#39;%s&#39;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cachekey</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>hash&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$md5</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;url&#39;</span>&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ckey<span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;width&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>width<span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;height&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>height<span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;type&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>type<span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;data&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>data<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>ob_start</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$props</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>Render<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$image</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>ob_get_clean</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;UPDATE&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#160;SET</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;data=&#39;%s&#39;,&#160;hash=&#39;%s&#39;,&#160;created=NOW(),&#160;width=%d,&#160;height=%d,</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;type=&#39;%s&#39;,&#160;ckey=&#39;%s&#39;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;WHERE&#160;id=%d&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$image</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$md5</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$props</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;width&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$props</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;height&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;image/&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cachekey</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>id<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;INSERT&#160;INTO&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;ckey,&#160;data,&#160;created,&#160;hash,&#160;width,&#160;height,&#160;type</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;)&#160;VALUES&#160;(</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#39;%s&#39;,&#39;%s&#39;,DATETIME(&#39;NOW&#39;),&#39;%s&#39;,%d,%d,&#39;%s&#39;</span><br/>
+<span style='color: #008800;'>&#160;&#160;&#160;&#160;&#160;&#160;)&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cachekey</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$image</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$md5</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$props</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;width&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$props</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;height&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;image/&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>format<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;url&#39;</span>&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$cachekey</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;width&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$props</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;width&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;height&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$props</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;height&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;type&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#34;image/$this-&#62;type&#34;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;data&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$image</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Get&#160;a&#160;specific&#160;image&#160;from&#160;the&#160;database</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;GraphicsException</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;the&#160;DB&#160;object&#160;isn&#39;t&#160;initialized</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$which</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;This&#160;is&#160;the&#160;cache&#160;key&#160;for&#160;the&#160;image.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;{@see&#160;GTextDB}&#160;for&#160;an&#160;example&#160;of&#160;usage</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;Mysql_DBResult|bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;GraphicsException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;GTextDB&#160;is&#160;not&#160;initialized&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sql</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;SELECT&#160;data,&#160;type&#160;AS&#160;mimetype,&#160;width,&#160;height&#160;FROM&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;WHERE&#160;ckey=&#39;%s&#39;&#160;LIMIT&#160;1&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sql</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$which</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>Exception&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PrintException<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Clear&#160;the&#160;dabtabase</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Clear<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$db</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Query<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;DELETE&#160;FROM&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$table</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

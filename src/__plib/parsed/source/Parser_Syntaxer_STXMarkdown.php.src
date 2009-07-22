@@ -1,0 +1,205 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;STXMarkdown&#160;extends&#160;the&#160;Markdown&#160;class&#160;to&#160;enable&#160;codeblocks&#160;to&#160;be</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;highlighted&#160;by&#160;the&#160;syntax&#160;highlighter&#160;class&#160;{@link&#160;Syntaxer}</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;NOTE!&#160;This&#160;is&#160;not&#160;a&#160;standalone&#160;class&#160;but&#160;depends&#160;on&#160;two&#160;other&#160;classes:</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;*&#160;PHP&#160;Markdown&#160;&#38;&#160;Extra&#160;by&#160;Michel&#160;Fortin</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#60;http://www.michelf.com/projects/php-markdown/&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;*&#160;Syntaxer&#160;by&#160;Pontus&#160;�stlund</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#60;http://www.poppa.se/projects/syntaxer/&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@license&#160;GPL&#160;License&#160;2</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;1.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Parser</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;MarkdownExtra_Parser</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;Syntaxer</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Version&#160;constant</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;STX_MARKDOWN_VERSION&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;1.1&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;We&#160;need&#160;markdown</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Parser/Markdown/markdown.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;We&#160;need&#160;the&#160;{@see&#160;Syntaxer}&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Parser/Syntaxer/Syntaxer.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;The&#160;STXMarkdown&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;*&#160;Either&#160;open&#160;up&#160;markdown.php&#160;and&#160;change&#160;the&#160;value&#160;of&#160;the&#160;constant</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;MARKDOWN_PARSER_CLASS&#160;to&#160;STXMarkdown</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;*&#160;Or&#160;use&#160;this&#160;function&#160;instead:</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;function&#160;MyMarkdown($text)</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;&#160;&#160;static&#160;$parser;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;&#160;&#160;if&#160;(!isset($parser))</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$parser&#160;=&#160;new&#160;STXMarkdown();</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;&#160;&#160;return&#160;$parser-&#62;transform($text);</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;&#160;&#160;&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;Parser</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Syntaxer</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;STXMarkdown&#160;<span style='color: #000099;'><b>extends</b></span>&#160;MarkdownExtra_Parser&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Cache&#160;map&#160;for&#160;Syntaxer&#160;objects.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$cache_map</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;path&#160;where&#160;to&#160;look&#160;for&#160;.stx&#160;files</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$stxpath</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;path&#160;where&#160;to&#160;save&#160;the&#160;generated&#160;syntax&#160;maps</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #990000;'><b>$stxcachepath</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;the&#160;tabsize&#160;in&#160;the&#160;Syntaxer&#160;parser</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$tabsize</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>4</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Here&#160;we&#160;just&#160;initialize&#160;the&#160;parent&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$stxpath</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$stxcachepath</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stxpath&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$stxpath</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stxcachepath&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$stxcachepath</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tab_width&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tabsize</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;This&#160;method&#160;overrides&#160;the&#160;Markdown&#160;class&#160;that&#160;takes&#160;care&#160;of&#160;codeblocks.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@see&#160;MarkdownExtra_Parser::_doCodeBlocks_callback()</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$matches</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>function</b></span>&#160;_doCodeBlocks_callback<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$matches</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$codeblock</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$matches</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$codeblock</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>outdent<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$codeblock</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$codeblock</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Hilite<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$codeblock</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$codeblock</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/\A\n+/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;/\n+\z/&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$codeblock</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #008800;'>&#34;\n\n&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>hashBlock<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$codeblock</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;\n\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Do&#160;the&#160;actual&#160;highlighting.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Some&#160;added&#160;fetures&#160;is&#160;that&#160;we&#160;at&#160;the&#160;top&#160;of&#160;the&#160;codeblock&#160;can&#160;specify</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;what&#160;laguage&#160;we&#39;re&#160;highlighting.&#160;We&#160;can&#160;also&#160;specify&#160;wether&#160;the&#160;code</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;should&#160;be&#160;treated&#160;as&#160;HTML&#160;ebedded&#160;or&#160;not.&#160;The&#160;default&#160;behaviour&#160;of&#160;the</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;syntax&#160;highlighter&#160;is&#160;to&#160;first&#160;determine&#160;if&#160;the&#160;language&#160;at&#160;hand&#160;is</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;an&#160;HTML&#160;embedded&#160;language&#160;or&#160;not.&#160;If&#160;it&#160;is&#160;no&#160;highlighting&#160;will&#160;be&#160;done</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;until&#160;the&#160;processing&#160;instruction&#160;is&#160;found.&#160;For&#160;PHP&#160;the&#160;case&#160;would&#160;be</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;`&#60;?`&#160;or&#160;`&#60;?php`.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;If&#160;the&#160;highlighter&#160;is&#160;used&#160;in&#160;a&#160;blog&#160;or&#160;something&#160;similar&#160;mostly&#160;snippets</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;of&#160;code&#160;will&#160;be&#160;highlighted&#160;and&#160;thus&#160;you&#160;might&#160;not&#160;want&#160;to&#160;add&#160;the</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;processing&#160;instructions&#160;but&#160;rather&#160;treat&#160;the&#160;code&#160;an&#160;non-html&#160;embedded.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;To&#160;accomplish&#160;this&#160;the&#160;text&#160;to&#160;be&#160;parsed&#160;could&#160;be&#160;formatted&#160;like&#160;this:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;This&#160;is&#160;just&#160;some&#160;silly&#160;text&#160;that&#160;preceeds&#160;some&#160;silly&#160;example&#160;code:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;#lang=php&#160;embedded=n</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;$some_var&#160;=&#160;&#39;This&#160;is&#160;a&#160;string&#39;;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;echo&#160;call_some_func($some_var);</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;And&#160;here&#39;s&#160;some&#160;silly&#160;text&#160;after&#160;the&#160;silly&#160;codeblock.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$in</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Hilite<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$in</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$lang</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;none&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$embedded</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$in</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>rtrim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$in</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;\n&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;Check&#160;for&#160;what&#160;language&#160;to&#160;use&#160;and&#160;if&#160;treat&#160;is&#160;as</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;HTML&#160;embedded&#160;or&#160;not</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$re</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;/^\s*#lang=(.[^\s]+)(?:\s+embedded=(.*))?/im&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>preg_match</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$re</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$in</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$match</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$lang</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>strtolower</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$match</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$match</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>2</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$embedded</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$match</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>2</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;y&#39;</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #000099;'><b>true</b></span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;remove&#160;the&#160;instruction</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$in</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/^\s*#lang=.*\r?\n/im&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$in</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>try</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;If&#160;an&#160;object&#160;for&#160;the&#160;language&#160;doesn&#39;t&#160;exist&#160;in&#160;the&#160;cache</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;create&#160;a&#160;new&#160;object&#160;and&#160;cache&#160;it.</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cache_map<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$lang</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$stx</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Syntaxer<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$lang</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stxpath<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>stxcachepath<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tabsize&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tab_width&#160;<span style='color: #0000FF;'>-</span>&#160;<span style='color: purple;'>2</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cache_map<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$lang</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$stx</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cache_map<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$lang</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>HTMLEmbedded<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$embedded</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Parse<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$in</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$lines</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>GetLines<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$lang</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>GetLanguage<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$noun</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$lines</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #008800;'>&#39;line&#39;</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #008800;'>&#39;lines&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$out1</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#60;div&#160;class=&#39;highlight&#39;&#62;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;&#60;div&#160;class=&#39;header&#39;&#62;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;&#60;span&#160;class=&#39;em&#39;&#62;$lines&#60;/span&#62;&#160;$noun&#160;of&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;&#60;span&#160;class=&#39;em&#39;&#62;$lang&#60;/span&#62;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;&#60;/div&#62;&#60;div&#160;class=&#39;body&#39;&#62;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$out2</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#60;/div&#62;&#60;/div&#62;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$out</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$out1</b></span><span style='color: #0000FF;'>.</span><span style='color: #008800;'>&#34;&#60;ol&#62;\n&#34;</span><span style='color: #0000FF;'>.</span><span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>GetBuffer<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>.</span><span style='color: #008800;'>&#34;&#60;/ol&#62;&#34;</span><span style='color: #0000FF;'>.</span><span style='color: #990000;'><b>$out2</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>unset</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$stx</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$out</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>catch</b></span>&#160;<span style='color: #0000FF;'>(</span>SyntaxerIOError&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>getMessage<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Like&#160;{@see&#160;Markdown()}&#160;except&#160;this&#160;function&#160;creates&#160;an&#160;instance&#160;of</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;{@see&#160;STXMarkdown}&#160;that&#160;syntax&#160;highlights&#160;source&#160;code.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@since&#160;1.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@param&#160;string&#160;$text</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>function</b></span>&#160;STXMarkdown<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$parser</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$parser</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$parser</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;STXMarkdown<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$parser</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>transform<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$text</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

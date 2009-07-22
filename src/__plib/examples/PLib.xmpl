@@ -1,0 +1,7 @@
+<?php
+require_once 'PLib.php';
+PLib::Import('Protocols.HTTPClient');
+
+$cli = new HTTPClient();
+$res = $cli->Get('http://google.com/search', array('q' => 'php'));
+?>

@@ -1,0 +1,165 @@
+<?php
+/**
+ * Examples of how to use the HTTPClient class
+ *
+ * @author Pontus Östlund <spam@poppa.se>
+*/
+require_once 'PLib.php';
+
+PLib::Import('Protocols.Net');
+
+try {
+
+  $delim = "<pre>" . str_repeat('-', 80 - strlen('<pre></pre>')) . "</pre>\n\n";
+
+  /* ===========================================================================
+   *
+   *   Example 1.
+   *   Just a simple GET request where we pass on some query variables.
+   *
+   * ======================================================================== */
+
+  // To enable cookies.
+  $cookiejar = new HTTPCookie('mycookies');
+  $client = new HTTPRequest($cookiejar);
+
+  // Cache the request for ten minutes
+  $client->Cache(60*10);
+
+  $server = 'http://www.poppa.se/remote/respond.php';
+  $vars = array(
+    'name'           => 'poppa',
+    'local-server'   => $_SERVER['SERVER_NAME'],
+    'local-software' => $_SERVER['SERVER_SOFTWARE']
+  );
+  
+  // A HTTPResponse object
+  $resp = $client->Get($server, $vars);
+
+  if (($c = $resp->Status()) != 200)
+    throw new Exception("Got status code \"$c\" aborting");
+
+  echo $resp->Data(); // or: echo (string)$resp
+
+  /* ---------------------------------------------------------------------------
+   * Result from echo
+   * ---------------------------------------------------------------------------
+   *
+   * Request from:        85.228.236.218
+   * Request method:      GET
+   * User-Agent:          PLib HTTPClient/0.2
+   * Cookies:             No cookies passed
+   * I set the cookie "responder" with the value "85.228.236.218"
+   * Query variables:
+   *  name:               poppa
+   *  local-server:       127.0.0.2
+   *  local-software:     Apache/2.2.3 (Ubuntu) PHP/5.2.1
+   *
+   * ------------------------------------------------------------------------ */
+
+	echo $delim;
+
+  /* ===========================================================================
+   *
+   * Lets do a POST request while we're at it and relay
+   * the current users User-Agent.
+   *
+   * ======================================================================== */
+  $extraHeader = array('User-Agent' => $_SERVER['HTTP_USER_AGENT']);
+  // Restore the cache time. This request will not get the same cache as
+  // above event though both the URL and query vars are the same. The
+  // method is different so the cache checksums will differ.
+  $client->Cache(60*10);
+  $resp = $client->Post($server, $vars, $extraHeader);
+
+  if (($c = $resp->Status()) != 200)
+    throw new Exception("Got status code \"$c\" aborting");
+
+  echo $resp->Data();
+
+  /* ---------------------------------------------------------------------------
+   * Result from echo
+   * ---------------------------------------------------------------------------
+   *
+   * Request from:        85.228.236.218
+   * Request method:      POST
+   * User-Agent:          Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.8.1.4)
+   *                      Gecko/20061201 Firefox/2.0.0.4 (Ubuntu-feisty)
+   * Cookies:
+   *  responder:          85.228.236.218
+   * Post variables:
+   *  name:               poppa
+   *  local-server:       127.0.0.2
+   *  local-software:     Apache/2.2.3 (Ubuntu) PHP/5.2.1
+   * Raw input:
+   *  name=poppa&local-server=127.0.0.2&local-software=Apache%2F2.2.3+%28Ubuntu\
+   *  %29+PHP%2F5.2.1
+   *
+   * Decoded raw input:
+   *  name=poppa&local-server=127.0.0.2&local-software=Apache/2.2.3 (Ubuntu) \
+   *  PHP/5.2.1
+   *
+   * ------------------------------------------------------------------------ */
+
+  echo $delim;
+  unset($client);
+
+  /* ===========================================================================
+   *
+   * Lets do a POST request with an XML tree as content (Like a SOAP call)
+   *
+   * ======================================================================== */
+
+  $rawContent =
+	"<?xml version='1.0' encoding='utf-8'?>\n"      .
+	"<root>\n"                                      .
+  "  <node>\n"                                    .
+  "    <value id='12'>Some value</value>\n"       .
+  "    <value id='13'>Some other value</value>\n" .
+  "  </node>\n"                                   .
+	"</root>"                                       ;
+
+  // NOTE! We don't pass a HTTPCookie object as argument to the constructor
+  // here so we will get the result "I set the cookie..." even though it's
+  // already set from the previous requests. Not passing a cookie object to
+  // the client means: Don't bother with cookies at all!
+  $client = new HTTPRequest();
+  $client->Cache(60*10);
+  $resp = $client->DoMethod('POST', $server, null, null, $rawContent);
+
+  if (($c = $resp->Status()) != 200)
+    throw new Exception("Got status code \"$c\" aborting");
+
+  echo $resp->Data();
+
+  /* ---------------------------------------------------------------------------
+   * Result from echo
+   * ---------------------------------------------------------------------------
+   *
+   * Request from:        85.228.236.218
+   * Request method:      POST
+   * User-Agent:          PLib HTTPClient/0.2
+   * Cookies:             No cookies passed
+   * I set the cookie "responder" with the value "85.228.236.218"
+   * Post variables:      No variables passed
+   * Raw input:
+   *  %3C%3Fxml+version%3D%271.0%27+encoding%3D%27utf-8%27%3F%3E%0A%3Croot%3E%0\
+   *  A++%3Cnode%3E%0A++++%3Cvalue+id%3D%2712%27%3ESome+value%3C%2Fvalue%3E%0A+\
+   *  +++%3Cvalue+id%3D%2713%27%3ESome+other+value%3C%2Fvalue%3E%0A++%3C%2Fnode\
+   *  %3E%0A%3C%2Froot%3E
+   *
+   * Decoded raw input:
+   *  <?xml version='1.0' encoding='utf-8'?>
+   *  <root>
+   *    <node>
+   *      <value id='12'>Some value</value>
+   *      <value id='13'>Some other value</value>
+   *    </node>
+   *  </root>
+   *
+   * ------------------------------------------------------------------------ */
+}
+catch (Exception $ex) {
+  die($ex->getMessage());
+}
+?>

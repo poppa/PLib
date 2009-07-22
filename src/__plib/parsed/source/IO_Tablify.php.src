@@ -1,0 +1,518 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Tablify&#160;converts&#160;an&#160;CSV&#160;file&#160;into&#160;an&#160;HTML&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;StreamReader</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;We&#160;might&#160;need&#160;the&#160;{@see&#160;StreamReader}&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/IO/StreamReader.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Tablify&#160;converts&#160;an&#160;CSV&#160;file&#160;into&#160;an&#160;HTML&#160;table.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Tablify</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@depends&#160;StreamReader</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;Tablify&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Instance&#160;counter.&#160;Used&#160;when&#160;creating&#160;a&#160;unique&#160;object&#160;key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$instanses</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Configuration&#160;array.&#160;The&#160;array&#160;keys&#160;are&#160;reached&#160;through&#160;the&#160;magic</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;methods&#160;{@see&#160;Tablify::__get()}&#160;and&#160;{@see&#160;Tablify::__set()}.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$conf</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;CellSeparator&#39;</span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#34;\t&#34;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;RowSeparator&#39;</span>&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#34;\n&#34;</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;Interactive&#39;</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;TableAttributes&#39;</span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;HeaderAttributes&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;OddRowAttributes&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;EvenRowAttributes&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;Linkify&#39;</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;Squeeze&#39;</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;HeaderRow&#39;</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>false</b></span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;sort&#160;order.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$sortOrder</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;SORT_ASC<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;What&#160;column&#160;index&#160;to&#160;sort&#160;on.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;0&#160;means&#160;don&#39;t&#160;sort</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$sortCol</b></span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;array&#160;with&#160;the&#160;rows&#160;and&#160;columns&#160;of&#160;the&#160;parsed&#160;data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$contents</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;resulting&#160;table</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$buffer</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;highest&#160;number&#160;of&#160;columns&#160;a&#160;row&#160;has.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$flood</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Each&#160;object&#160;gets&#160;an&#160;unique&#160;key&#160;so&#160;we&#160;can&#160;determine&#160;what&#160;table&#160;to&#160;sort</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;on&#160;interactive&#160;sort&#160;if&#160;multiple&#160;tables&#160;are&#160;created.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$uniqueKey</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;same&#160;object&#160;can&#160;only&#160;be&#160;used&#160;once.&#160;This&#160;member&#160;keeps&#160;track&#160;of&#160;that!</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$renders</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$args</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Associative&#160;array&#160;with&#160;settings.&#160;The&#160;settings&#160;are:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;CellSeparator:&#160;What&#160;character&#160;to&#160;split&#160;cells&#160;on.&#160;Default&#160;is&#160;\t</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;RowSeparator:&#160;What&#160;character&#160;to&#160;split&#160;row&#160;on.&#160;Default&#160;is&#160;\n</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;Interactive:&#160;Boolean&#160;for&#160;if&#160;to&#160;allow&#160;interactive&#160;sorting.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;Default&#160;is&#160;false.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;TableAttributes:&#160;Assoc&#160;array&#160;to&#160;set&#160;tag&#160;attributes&#160;for&#160;the&#160;table.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;HeaderAttributes:&#160;Assoc&#160;array&#160;to&#160;set&#160;tag&#160;attributes&#160;for&#160;the&#160;header&#160;tr.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;OddRowAttributes:&#160;Assoc&#160;array&#160;to&#160;set&#160;tag&#160;attributes&#160;for&#160;every&#160;odd&#160;tr.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;EvenRowAttributes:&#160;Assoc&#160;array&#160;to&#160;set&#160;tag&#160;attributes&#160;for&#160;every&#160;even&#160;tr.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;Linkify:&#160;Boolean&#160;for&#160;if&#160;to&#160;make&#160;URLs&#160;clickable.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;Squeeze:&#160;If&#160;set&#160;to&#160;true&#160;emty&#160;&#34;cells&#34;&#160;in&#160;the&#160;CSV&#160;file&#160;will&#160;be&#160;discarted.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;This&#160;allows&#160;for&#160;CSV&#160;files&#160;formatted&#160;like&#160;this:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;Given&#160;name&#160;&#160;&#160;&#160;&#160;&#160;&#160;Last&#160;name&#160;&#160;&#160;Profession</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;Brad&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Pit&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Actor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;Ingmar&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Bergman&#160;&#160;&#160;&#160;&#160;Director</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;Mary&#160;Elizabeth&#160;&#160;&#160;Winstead&#160;&#160;&#160;&#160;Actress&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;*&#160;HeaderRow:&#160;If&#160;true&#160;the&#160;first&#160;line&#160;in&#160;the&#160;CSV&#160;file&#160;will&#160;not&#160;be&#160;treated</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;as&#160;data&#160;but&#160;as&#160;column&#160;headers.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$k</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$v</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>conf<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$k</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>conf<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$k</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$v</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$instanses</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>uniqueKey&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>md5</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SERVER</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;PHP_SELF&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;-&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$instanses</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;sorting&#160;rules.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$col</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;What&#160;column&#160;to&#160;do&#160;the&#160;initial&#160;sort&#160;on.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$order</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Sort&#160;order.&#160;Use&#160;the&#160;builtin&#160;constants&#160;SORT_ASC&#160;and&#160;SORT_DESC</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Sort<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$order</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$order</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;SORT_ASC&#160;<span style='color: #0000FF;'>|</span><span style='color: #0000FF;'>|</span>&#160;<span style='color: #990000;'><b>$order</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;SORT_DESC<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortOrder&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$order</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_int</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #990000;'><b>$col</b></span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortCol&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Parse&#160;CSV&#160;string&#160;data.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$data</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Parse<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$arr</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>explode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>RowSeparator<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$data</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$line</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>array_shift</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$arr</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>createArray<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Parse&#160;a&#160;CVS&#160;file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;ParseFile<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>file_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;The&#160;file&#160;\&#34;$file\&#34;&#160;doesn&#39;t&#160;exist!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$reader</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StreamReader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>false</b></span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$line</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$reader</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ReadLine<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>createArray<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Render&#160;the&#160;CVS&#160;data&#160;to&#160;a&#160;table.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Render<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>renders<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>renders&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;This&#160;Tablify&#160;object&#160;can&#160;only&#160;be&#160;used&#160;once.&#160;To&#160;create&#160;another&#160;table&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;you&#160;need&#160;to&#160;create&#160;a&#160;new&#160;Tablify&#160;instance&#160;or&#160;call&#160;the&#160;\&#34;Copy\&#34;&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;method&#160;for&#160;this&#160;object.&#34;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Interactive<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>headers_sent</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$filename</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$linenum</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;Can&#160;not&#160;run&#160;in&#160;interactive&#160;mode&#160;since&#160;headers&#160;already&#160;have&#160;been&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;sent&#160;in&#160;$filename&#160;($linenum).&#160;Interactive&#160;mode&#160;requires&#160;a&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;session&#160;and&#160;one&#160;could&#160;not&#160;be&#160;started&#160;due&#160;to&#160;the&#160;above.&#34;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>session_start</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;__tablify&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;__tablify&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;TablifySession<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;Interactive&#160;values&#160;overrides&#160;those&#160;set&#160;in&#160;{@link&#160;Tablify::Sort()}</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;It&#39;s&#160;an&#160;assigment</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$so</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>getSessObject<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortCol&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$so</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;sort&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortOrder&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$so</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;order&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;&#60;table&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>attrToStr<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>TableAttributes<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>HeaderRow<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>createHeader<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>array_shift</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortCol&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$i</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ints</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$callback</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;_strsort&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$dlen</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$i</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span>&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dlen</b></span>&#160;<span style='color: #0000FF;'>&#60;</span>&#160;<span style='color: purple;'>10</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$dlen</b></span><span style='color: #0000FF;'>-</span><span style='color: purple;'>1</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: purple;'>10</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>isNumber<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$i</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortCol<span style='color: #0000FF;'>-</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ints</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$ints</b></span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>4</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$callback</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;_intsort&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>uasort</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents<span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$callback</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortOrder&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;SORT_DESC<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>array_reverse</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$i</b></span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$erc</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>attrToStr<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>EvenRowAttributes<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$orc</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>attrToStr<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>OddRowAttributes<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\t&#60;tr&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #990000;'><b>$i</b></span>&#160;<span style='color: #0000FF;'>%</span>&#160;<span style='color: purple;'>2</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$erc</b></span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #990000;'><b>$orc</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Linkify<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$col</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>linkify<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>empty</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #990000;'><b>$col</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;&#38;nbsp;&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\t\t&#60;td&#62;$col&#60;/td&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$diff</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>flood&#160;<span style='color: #0000FF;'>-</span>&#160;<span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$diff</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>-</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\t\t&#60;td&#62;&#38;nbsp;&#60;/td&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\t&#60;/tr&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ret</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#60;/table&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$ret</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Make&#160;a&#160;copy&#160;of&#160;the&#160;object.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;All&#160;settings&#160;in&#160;{@link&#160;Tablify::$conf}&#160;will&#160;be&#160;copied&#160;to&#160;the&#160;new&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;Tablify</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Copy<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ret</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>conf&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ret</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>{</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>}</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$ret</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Splits&#160;$line&#160;to&#160;a&#160;column&#160;array&#160;and&#160;append&#160;to&#160;the&#160;{@link&#160;Tablify::$content}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;array.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$line</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;createArray<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$line</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;/\r?\n?$/&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Squeeze<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cols</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>preg_split</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;/{$this-&#62;CellSeparator}+/&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cols</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>explode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>CellSeparator<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;It&#39;s&#160;an&#160;assigment</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$l</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cols</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>flood<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>flood&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$l</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents<span style='color: #0000FF;'>[</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>array_map</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;trim&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cols</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Creates&#160;the&#160;header&#160;row&#160;and&#160;makes&#160;them&#160;interactive&#160;of&#160;in&#160;interactive&#160;mode.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$row</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;createHeader<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$attr</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>attrToStr<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>HeaderAttributes<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\t&#60;tr$attr&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Interactive<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$i</b></span>&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$active</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortCol<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$arrow</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$order</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$i</b></span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$i</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$active</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortOrder<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$order</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortOrder&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;SORT_ASC&#160;<span style='color: #0000FF;'>?</span>&#160;SORT_DESC&#160;<span style='color: #0000FF;'>:</span>&#160;SORT_ASC<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$order</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;SORT_DESC<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$arrow</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$order</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;SORT_ASC&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #008800;'>&#39;&#160;&#38;dArr;&#39;</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #008800;'>&#39;&#160;&#38;uArr;&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$arrow</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$order</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortOrder<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>uniqueKey&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;-&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$i</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;-&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$order</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$url</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$_SERVER</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;PHP_SELF&#39;</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;?__tablify=&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\t\t&#60;th&#160;scope=&#39;col&#39;&#62;&#60;a&#160;href=\&#34;$url\&#34;&#62;$col&#60;/a&#62;$arrow&#60;/th&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\t\t&#60;th&#160;scope=&#39;col&#39;&#62;$col&#60;/th&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\t&#60;/tr&#62;\n&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Determines&#160;how&#160;to&#160;sort&#160;the&#160;tables&#160;if&#160;in&#160;interactive&#160;mode.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array|bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;getSessObject<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;It&#39;s&#160;an&#160;assigment&#160;in&#160;here</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_GET</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;__tablify&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #990000;'><b>$sess</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$_GET</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;__tablify&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;list&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$order</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>explode</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;-&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$sess</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>uniqueKey<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$sessobj</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;order&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$order</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;sort&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$col</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;__tablify&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>uniqueKey<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$sessobj</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>uniqueKey<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$sessobj</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;__tablify&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SESSION</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;__tablify&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Get<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$obj</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>uniqueKey<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$obj</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Sort&#160;content&#160;on&#160;string&#160;values</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;This&#160;is&#160;a&#160;callback&#160;for&#160;{@link&#160;uasort()}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$a</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$b</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;_strsort<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$a</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$b</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$col</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortCol&#160;<span style='color: #0000FF;'>-</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>strcmp</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$a</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$b</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Sort&#160;content&#160;on&#160;numeric&#160;values</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;This&#160;is&#160;a&#160;callback&#160;for&#160;{@link&#160;uasort()}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$a</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$b</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;_intsort<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$a</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$b</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$col</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sortCol&#160;<span style='color: #0000FF;'>-</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$a</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$b</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$a</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$b</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: purple;'>1</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #0000FF;'>-</span><span style='color: purple;'>1</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Check&#160;if&#160;$what&#160;is&#160;numberic</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;isNumber<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>preg_match</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/^[0-9.]+$/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Turns&#160;an&#160;associative&#160;array&#160;into&#160;a&#160;string&#160;of&#160;HTML&#160;tag&#160;attributes.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$attr</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;attrToStr<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$attr</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$out</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$attr</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$k</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$v</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$out</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#160;$k&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;=&#34;&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>strlen</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$v</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #ff0000;'>htmlentities</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$v</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #990000;'><b>$k</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;&#34;&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$out</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Makes&#160;URLs&#160;clickable</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$str</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;linkify<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$str</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$pattern</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;#(^|[\n&#160;])([\w]+?://.*?[^&#160;\&#34;\n\r\t&#60;]*)\b#is&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$replace</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\\1&#60;a&#160;href=\&#34;\\2\&#34;&#62;\\2&#60;/a&#62;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$pattern</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;#(^|[\n&#160;])((www|ftp)\.[\w\-]+\.[\w\-.\~]+&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;(?:/[^&#160;\&#34;\t\n\r&#60;]*)?)#is&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$replace</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\\1&#60;a&#160;href=\&#34;http://\\2\&#34;&#62;\\2&#60;/a&#62;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$pattern</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>2</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;#(^|[\n&#160;])([a-z0-9&#38;\-_.]+?)@&#34;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;([\w\-]+\.([\w\-\.]+\.)*[\w]+)#i&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$replace</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>2</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;\\1&#60;a&#160;href=\&#34;mailto:\\2@\\3\&#34;&#62;\\2@\\3&#60;/a&#62;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>preg_replace</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$pattern</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$replace</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$str</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Magic&#160;method.&#160;Sets&#160;values&#160;to&#160;the&#160;{@link&#160;Tablify::$conf}&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$value</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__set</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>conf<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>conf<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Magic&#160;method.&#160;Returns&#160;the&#160;value&#160;of&#160;the&#160;{@link&#160;Tablify::$conf}&#160;array&#160;with</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;index&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$what</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;mixed</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__get</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>conf<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>conf<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Destructor.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__destruct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>buffer&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>contents&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;Keeps&#160;track&#160;of&#160;interative&#160;sorting&#160;settings&#160;for&#160;a&#160;{@link&#160;Tablify}&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Tablify</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;TablifySession&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Container&#160;for&#160;session&#160;objects</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$objects</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$arr</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>objects<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$arr</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>objects<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

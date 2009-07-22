@@ -1,0 +1,84 @@
+<?php
+$d    = new XMLDocument();
+$root = $d->AddNode('my-root');
+$root->AddNode('meta');
+$meta->AddNode('title', 'My title');
+$meta->AddNode('author', 'Pontus Östlund', array('is-a' => 'Hacker'));
+
+$cont = $root->AddNodeTree('
+  <content>
+    <summary>This is a <em>little</em> summary.</summary>
+    <body>
+      <header>This is a header</header>
+      <para>This is a paragraph</para>
+    </body>
+  </content>
+');
+
+echo $d->Finalize();
+
+/* -----------------------------------------------------------------------------
+ * RESULT:
+ * -----------------------------------------------------------------------------
+ * <my-root>
+ *   <meta>
+ *     <title>My title</title>
+ *     <author is-a='hacker'>Pontus Östlund</author>
+ *   </meta>
+ *   <content>
+ *     <summary>
+ *       This is a <em>little</em> summary
+ *     </summary>
+ *     <body>
+ *       <header>This is a header</header>
+ *       <para>This is a paragraph</para>
+ *     </body>
+ *   </content>
+ * </my-root>
+*/
+
+unset($d);
+
+$d     = new XMLDocument();
+$root  = $d->AddNode('my-root');
+$items = $root->AddNode('items');
+$item  = $items->AddNode('item');
+$item->AddNode('title', 'A title');
+$body = $item->AddNode('body');
+$body->AddNode('h1', 'A header');
+$para = $body->AddNode('p', 'Just some content here to display...');
+
+echo $item->Render();
+
+/* -----------------------------------------------------------------------------
+ * RESULT:
+ * -----------------------------------------------------------------------------
+ * <item>
+ *   <title>A title</title>
+ *   <body>
+ *     <h1>A header</h1>
+ *     <p>
+ *       Just some content here to display...
+ *     </p>
+ *   </body>
+ * </item>
+*/
+
+echo $para->Render();
+
+/* -----------------------------------------------------------------------------
+ * RESULT:
+ * -----------------------------------------------------------------------------
+ * <p>
+ *   Just some content here to display...
+ * </p>
+*/
+
+echo $para->InnerXML();
+
+/* -----------------------------------------------------------------------------
+ * RESULT:
+ * -----------------------------------------------------------------------------
+ * Just some content here to display...
+*/
+?>

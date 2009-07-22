@@ -1,0 +1,56 @@
+<?php
+/**
+ * RSSWriter example. Howto create an RSS feed.
+ *
+ * @author Pontus Östlund <spam@poppa.se>
+*/
+require_once 'PLib.php';
+
+PLib::Import('DB.Database');
+PLib::Import('Web.Feed');
+
+try {
+	$db = DB::Create('mysql://uname:pword@host/db')->Connect();
+	
+	$mysite = 'http://mysite.com/blog';
+
+	$feed = RssFeed::Create();
+	
+	$channel = new RSSChannel();
+	$channel->SetTitle('Latest blog posts');
+	$channel->SetLink($mysite . '/');
+	$channel->SetDescription('Latest blog posts from my fantastic site');
+	$channel->Set('image', array(
+		'url'    => $mysite . '/mylogo.png',
+		'link'   => $mysite . '/',
+		'width'  => '150',
+		'height' => '70'
+	));
+
+	$sql = "SELECT * FROM blog_entries ORDER BY date DESC LIMIT 10";
+	$res = $db->Query($sql);
+
+	if ($res->NumRows() > 0) {
+		while ($row = $res->Fetch()) {
+			$item = new RSSItem();
+			$item->SetTitle($row->title);
+			$item->SetLink($mysite . '/entries/' . $row->id);
+			// The date will automatically be transformed into a
+			// RFC2822-date which  all RSS dates should be formatted as
+			$item->SetDate($row->date);
+			$item->SetDescription($row->excerpt);
+
+			// Add the item to the channel
+			$channel->AddItem($item);
+		}
+	}
+
+
+	// If the second argument is "true" an text/xml header will be output - if
+	// no headers alerady has been output - and the RSS feed will be echoed out.
+	$feed->Render($channel, true);
+}
+catch (Exception $e) {
+  die("Error: " . $e->getMessage());
+}
+?>

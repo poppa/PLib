@@ -1,0 +1,195 @@
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;XSLT&#160;functions&#160;and&#160;classes</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@license&#160;GPL&#160;License&#160;2</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;1.0</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;XML</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;XSL</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;XSLTransform</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;A&#160;wrapper&#160;for&#160;creating&#160;an&#160;XSLT&#160;processor.</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;XML</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;XSL</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@version&#160;1.0</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@example&#160;XSLTransform.xmpl</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;XSLTransform&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;XSLTransformException</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$xsl</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;path&#160;to&#160;the&#160;XSL&#160;file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$setParams</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;If&#160;true&#160;some&#160;default&#160;XSLT&#160;params&#160;will&#160;be&#160;set.&#160;The&#160;following&#160;PHP</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;variables&#160;will&#160;be&#160;set&#160;and&#160;given&#160;a&#160;&#34;namespace&#34;:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;*&#160;$_SERVER&#160;will&#160;be&#160;popultated&#160;as&#160;$server.key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;*&#160;$_REQUEST&#160;will&#160;be&#160;popultated&#160;as&#160;$form.key</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;So&#160;if&#160;$setParams&#160;is&#160;true&#160;you&#160;can&#160;for&#160;instance&#160;grab&#160;a&#160;querystring</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;variable&#160;named&#160;&#34;name&#34;&#160;in&#160;the&#160;XSL&#160;template&#160;with:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;`&#60;xsl:value-of&#160;select=&#34;$form.name&#34;&#160;/&#62;`</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;or&#160;the&#160;current&#160;script&#160;file&#160;name&#160;with:</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;&#160;&#160;`&#60;xsl:value-of&#160;select=&#34;$server.php_self&#34;&#160;/&#62;`</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;array&#160;keys&#160;in&#160;the&#160;PHP&#160;arrays&#160;will&#160;be&#160;lower&#160;cased&#160;when&#160;set&#160;in&#160;the</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;XSL&#160;template.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xsl</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$setParams</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>file_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xsl</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;XSLTransformException<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;The&#160;file&#160;[$xsl]&#160;does&#160;not&#160;exists&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>xslt&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;XSLTProcessor<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>set_error_handler</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;XSLTransformException&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;ErrorHandler&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xdoc</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DOMDocument<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xdoc</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resolveExternals&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xdoc</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>substituteEntities&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xdoc</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>load<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xsl</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>xslt<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>importStyleSheet<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xdoc</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$setParams</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_REQUEST</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>SetParam<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>strtolower</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;form.$key&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_SERVER</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_object</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>SetParam<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>strtolower</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;server.$key&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>restore_error_handler</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;an&#160;XSL&#160;param&#160;in&#160;the&#160;stylesheet</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$name</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;XSL&#160;param&#160;name</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string|int&#160;$value</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;XSL&#160;param&#160;value</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$ns</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;XSL&#160;namespace</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;void</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetParam<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$ns</b></span><span style='color: #0000FF;'>=</span><span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>xslt<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>setParameter<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$ns</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Wrapper&#160;for&#160;{@link&#160;XSLTransform::SetParam()}&#160;so&#160;that&#160;we&#160;can&#160;pass&#160;an&#160;array</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;with&#160;key/value&#160;pairs&#160;to&#160;set&#160;all&#160;params&#160;at&#160;once.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$params</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetParams<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$params</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$params</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>setParam<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Get&#160;the&#160;actual&#160;XSLTProcessor&#160;object</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;XSLTProcessor</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetObject<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>xslt<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Register&#160;PHP&#160;functions.&#160;{@see&#160;XSLTProcessor::registerPHPFunctions()}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$args</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Either&#160;a&#160;function&#160;name&#160;as&#160;a&#160;string&#160;or&#160;an&#160;array&#160;of&#160;function&#160;names</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;RegisterPHPFunctions<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>xslt<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>registerPHPFunctions<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Do&#160;the&#160;transformation!</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;XSLTransformException</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;&#160;string|DOMDocument|XMLDocument|XMLNode&#160;$xml</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Either&#160;a&#160;path&#160;to&#160;an&#160;XML&#160;document,&#160;a&#160;string&#160;reprsentation&#160;of&#160;an&#160;XML&#160;tree</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;or&#160;a&#160;{@link&#160;DOMDocument::__construct()&#160;DOMDocument}&#160;object&#160;or&#160;an</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;instance&#160;of&#160;PLib&#39;s&#160;{@link&#160;XMLDocument}&#160;or&#160;{@link&#160;XMLNode}.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;mixed&#160;string|boolean</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Transform<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>set_error_handler</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;XSLTransformException&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;ErrorHandler&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_string</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xmld</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xml</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DOMDocument<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>substituteEntities&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>preserveWhiteSpace&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>file_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xmld</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>load<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xmld</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>loadXML<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xmld</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xml</b></span>&#160;instanceof&#160;XMLNode<span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$xml</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>DomDoc<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>xslt<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>transformToXml<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$xml</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>restore_error_handler</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>/**</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;XSL&#160;transform&#160;exception&#160;class</span><br/>
+<span style='color: #0099CC;'>&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@package&#160;XML</span><br/>
+<span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Exception</span><br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;XSLTransformException&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Exception&#160;<br/>
+<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$message</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Handle&#160;error&#160;callbacks&#160;when&#160;used&#160;through</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;{@link&#160;set_error_handler()}.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#60;code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;set_error_handler(array(&#39;XSLTransformException&#39;,&#160;&#39;ErrorHandler&#39;),&#160;E_ALL);</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;doSomeStuff();</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;restore_error_handler();</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#60;/code&#62;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$code</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$string</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$file</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$line</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$context</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;ErrorHandler<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$code</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$context</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$e</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$code</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>line&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$line</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #ff0000;'>file</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #990000;'><b>$e</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #003366;'>?&#62;</span><br/>

@@ -1,0 +1,228 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Generates the PLib documentation.
+ *
+ * @author Pontus Östlund <spam@poppa.se>
+ * @version 0.1
+ * @package PLib
+ * @subpackage Tools
+*/
+
+if (version_compare(PHP_VERSION, '5.1', '<'))
+	print("PHP version 5.1 or greater is required to run this script.\n")
+	      and exit(1);
+
+require_once dirname(__FILE__) . '/PLib.php';
+PLib::Import('*');
+
+/**
+ * A god class.
+ * Just instantiate it and it will generate the documentation.
+ *
+ * @author Pontus �stlund <spam@poppa.se>
+ * @version 0.1
+ * @package PLib
+ * @subpackage Tools
+*/
+class TreeGenerator extends PLib
+{
+	private $skip      = '#^\.|^stx$|docs|^__|nbproject#';
+	private $container = array();
+	private $depth     = -1;
+	private $stx       = null;
+	private $xmldir    = null;
+  private $enc       = 'utf-8';
+
+	/**
+	 * Constructor
+	 *
+	 * @param bool $format
+	 *   Format the generated XML tree or not. A formatted XML tree will be
+	 *   quite a few kB larger than an unformatted one. And more important:
+	 *   The XSLT processor will run faster on an unformatted XML tree.
+	*/
+	public function __construct($xmldir, $format=false, $stxpath=null)
+	{
+		$this->xmldir = $xmldir;
+		$cp = $stxpath ? $stxpath . '/phps' : null;
+		$this->stx = new Syntaxer('php', $stxpath, $cp);
+		$this->stx->SetLineWrapper('', "<br/>\n");
+		$this->Run($format);
+	}
+
+	/**
+	 * Run the genrator.
+	 *
+	 * @param bool $format
+	*/
+	private function Run($format)
+	{
+		$this->iterate(PLIB_INSTALL_DIR);
+
+		usort(
+			$this->container,
+			create_function('$a,$b', '
+				if ($a["depth"] == $b["depth"])
+					return 0;
+				return $a["depth"] > $b["depth"] ? 1 : -1;
+			')
+		);
+
+		usort(
+			$this->container,
+			create_function('$a,$b','
+			  return strcmp($a["namespace"], $b["namespace"]);
+			')
+		);
+
+		$xml       = new XMLDocument('1.0', $this->enc);
+		$xcont     = array();
+		$xcont[-1] = $xml->AddNode('plib');
+
+		$desc = trim(Markdown(PLIB_DESCRIPTION));
+
+		$xcont[-1]->AddNodeTree(
+			'<description>'.safe_xml($desc, 0).'</description>'
+		);
+
+		$namespaces = array();
+
+		foreach ($this->container as $obj) {
+			if (!isset($namespaces[$obj['namespace']])) {
+
+				cwrite(
+					"Render namespace: BLUE:%s",
+				  empty($obj['namespace']) ? '.' : $obj['namespace']
+				);
+
+				$namespaces[$obj['namespace']] = true;
+				$xcont[$obj['depth']] = $xcont[$obj['depth']-1]->AddNode(
+					'namespace', null, array('name' => $obj['namespace'],
+					                         'path' => dirname($obj['path']))
+				);
+			}
+
+			$obj['reflection']->Inject('namespace', $obj['namespace']);
+			$obj['reflection']->Inject('classpath', $obj['classpath']);
+			$n = $obj['reflection']->Xml();
+			if ($n)
+				$xcont[$obj['depth']]->AddDomNode($n->firstChild);
+		}
+
+		file_put_contents(
+			$this->xmldir.'/plib.xml',
+			$xml->Render(false, $format)
+		);
+	}
+
+	/**
+	 * Iterates over the directory structure
+	 *
+	 * @param string $dir
+  */
+	private function iterate($dir)
+	{
+		if (is_dir($dir)) {
+			$dh = opendir($dir);
+			if (is_resource($dh)) {
+				$this->depth++;
+				while (($file = readdir($dh)) !== false) {
+					$path = $dir . PLIB_DS . $file;
+
+					if (preg_match($this->skip, $file))
+						continue;
+
+					if (is_file($path) && preg_match('/\.php$/', $file)) {
+						if ($sd = DocblockParser::StaticFilesLocation('SOURCE_RESULT')) {
+							$nn = str_replace(PLIB_DS, '_', PLib::GetInternalPath($path));
+							$nn = IO::CombinePath($sd, "$nn.src");
+							if (PLib::$VERBOSE) {
+								cwrite("GREEN:Highlighting source for:NONE: %s",
+								       PLib::GetInternalPath($path));
+							}
+							$this->stx->Parse(file_get_contents($path));
+							file_put_contents($nn, $this->stx->GetBuffer());
+						}
+						$mo                = array();
+						$mo['depth']       = $this->depth;
+						$mo['path']        = PLib::GetInternalPath($path);
+						$mo['namespace']   = PLib::PathToNamespace(dirname($path));
+						$mo['classpath']   = PLib::PathToNamespace($path);
+						$mo['reflection']  = new PLibReflectionModule(
+							PLib::GetInternalPath($path)
+						);
+						$this->container[] = $mo;
+					}
+					else
+						$this->iterate($path);
+				}
+			}
+			$this->depth--;
+			closedir($dh);
+		}
+	}
+}
+
+$usage = <<<EOF
+Usage: ./docgen [FLAG]
+
+  -f, --format   Format the XML tree, i.e. make human readable.
+  -v, --verbose  Show verbose output during parsing
+  -t, --target   Where to save the result. Default is the PLib install dir
+  -s, --stx-path Alternative path to syntax highlighting files.
+  -h, --help     This text!
+
+EOF;
+
+$opt = new Getoptlong('f|--format', 'v|--verbose', 'h|--help', 't|--target',
+                      's|--stx-path');
+
+$format  = false;
+$stxpath = null;
+$target  = PLIB_INSTALL_DIR . '/__plib/parsed';
+$xmldir  = PLIB_INSTALL_DIR . '/__plib';
+
+if ($opt->Get('h')) print($usage) and exit(0);
+if ($opt->Get('f')) $format = true;
+if ($opt->Get('v')) PLib::$VERBOSE = true;
+if ($opt->Get('s')) $stxpath = $opt->Get('s');
+if (!$stxpath) {
+	$stxpath = PLIB_INSTALL_DIR . '/Parser/Syntaxer/stx';
+}
+if ($opt->Get('t')) {
+	$target = rtrim($opt->Get('t'), '/');
+	if (!is_dir($target)) {
+		cwrite("BBLACK:{$target}NONE: is not a directory!");
+		exit(1);
+	}
+	$xmldir = $target;
+}
+
+try {
+
+	$stx = new Syntaxer('php', $stxpath, $stxpath . '/phps');
+	$stx->SetLineWrapper('', '<br/>');
+	$stx->HTMLEmbedded(false);
+
+	DocblockTagParser::$syntaxer = $stx;
+
+	$pi = PLIB_INSTALL_DIR . '/__plib';
+	$pp = "$pi/parsed";
+	$timer = new ExecutionTimer();
+	cwrite('BPURPLE:Running tree generator...');
+	chdir(PLIB_INSTALL_DIR);
+	PLibReflection::BasePath(PLIB_INSTALL_DIR);
+	DocblockParser::StaticFilesLocation('EXAMPLE_SOURCE', "$pi/examples");
+	DocblockParser::StaticFilesLocation('EXAMPLE_RESULT', "$target/examples");
+	DocblockParser::StaticFilesLocation('SOURCE_RESULT',  "$target/source");
+	new TreeGenerator($xmldir, $format, $stxpath);
+	cwrite('BPURPLE:...done');
+	cwrite("Execution time: $timer");
+}
+catch (Exception $e) {
+	PLib::PrintException($e);
+	exit(1);
+}
+exit(0);
+?>
