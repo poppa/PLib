@@ -465,32 +465,39 @@ class Dir extends IO
 	 * @param bool $recurse
 	 *   If true the directory will be removed recursivley
 	 */
-	public static function Remove($path, $recurse=false)
-	{
-		if ($recurse) {
-			$fh = opendir($path);
-			if (!is_resource($fh))
-				throw new Exception("Couldn't open \"$path\" for reading!");
+  public static function Remove($path, $recurse=false, $keepRoot=false)
+  {
+    static $root = null;
+    if ($keepRoot && $root == null)
+      $root = $path;
 
-			while (false !== ($file = readdir($fh))) {
-				if (in_array($file, array('.', '..')))
-					continue;
+    if ($recurse) {
+      $fh = opendir($path);
+      if (!is_resource($fh))
+        throw new Exception("Couldn't open \"$path\" for reading!");
 
-				$fp = $path . DIRECTORY_SEPARATOR . $file;
-				if (is_dir($fp))
-					self::Remove($fp, $recurse);
-				else
-					if (!unlink($fp))
-						throw new Exception("Couldn't remove \"$fp\"!");
-			}
-			closedir($fh);
-			rmdir($path);
-		}
-		else {
-			if (!rmdir($path))
-				throw new Exception("Couldn't remove direcotry \"$path\"");
-		}
-	}
+      while (false !== ($file = readdir($fh))) {
+        if (in_array($file, array('.', '..')))
+          continue;
+
+        $fp = $path . DIRECTORY_SEPARATOR . $file;
+        if (is_dir($fp))
+            self::Remove($fp, $recurse, $keepRoot);
+        else
+          if (!unlink($fp))
+            throw new Exception("Couldn't remove \"$fp\"!");
+      }
+
+      closedir($fh);
+      if ($path != $root)
+        rmdir($path);
+    }
+    else {
+      if ($path != $root)
+        if (!rmdir($path))
+          throw new Exception("Couldn't remove direcotry \"$path\"");
+    }
+  }
 }
 
 /**

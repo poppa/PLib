@@ -1,11 +1,8 @@
 CHANGELOG
 ================================================================================
 
-**Revision 2: 03:18, Sun 10 May 2009**
+* Cache
 
-First check in of new branch of PLib
-
-**Revision 1: 00:41, Sun 10 May 2009**
-
-Initial import of new PLib
+  Added the method `Cache::Get2()` which will return the data even if the
+  cache has expired.
 

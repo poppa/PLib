@@ -215,8 +215,6 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Iterate&#160;over&#160;the&#160;result&#160;set.</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Wrapper&#160;for&#160;{@link&#160;sqlite_fetch_object()}</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@todo&#160;I&#160;havn&#39;t&#160;confirmed&#160;that&#160;the&#160;object&#160;casting&#160;actually&#160;works&#160;for</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;older&#160;versions&#160;of&#160;Sqlite,&#160;but&#160;should&#160;work!</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@uses&#160;DBResult::$counter</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;http://php.net/sqlite_fetch_object</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;object</span><br/>

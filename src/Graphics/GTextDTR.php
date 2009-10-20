@@ -5,7 +5,6 @@
  * @author Pontus Östlund <spam@poppa.se>
  * @package Graphics
  * @version 0.1
- * @todo When the new HTML parser is done, fix this one too.
  */
 
 /**
@@ -110,6 +109,8 @@ class GTextDTR extends HTMLParser
   {
     parent::__construct();
     $this->gtext  = $gtext;
+    $this->SetTagCallback(array($this, 'tagCallback'));
+    $this->SetDataCallback(array($this, 'dataCallback'));
   }
 
   /**
@@ -260,7 +261,7 @@ class GTextDTR extends HTMLParser
    */
   protected function tagCallback(HTMLParser $p, $tag, $attr)
   {
-  	if ($this->Context() == 'tag')
+  	if ($this->Context() == parent::TYPE_CONTAINER)
   		$this->depth++;
 
   	if ($this->doParse) {
@@ -311,7 +312,7 @@ class GTextDTR extends HTMLParser
   		$this->buffer .= $this->Tag();
   	}
 
-		if ($this->Context() == 'endtag')
+		if ($this->Context() == parent::TYPE_ENDTAG)
   		$this->depth--;
   }
 

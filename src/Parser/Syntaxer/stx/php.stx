@@ -79,6 +79,7 @@ include
 include_once
 int
 integer
+interface
 isset
 long
 mixed

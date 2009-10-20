@@ -8,7 +8,7 @@
  * * PHP Markdown & Extra by Michel Fortin
  *   <http://www.michelf.com/projects/php-markdown/>
  *
- * * Syntaxer by Pontus �stlund
+ * * Syntaxer by Pontus Östlund
  *   <http://www.poppa.se/projects/syntaxer/>
  *
  * @author Pontus Östlund <spam@poppa.se>
@@ -21,7 +21,7 @@
 
 /**
  * Version constant
-*/
+ */
 define('STX_MARKDOWN_VERSION', '1.1');
 
 /**

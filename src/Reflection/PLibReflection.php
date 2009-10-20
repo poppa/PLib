@@ -532,7 +532,7 @@ class PLibReflectionModule extends PLibReflection
 		}
 		else
 			PLib::wdebug("  GRAY:Found no functions");
-
+/*
     // Pick out includes
     // This is not bullet proof. It requires that there's nothing before the
     // require_once statement.
@@ -556,7 +556,7 @@ class PLibReflectionModule extends PLibReflection
     }
     else
       PLib::wdebug("  GRAY:Found no includes");
-
+*/
     // Pick out constants
   }
 

@@ -15,12 +15,6 @@
  * and some other features are added. Check out the bundled php.stx file as
  * reference.
  *
- * @todo
- *   <del>Ability to dynamically add stuff to the alias array.</del>
- *   And maybe dynamically be able to define script_begin and script_end
- *   for languages that normally isn't HTML embedded. One case could be
- *   when highlighting an ERuby file.
- *
  * @author  Pontus Östlund <pontus@poppa.se>
  * @version 2.0.5
  * @license GPL License 2
@@ -31,16 +25,16 @@
 /**
  * Constant that can be useful if this script is being used in some other
  * text processing script like Markdown or Textile or something like that.
-*/
+ */
 define('SYNTAXER', 1);
 /**
  * Sytaxer version constant.
-*/
+ */
 define('SYNTAXER_VERSION', '2.0.5');
 
 /**
  * The StreamReader is used when loading and creating the syntax maps
-*/
+ */
 require_once PLIB_INSTALL_DIR . '/IO/StreamReader.php';
 
 /**
@@ -518,7 +512,7 @@ class Syntaxer
 				}
 
 				if ($char == "\n") {
-					$this->appendLine($line . $this->space);
+					$this->appendLine($line);
 					$line = null;
 				}
 				else
@@ -929,6 +923,7 @@ class Syntaxer
 	private function appendLine($what)
 	{
 		$this->lines++;
+    if (!strlen($what)) $what = $this->space;
 		$this->_buffer .= join($what, $this->line_wrap);
 	}
 }
@@ -987,15 +982,10 @@ class SyntaxMap
 	/**
 	 * Constructor
 	 *
-	 * @todo
-	 * <del>Should use the {@see StreamReader} instead of {@link file()} since the
-	 * {@see StreamReader} will consume far less memory when we load large
-	 * syntax files.</del>
-	 *
 	 * @param string $path
-	 *     Path to the .stx files
+	 *  Path to the .stx files
 	 * @param string $cachepath
-	 *     Path to the generated .php files
+	 *  Path to the generated .php files
 	 * @throws SyntaxerIOError
 	 * @return void
 	 */

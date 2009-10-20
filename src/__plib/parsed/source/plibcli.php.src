@@ -8,45 +8,45 @@
 <span style='color: #0099CC;'>&#160;*&#160;@since&#160;PLib&#160;0.1.8</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;PLib</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;CLI</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 &#160;<br/>
 <span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span>PHP_SAPI&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;cli&#39;</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Clears&#160;the&#160;cli&#160;color</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_NO_COLOR&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;\033[0m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Red&#160;foreground&#160;text</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_RED&#39;</span><span style='color: #0000FF;'>,</span>&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\033[31m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Light&#160;gray&#160;foreground&#160;text</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_GRAY&#39;</span><span style='color: #0000FF;'>,</span>&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\033[37m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Blue&#160;foreground&#160;text</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_BLUE&#39;</span><span style='color: #0000FF;'>,</span>&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\033[34m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Purple&#160;foreground&#160;text</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_PURPLE&#39;</span><span style='color: #0000FF;'>,</span>&#160;&#160;&#160;<span style='color: #008800;'>&#34;\033[35m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Green&#160;foreground&#160;text</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_GREEN&#39;</span><span style='color: #0000FF;'>,</span>&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\033[32m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Brownish&#160;foreground&#160;text</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_BROWN&#39;</span><span style='color: #0000FF;'>,</span>&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\033[33m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Black&#160;foreground&#160;text</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_BLACK&#39;</span><span style='color: #0000FF;'>,</span>&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;\033[1m&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Color&#160;keyword&#160;pattern</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #ff0000;'>define</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;PLIB_CLI_CLR_RE&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;/(B)?(PURPLE|RED|GREEN|BLUE|GRAY|BROWN|BLACK|&#34;</span><span style='color: #0000FF;'>.</span>&#160;<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;NONE):/i&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;<br/>
@@ -77,7 +77,7 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$args</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Works&#160;like&#160;{@link&#160;sprintf()}</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>function</b></span>&#160;cwrite<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$args</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -101,7 +101,7 @@
 <span style='color: #0099CC;'>&#160;*&#160;@since&#160;plibcli&#160;0.2</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@param&#160;mixed&#160;$args</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;&#160;&#160;See&#160;{@link&#160;sprintf()}</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #000099;'><b>function</b></span>&#160;cprint<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
 <span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$args</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -196,13 +196,13 @@
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;PLib</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;CLI</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #000099;'><b>class</b></span>&#160;Getoptlong&#160;<br/>
 <span style='color: #0000FF;'>{</span>&#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Where&#160;we&#160;keep&#160;the&#160;result&#160;after&#160;parsing&#160;the&#160;options</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$options</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
@@ -212,7 +212,7 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;`$opts&#160;=&#160;new&#160;Getoptlong(&#39;v|--verbose&#39;,&#160;&#39;h|--help&#39;);`</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$args</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$argv</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$_SERVER</b></span><span style='color: #0000FF;'>[</span><span style='color: #008800;'>&#39;argv&#39;</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -240,7 +240,7 @@
 &#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$opts</b></span><span style='color: #0000FF;'>[</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$a</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$re</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;^--?([-_a-z0-9]+)=?(?:(?:[&#34;\&#39;]?)(.*)(?:[&#34;\&#39;]?|\s))?&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$re</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;^--?([-_a-z0-9?]+)=?(?:(?:[&#34;\&#39;]?)(.*)(?:[&#34;\&#39;]?|\s))?&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$mod</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$argv</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$arg</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
@@ -280,7 +280,7 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$index</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string|bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$index</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>options<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$index</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
@@ -293,7 +293,7 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Returns&#160;the&#160;options&#160;array</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Options<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #ff0000;'>reset</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>options<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -306,7 +306,7 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@see&#160;each()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Next<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>each</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>options<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -314,7 +314,7 @@
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Reset&#160;the&#160;options&#160;array&#160;if&#160;{@link&#160;Getoptlong::Next()}&#160;has&#160;been&#160;used</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Reset<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #ff0000;'>reset</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>options<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -345,18 +345,18 @@
 <span style='color: #0099CC;'>&#160;*&#160;@since&#160;plibcli&#160;0.2</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;PLib</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;CLI</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
 <span style='color: #000099;'><b>class</b></span>&#160;Stdin&#160;<br/>
 <span style='color: #0000FF;'>{</span>&#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;file&#160;handler&#160;resource</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;resource</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$fh</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Creates&#160;a&#160;new&#160;instance&#160;of&#160;Stdin</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fh&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>fopen</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;php://stdin&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;r&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -368,7 +368,7 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$trim</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Trims&#160;the&#160;string&#160;by&#160;default</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Read<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$trim</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$data</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>fread</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fh<span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>4096</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
@@ -377,7 +377,7 @@
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Destructor.&#160;Closes&#160;the&#160;file&#160;handler&#160;resource</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
 &#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__destruct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_resource</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>fh<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>

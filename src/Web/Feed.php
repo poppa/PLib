@@ -301,16 +301,16 @@ abstract class AbstractThing
 
 	/**
 	 * Should return the content part of the thing
-   * 
+   *
 	 * @return string
 	 */
 	abstract public function GetContent();
 
   /**
    * Add an arbitrary key/value pair to the {@link AbstractThing::$data} array.
-   * 
+   *
    * @param string $name
-   * @param mixed $value 
+   * @param mixed $value
    */
   public function SetData($name, $value)
   {
@@ -339,26 +339,43 @@ abstract class AbstractThing
   }
 
   /**
+   * Add an abritrary element
+   *
+   * @param string $name
+   * @param string|array $value
+   * @param array $attr
+   */
+  public function SetElement($name, $value, $attr=array())
+  {
+    $this->data[$name] = $value;
+  }
+
+  /**
    * Cast to string
-   * 
+   *
    * @return string
    */
   public function __toString()
   {
-    $xdoc = new XMLDocument();
-    $root = $xdoc->AddNode($this->nodeName, null, $this->attributes);
+    try {
+      $xdoc = new XMLDocument();
+      $root = $xdoc->AddNode($this->nodeName, null, $this->attributes);
 
-    foreach ($this->data as $key => $val) {
-      if (is_array($val)) {
-        $n = $root->AddNode($key);
-        foreach ($val as $k => $v)
-          $n->AddNode($k, safe_xml($v));
+      foreach ($this->data as $key => $val) {
+        if (is_array($val)) {
+          $n = $root->AddNode($key);
+          foreach ($val as $k => $v)
+            $n->AddNode($k, safe_xml($v));
+        }
+        else
+          $root->AddNode($key, safe_xml($val));
       }
-      else
-        $root->AddNode($key, safe_xml($val));
-    }
 
-    return $xdoc->Render(0, 1);
+      return $xdoc->Render(0, 0);
+    }
+    catch (Exception $e) {
+      return 0;
+    }
   }
 }
 
@@ -461,26 +478,32 @@ abstract class AbstractChannel extends AbstractThing
    */
   public function __toString()
   {
-    $xdoc = new XMLDocument();
-    $root = $xdoc->AddNode($this->nodeName, null, $this->attributes);
+    try {
+      $xdoc = new XMLDocument();
+      $root = $xdoc->AddNode($this->nodeName, null, $this->attributes);
 
-    foreach ($this->data as $key => $val) {
-      if (is_array($val)) {
-        $n = $root->AddNode($key);
-        foreach ($val as $k => $v)
-          $n->AddNode($k, safe_xml($v));
+      foreach ($this->data as $key => $val) {
+        if (is_array($val)) {
+          $n = $root->AddNode($key);
+          foreach ($val as $k => $v)
+            $n->AddNode($k, safe_xml($v));
+        }
+        else
+          $root->AddNode($key, safe_xml($val));
       }
-      else
-        $root->AddNode($key, safe_xml($val));
+
+      $root->AddNode($this->lastBuildDateNode,
+                     safe_xml($this->GetLastBuildDate()));
+
+      foreach ($this->items as $item) {
+        $root->AddNodeTree(((string)$item));
+      }
+
+      return $xdoc->Render(0, 1);
     }
-
-    $root->AddNode($this->lastBuildDateNode, 
-                   safe_xml($this->GetLastBuildDate()));
-
-    foreach ($this->items as $item)
-      $root->AddNodeTree((string)$item);
-
-    return $xdoc->Render(0, 1);
+    catch (Exception $e) {
+      return 0;
+    }
   }
 }
 
@@ -551,7 +574,7 @@ abstract class Feed
    * Default date format for date nodes
    * @var string
    */
-  public static $DateFormat = '%a, %d %B %Y %T %Z';
+  public static $DateFormat = '%a, %d %b %Y %T %z';
   /**
    * Class type
    * @var int
@@ -583,6 +606,11 @@ abstract class Feed
    */
   protected $attributes = array();
   /**
+   * Namespaces
+   * @var array
+   */
+  protected $ns = array();
+  /**
    * Output encoding
    * @var string
    */
@@ -602,7 +630,7 @@ abstract class Feed
 	 * Creates a feed object from an XML feed.
 	 *
 	 * @throws Exception
-	 *   If the XML can't be parsed
+	 *  If the XML can't be parsed
 	 * @param string $xml
 	 * @return Feed
 	 *   Can etither be a {@see RssFeed}, {@see AtomFeed} or {@see RdfFeed}
@@ -631,7 +659,7 @@ abstract class Feed
 		$i    = 0;
 
 		while ($node = $doc->childNodes->item($i++)) {
-      // It's an double assignment
+      // It's a double assignment
 			if (($name = $node->nodeName) && ($pos = strpos($name, ':')) !== false)
 				$name = substr($name, 0, $pos);
 
@@ -647,6 +675,8 @@ abstract class Feed
 			case 'rdf':  return new RdfFeed($node);
 			case 'feed': return new AtomFeed($node);
 		}
+
+		return 0;
 	}
 
 	/**
@@ -676,7 +706,17 @@ abstract class Feed
 			throw $e;
 		}
 
-		return self::Parse((string)$resp, $enc);
+    try {
+      $rv = self::Parse((string)$resp);
+      if (!$rv)
+        throw new Exception("No object returned from Feed::Parse()");
+
+      return $rv;
+    }
+    catch (Exception $e) {
+      $cli->ClearCache();
+      throw $e;
+    }
 	}
 
 	/**
@@ -686,7 +726,7 @@ abstract class Feed
    * @param string $enc
    *  Output encoding
 	 */
-	protected function __construct(DOMElement $node=null)
+	protected function __construct(DOMNode $node=null)
 	{
 		if ($node)
 			$this->xml = $node;
@@ -726,7 +766,7 @@ abstract class Feed
 
   /**
    * Set the channel for the feed
-   * 
+   *
    * @param AbstractChannel $chnl
    * @return AbstractChannel
    */
@@ -745,7 +785,7 @@ abstract class Feed
   public function Render(AbstractChannel $chnl, $addHeader=false)
   {
     $xdoc = new XMLDocument('1.0', $this->encoding);
-    $root = $xdoc->AddNode($this->nodeName, null, $this->attributes);
+    $root = $xdoc->AddNode($this->nodeName, null, $this->attributes+$this->ns);
     $root->AddNodeTree((string)$chnl);
 
     return $xdoc->Render(null, 1);
@@ -763,7 +803,7 @@ abstract class Feed
 
   /**
    * Set a specific root attribute
-   * 
+   *
    * @param string $key
    * @param string $value
    */
@@ -774,7 +814,7 @@ abstract class Feed
 
   /**
    * Set the output encoding
-   * 
+   *
    * @param string $enc
    */
   public function SetEncoding($enc)
@@ -783,8 +823,19 @@ abstract class Feed
   }
 
   /**
-   * Cast to string
+   * Add namespace
    * 
+   * @param string $name
+   * @param string $space
+   */
+  public function AddNamespace($name, $space)
+  {
+    $this->ns[$name] = $space;
+  }
+
+  /**
+   * Cast to string
+   *
    * @return string
    */
   public function __toString()
@@ -1008,7 +1059,7 @@ class RssItem extends AbstractItem
 
   /**
    * Creates a new RssItem object
-   * 
+   *
    * @param DOMElement $node
    */
   public function __construct(DOMElement $node=null)
@@ -1226,12 +1277,14 @@ class RdfChannel extends AbstractChannel
 	public function __construct(DOMElement $node=null)
 	{
 		$i = 0;
-		while ($n = $node->childNodes->item($i++)) {
-			if ($n->nodeName == 'channel') {
-				parent::__construct($n);
-				break;
-			}
-		}
+    if ($node) {
+      while ($n = $node->childNodes->item($i++)) {
+        if ($n->nodeName == 'channel') {
+          parent::__construct($n);
+          break;
+        }
+      }
+    }
 		parent::__construct($node);
 	}
 
@@ -1351,6 +1404,12 @@ class AtomFeed extends Feed
 	protected $NAME = FEED_NAME_ATOM;
 
   /**
+   * XML node name of this instance
+   * @var string
+   */
+  protected $nodeName = 'feed';
+
+  /**
    * Creates a new RssFeed object
    *
    * @param string $version
@@ -1401,7 +1460,7 @@ class AtomChannel extends AbstractChannel
 	 *
 	 * @param DOMElement $node
 	 */
-	public function __construct(DOMElement $node)
+	public function __construct(DOMElement $node=null)
 	{
 		parent::__construct($node);
 	}
@@ -1497,6 +1556,22 @@ class AtomEntry extends AbstractItem
    * @var int
    */
 	protected $TYPE = FEED_TYPE_ATOM_ITEM;
+
+  /**
+   * XML node name of this instance
+   * @var string
+   */
+  protected $nodeName = 'entry';
+
+  /**
+   * Creates a new AtomEntry object
+   *
+   * @param DOMElement $node
+   */
+  public function __construct(DOMElement $node=null)
+  {
+    parent::__construct($node);
+  }
 
 	/**
 	 * Returns the date, either the updated or published node. The "updated" node
@@ -1615,5 +1690,18 @@ class AtomEntry extends AbstractItem
 
 		$this->data['category'][] = $n->getAttribute('label');
 	}
+
+  protected function parse_link(DOMElement $n)
+  {
+    if (!isset($this->data['link']))
+      $this->data['link'] = array();
+
+    $tmp = array();
+
+    foreach ($n->attributes as $an)
+      $tmp[$an->nodeName] = $an->nodeValue;
+
+    $this->data['link'][] = $tmp;
+  }
 }
 ?>

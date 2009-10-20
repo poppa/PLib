@@ -96,6 +96,29 @@ class XMLNode
 		return $n;
 	}
 
+  /**
+   * Returns the {@see DOMNode} of this object.
+   * 
+   * @return DOMNode
+   */
+  public function GetNode()
+  {
+    return $this->node;
+  }
+
+  /**
+   * Add a namespace node
+   *
+   * @param name $name
+   * @param string $value
+   * @param QName $ns
+   */
+  public function AddNSNode($name, $value, QName $ns)
+  {
+    $nsn = $this->doc->createElementNS($ns->NamespaceURI(), $name, 'fck');
+    $this->node->appendChild($nsn);
+  }
+
 	/**
 	 * Appends an {@link DOMElement} to the current node.
 	 *
@@ -135,9 +158,9 @@ class XMLNode
 	 */
 	function AddNodeTree($tree)
 	{
-		$xdoc = new DomDocument('1.0', 'iso-8859-1');
+    $xdoc = new DomDocument('1.0', $this->owner->Encoding());
 		$xdoc->preserveWhiteSpace = false;
-		$xdoc->loadXML($tree);
+    $xdoc->loadXML($tree);
 
 		$t = $this->doc->importNode($xdoc->firstChild, true);
 
@@ -348,14 +371,30 @@ class XMLDocument extends XMLNode
    *  Format the output (i.e. indentation)
    * @return string
    */
-	public function Render($html=false, $format=false)
+	public function Render($html=false, $format=false, $declaration=true)
 	{
 		$this->doc->formatOutput = $format;
 		if ($html)
 			return $this->doc->saveHTML();
 
+    if (!$declaration) {
+      $r = explode("\n", $this->doc->saveXML());
+      array_shift($r);
+      return join("\n", $r);
+    }
+
 		return $this->doc->saveXML();
 	}
+
+  /**
+   * Returns the encoding
+   * 
+   * @return string
+   */
+  public function Encoding()
+  {
+    return $this->encoding;
+  }
 
 	/**
 	 * Compat method for older version of this class

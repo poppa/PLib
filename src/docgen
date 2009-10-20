@@ -79,13 +79,13 @@ class TreeGenerator extends PLib
 		$xml       = new XMLDocument('1.0', $this->enc);
 		$xcont     = array();
 		$xcont[-1] = $xml->AddNode('plib');
-
+/*
 		$desc = trim(Markdown(PLIB_DESCRIPTION));
 
 		$xcont[-1]->AddNodeTree(
 			'<description>'.safe_xml($desc, 0).'</description>'
 		);
-
+*/
 		$namespaces = array();
 
 		foreach ($this->container as $obj) {

@@ -3,7 +3,7 @@
  * Simple cache
  *
  * @author Pontus Östlund <pontus@poppa.se>
- * @version 0.1
+ * @version 0.2
  * @package Cache
  * @uses DB
  * @uses Date
@@ -24,7 +24,7 @@ require_once PLIB_INSTALL_DIR . '/Calendar/Date.php';
  * expicitly.
  *
  * @author Pontus Östlund <spam@poppa.se>
- * @version 0.1
+ * @version 0.2
  * @package Cache
 */
 class Cache
@@ -33,6 +33,12 @@ class Cache
 	 * If returned from a remove callback function the cached entry will be kept.
 	 */
 	const KEEP_CACHE = 1;
+	/**
+	 * 10 years ahead in time. Use as third argument to {@see Cache::Add()} to
+	 * add non-expireing cache (10 years must be seen as persistent ;)
+	 * @var int
+	 */
+	const PERSISTENT = 315360000;
 	/**
 	 * The path where to save the SQLite file
 	 * @var string
@@ -242,6 +248,60 @@ class Cache
 		}
 
 		return $returnObject ? $res : $res->data;
+	}
+	
+	/**
+	 * Exactly like {@see Cache::Get()} except this method will return the
+	 * cache result even if it has expired. The index in the database will still
+	 * be removed though.
+	 *
+	 * @since 0.2
+	 *
+	 * @param string $key
+	 *  A key associated with this cache
+	 * @param string $hash
+	 *  See {@see Cache::Add()}
+	 * @param bool $returnObject
+	 *  If set to true the SQL result set will be returned rather than
+	 *  the actual cache data.
+	 * @return array
+	 *  Indices:
+	 *    expired: boolean
+	 *    data: string
+	 */
+	public static function Get2($key, $hash=null)
+	{
+		if (self::$isInit === 0)
+			self::initDB();
+
+		$table = self::$table;
+
+		$sql = "SELECT * FROM $table WHERE ckey = '%s'";
+		$res = self::$db->Query($sql, $key);
+
+		$ret = array('expired' => true, 'data' => null);
+
+		if ($res->NumRows() == 0)
+			return $ret;
+
+		$res = $res->Fetch();
+		$ret['data'] = $res->data;
+
+		if ($hash && $hash != $res->hash) {
+			self::Remove($key, $res);
+			return $ret;
+		}
+
+		$old = new Date($res->expires);
+		$new = new Date();
+
+		if ($old->unixtime < $new->unixtime) {
+			self::Remove($key, $res);
+			return $ret;
+		}
+
+		$ret['expired'] = false;
+		return $ret;
 	}
 
 	/**

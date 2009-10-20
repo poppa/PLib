@@ -290,8 +290,12 @@ class DocblockParser
 
   protected static $classConstants = array();
 
+  /*
+   * Under devlopment
+   */
   public static function GetClassConstBLock($className, $file)
   {
+    return;
     if (array_key_exists($file, self::$classConstants)) {
       trace("::: $file already indexed\n");
       return;

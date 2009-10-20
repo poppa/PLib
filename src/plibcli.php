@@ -8,45 +8,45 @@
  * @since PLib 0.1.8
  * @package PLib
  * @subpackage CLI
-*/
+ */
 
 if (PHP_SAPI == 'cli') {
 
 /**
  * Clears the cli color
-*/
+ */
 define('PLIB_CLI_NO_COLOR', "\033[0m");
 /**
  * Red foreground text
-*/
+ */
 define('PLIB_CLI_RED',      "\033[31m");
 /**
  * Light gray foreground text
-*/
+ */
 define('PLIB_CLI_GRAY',     "\033[37m");
 /**
  * Blue foreground text
-*/
+ */
 define('PLIB_CLI_BLUE',     "\033[34m");
 /**
  * Purple foreground text
-*/
+ */
 define('PLIB_CLI_PURPLE',   "\033[35m");
 /**
  * Green foreground text
-*/
+ */
 define('PLIB_CLI_GREEN',    "\033[32m");
 /**
  * Brownish foreground text
-*/
+ */
 define('PLIB_CLI_BROWN',    "\033[33m");
 /**
  * Black foreground text
-*/
+ */
 define('PLIB_CLI_BLACK',    "\033[1m");
 /**
  * Color keyword pattern
-*/
+ */
 define('PLIB_CLI_CLR_RE', "/(B)?(PURPLE|RED|GREEN|BLUE|GRAY|BROWN|BLACK|".
                           "NONE):/i");
 
@@ -77,7 +77,7 @@ if (!function_exists('cwrite')) {
 	 *
 	 * @param mixed $args
 	 *   Works like {@link sprintf()}
-	*/
+	 */
 	function cwrite($args=null)
 	{
 		$args = func_get_args();
@@ -101,7 +101,7 @@ if (!function_exists('cwrite')) {
  * @since plibcli 0.2
  * @param mixed $args
  *   See {@link sprintf()}
-*/
+ */
 function cprint($args=null)
 {
 		$args = func_get_args();
@@ -196,13 +196,13 @@ function _cli_colorize($m)
  * @author Pontus Östlund <spam@poppa.se>
  * @package PLib
  * @subpackage CLI
-*/
+ */
 class Getoptlong
 {
 	/**
 	 * Where we keep the result after parsing the options
 	 * @var array
-	*/
+	 */
 	protected $options = array();
 
 	/**
@@ -212,7 +212,7 @@ class Getoptlong
 	 * `$opts = new Getoptlong('v|--verbose', 'h|--help');`
 	 *
 	 * @param string $args
-	*/
+	 */
 	public function __construct($args)
 	{
 		$argv = $_SERVER['argv'];
@@ -240,7 +240,7 @@ class Getoptlong
 			$opts[] = $a;
 		}
 
-		$re = '^--?([-_a-z0-9]+)=?(?:(?:["\']?)(.*)(?:["\']?|\s))?';
+		$re = '^--?([-_a-z0-9?]+)=?(?:(?:["\']?)(.*)(?:["\']?|\s))?';
 		$mod = 0;
 
 		foreach ($argv as $arg) {
@@ -280,7 +280,7 @@ class Getoptlong
 	 *
 	 * @param string $index
 	 * @return string|bool
-	*/
+	 */
 	public function Get($index)
 	{
 		if (isset($this->options[$index]))
@@ -293,7 +293,7 @@ class Getoptlong
 	 * Returns the options array
 	 *
 	 * @return array
-	*/
+	 */
 	public function Options()
 	{
 		reset($this->options);
@@ -306,7 +306,7 @@ class Getoptlong
 	 *
 	 * @see each()
 	 * @return array
-	*/
+	 */
 	public function Next()
 	{
 		return each($this->options);
@@ -314,7 +314,7 @@ class Getoptlong
 
 	/**
 	 * Reset the options array if {@link Getoptlong::Next()} has been used
-	*/
+	 */
 	public function Reset()
 	{
 		reset($this->options);
@@ -345,18 +345,18 @@ class Getoptlong
  * @since plibcli 0.2
  * @package PLib
  * @subpackage CLI
-*/
+ */
 class Stdin
 {
 	/**
 	 * The file handler resource
 	 * @var resource
-	*/
+	 */
 	protected $fh;
 
 	/**
 	 * Creates a new instance of Stdin
-	*/
+	 */
 	public function __construct()
 	{
 		$this->fh = fopen('php://stdin', 'r');
@@ -368,7 +368,7 @@ class Stdin
 	 * @param bool $trim
 	 *   Trims the string by default
 	 * @return string
-	*/
+	 */
 	public function Read($trim=true)
 	{
 		$data = fread($this->fh, 4096);
@@ -377,7 +377,7 @@ class Stdin
 
 	/**
 	 * Destructor. Closes the file handler resource
-	*/
+	 */
 	public function __destruct()
 	{
 		if (is_resource($this->fh))

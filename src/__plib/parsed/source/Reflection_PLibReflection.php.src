@@ -532,31 +532,31 @@
 &#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>wdebug<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;&#160;&#160;GRAY:Found&#160;no&#160;functions&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;Pick&#160;out&#160;includes</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;This&#160;is&#160;not&#160;bullet&#160;proof.&#160;It&#160;requires&#160;that&#160;there&#39;s&#160;nothing&#160;before&#160;the</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;require_once&#160;statement.</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$re</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;/^require_once\(?\s*(.*)\s*\)?\s*;/im&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>preg_match_all</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$re</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$fc</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$m</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$len</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$m</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>wdebug<span style='color: #0000FF;'>(</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;&#160;&#160;BLUE:Found&#160;\&#34;%d\&#34;&#160;include%s&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$len</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$len</b></span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: purple;'>1</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #008800;'>&#39;s&#39;</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$m</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$m</b></span><span style='color: #0000FF;'>[</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$inc</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;eval<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;\$inceval=$inc;&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>includes<span style='color: #0000FF;'>[</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;raw&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$inc</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;module&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>PathToNamespace<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$inceval</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;PLib<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>wdebug<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;&#160;&#160;GRAY:Found&#160;no&#160;includes&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;<br/>
+<span style='color: #0099CC;'>/*</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;//&#160;Pick&#160;out&#160;includes</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;//&#160;This&#160;is&#160;not&#160;bullet&#160;proof.&#160;It&#160;requires&#160;that&#160;there&#39;s&#160;nothing&#160;before&#160;the</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;//&#160;require_once&#160;statement.</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;$re&#160;=&#160;&#34;/^require_once\(?\s*(.*)\s*\)?\s*;/im&#34;;</span><br/>
+<span style='color: #0099CC;'>&#160;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;if&#160;(preg_match_all($re,&#160;$fc,&#160;$m))&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;$len&#160;=&#160;sizeof($m[1]);</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;PLib::wdebug(</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#34;&#160;&#160;BLUE:Found&#160;\&#34;%d\&#34;&#160;include%s&#34;,&#160;$len,&#160;($len&#160;&#62;&#160;1&#160;?&#160;&#39;s&#39;&#160;:&#160;&#39;&#39;)</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;);</span><br/>
+<span style='color: #0099CC;'>&#160;</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;if&#160;(sizeof($m[1]))&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;foreach&#160;($m[1]&#160;as&#160;$inc)&#160;{</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;eval(&#34;\$inceval=$inc;&#34;);</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$this-&#62;includes[]&#160;=&#160;array(</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#39;raw&#39;&#160;=&#62;&#160;$inc,</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#39;module&#39;&#160;=&#62;&#160;PLib::PathToNamespace($inceval)</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;);</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;}</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;else</span><br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;&#160;&#160;PLib::wdebug(&#34;&#160;&#160;GRAY:Found&#160;no&#160;includes&#34;);</span><br/>
+<span style='color: #0099CC;'>*/</span>&#160;<br/>
 &#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;Pick&#160;out&#160;constants</span><br/>
 &#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
 &#160;<br/>

@@ -605,9 +605,10 @@ class HTTPResponse
 			$bytes = 0;
 			do {
         // It's an assignment
-				if (($bytes = hexdec($rd->ReadLine())) == 0)
+        if (($bytes = hexdec($rd->ReadLine())) == 0)
 					continue;
-				$body .= $this->decode($rd->Read((int)$bytes), $enc);
+
+        $body .= $this->decode($rd->Read((int)$bytes), $enc);
 			} while (!$rd->End());
 
 			$rd->Dispose();

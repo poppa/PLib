@@ -83,7 +83,7 @@ class StringReader
 	 * The internal string
 	 * @var string
 	 */
-	protected $string;
+	public $string;
 	/**
 	 * The current position within the string
 	 * @var int
@@ -119,7 +119,9 @@ class StringReader
 		if ($this->cursor + $bytes > $this->length)
 			return false;
 
-		return substr($this->string, $this->cursor+=$bytes, $bytes);
+    $str = substr($this->string, $this->cursor, $bytes);
+    $this->cursor += $bytes;
+    return $str;
 	}
 
   /**

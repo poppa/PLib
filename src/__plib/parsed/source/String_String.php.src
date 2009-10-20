@@ -83,7 +83,7 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;internal&#160;string</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;current&#160;position&#160;within&#160;the&#160;string</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
@@ -119,7 +119,9 @@
 &#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cursor&#160;<span style='color: #0000FF;'>+</span>&#160;<span style='color: #990000;'><b>$bytes</b></span>&#160;<span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>length<span style='color: #0000FF;'>)</span>&#160;<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cursor<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>=</span><span style='color: #990000;'><b>$bytes</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bytes</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$str</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cursor<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$bytes</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>cursor&#160;<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$bytes</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$str</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
 &#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>

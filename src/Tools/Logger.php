@@ -131,11 +131,12 @@ class Logger
   public function Log($message)
   {
     $args = func_get_args();
-    if (sizeof($args) > 1) {
-      $message = array_shift($args);
-      $message = vsprintf($message, $args);
+    if (sizeof($args) > 0) {
+      //$message = array_shift($args);
+      $message = $this->getMessage($args);
     }
-    error_log($this->prefix().$message, $this->type, $this->dest,
+
+    error_log($message, $this->type, $this->dest,
               $this->extraHeaders);
   }
 
@@ -198,14 +199,34 @@ class Logger
    * Formats the message to write to the logfile
    * @return string
    */
-  protected function getMessage()
+  protected function getMessage($args)
   {
-    $args = func_get_args();
     $msg = array_shift($args);
     if (sizeof($args))
-      $msg = vsprintf($msg, $args);
+      $msg = $this->format(vsprintf($msg, $args));
+    else
+      $msg = $this->format($msg);
 
     return $msg;
+  }
+
+  /**
+   * Formats the string if formatting is on
+   * 
+   * @param string $str
+   * @return string
+   */
+  protected function format($str)
+  {
+    if ($this->formatOutput === true) {
+      $o = array();
+
+      foreach (explode("\n", $str) as $line)
+	$o[] = $this->prefix() . $line;
+      $str = rtrim(join("\n", $o))."\n";
+    }
+
+    return $str;
   }
 
   /**

@@ -17,7 +17,7 @@ define('PLIB', true);
 /**
  * The PLIB version
  */
-define('PLIB_VERSION', '0.2');
+define('PLIB_VERSION', '0.2.0');
 /**
  * Justa a silly description
  */
@@ -61,6 +61,11 @@ if (!is_dir(PLIB_TMP_DIR) && !is_writable(PLIB_TMP_DIR)) {
 		'this by defining the constant PLIB_TMP_DIR prior to including PLib.php.'
 	);
 }
+
+/**
+ * Have we got SQLite support or not
+ */
+define('PLIB_HAS_SQLITE', function_exists('sqlite_open'));
 
 if (!defined('PLIB_DEBUG')) {
 	/**
@@ -136,7 +141,8 @@ function wnl($args=null)
  */
 function rprint($what, $ent=true)
 {
-	echo "<pre>";
+	if (PHP_SAPI != 'cli')
+		echo "<pre>";
 
 	if ($ent && (is_array($what) || is_object($what)))
 		print_r(array_map('htmlentities', (array)$what));
@@ -144,7 +150,9 @@ function rprint($what, $ent=true)
 		echo htmlentities($what);
 	else
 		print_r($what);
-	echo "</pre>";
+		
+	if (PHP_SAPI != 'cli')
+		echo "</pre>";
 }
 
 //! This function might be part of PHP6...
@@ -451,7 +459,7 @@ function trace()
   static $logger;
   if (!$logger) {
     $logger = new Logger(Logger::LOG_FILE, PLIB_DBG_FILE);
-    $logger->formatOutput = false;
+    $logger->formatOutput = true;
   }
 
   $args = func_get_args();
@@ -662,6 +670,9 @@ class PLib
    */
   public static function GetDB()
   {
+    if (!PLIB_HAS_SQLITE)
+      throw new Exception("SQLite not available on this system!");
+
     if (!class_exists('Sqlite'))
       require_once PLIB_INSTALL_DIR . '/DB/Sqlite_driver.php';
 
@@ -951,8 +962,10 @@ class PLib
 		if (!class_exists('XSLTransform'))
 			PLib::Import('XML.XSLT');
 
-		ob_clean();
-		$res = null;
+    //if (headers_sent())
+    //  ob_end_clean();
+
+    $res = null;
 
 		try {
 			$parsePrivate = is_bool($parsePrivate) ? $parsePrivate : PLib::$debug;
@@ -999,6 +1012,7 @@ class PLib
 		try {
 			$c = new HTTPRequest();
 			$v = $c->Get('http://plib.poppa.se/version.php');
+
 			if (version_compare(PLIB_VERSION, (string)$v, '<')) {
 				wbr("<strong>There's a new version of PLib!</strong>");
 				wbr("The latest version is <strong><em>$v</em></strong> and you are " .
@@ -1006,6 +1020,10 @@ class PLib
 				wbr("Go to <a href='" . self::DOWNLOAD_URL . "'>the download page</a> ".
 				    "to grab the latest version!");
 			}
+      elseif (version_compare(PLIB_VERSION, (string)$v, '>')) {
+        wbr("What, you have a newer version (%s) than what is available (%s)!",
+            PLIB_VERSION, (string)$v);
+      }
 			else
 				wbr("You are using the latest version ($v) of PLib");
 		}

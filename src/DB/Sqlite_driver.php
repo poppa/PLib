@@ -215,8 +215,6 @@ class Sqlite_DBResult extends DBResult implements IDBResult
 	 * Iterate over the result set.
 	 * Wrapper for {@link sqlite_fetch_object()}
 	 *
-	 * @todo I havn't confirmed that the object casting actually works for
-	 * older versions of Sqlite, but should work!
 	 * @uses DBResult::$counter
 	 * @link http://php.net/sqlite_fetch_object
 	 * @return object

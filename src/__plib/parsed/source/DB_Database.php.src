@@ -75,7 +75,7 @@
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Database</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@since&#160;0.8</span><br/>
 <span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-interface&#160;IDB&#160;<br/>
+<span style='color: #000099;'><b>interface</b></span>&#160;IDB&#160;<br/>
 <span style='color: #0000FF;'>{</span>&#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;A&#160;database&#160;must&#160;be&#160;connectable!</span><br/>
@@ -131,7 +131,7 @@ interface&#160;IDB&#160;<br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Database</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@since&#160;0.8</span><br/>
 <span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-interface&#160;IDBResult&#160;<br/>
+<span style='color: #000099;'><b>interface</b></span>&#160;IDBResult&#160;<br/>
 <span style='color: #0000FF;'>{</span>&#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Iterate&#160;over&#160;the&#160;result&#160;set.</span><br/>

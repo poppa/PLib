@@ -60,6 +60,7 @@ class HTMLParser
 	private $tagCB       = array();
 	private $entCB       = null;
 	private $dataCB      = null;
+  private $allTagCB    = null;
 
 	public function __construct() {}
 
@@ -148,6 +149,16 @@ class HTMLParser
 	{
 		$this->entCB = $cb;
 	}
+
+  /**
+   * Set callback for all tags
+   * 
+   * @param string $cb
+   */
+  public function SetTagCallback($cb)
+  {
+    $this->allTagCB = $cb;
+  }
 
 	/**
 	 * Render the stack of parsed data. Note that {@see HTMLParser::Parse()}
@@ -375,6 +386,26 @@ class HTMLParser
 		return null;
 	}
 
+  /**
+   * Returns the current context
+   * 
+   * @return int
+   */
+  public function Context()
+  {
+    return $this->ctx;
+  }
+
+  /**
+   * Returns the current full tag, i.e. `<span class='date'>`
+   * 
+   * @return string
+   */
+  public function Tag()
+  {
+    return $this->tag;
+  }
+
 	/**
 	 * Parse the $str. To get the result of the parse call
 	 * {@see HTMLParser::Render()}.
@@ -415,6 +446,9 @@ class HTMLParser
 		if ($this->byte != $ts) {
 			$tstr = substr($this->data, $this->byte, $ts-$this->byte);
 
+      if ($this->allTagCB && $this->dataCB)
+        call_user_func($this->dataCB, $this, $tstr);
+
 			if (!$this->parseEntities($tstr))
 				$this->pStack(self::TYPE_DATA, $tstr, null, $this->byte);
 
@@ -448,7 +482,10 @@ class HTMLParser
 		else if ($this->ctx == self::TYPE_CDATA)
 			$name = substr($this->tag, 9, -3);
 
-//	dbg("$name : $this->ctx");
+    $this->tagname = $name;
+
+    $this->allTagCB &&
+		  call_user_func($this->allTagCB, $this, $name, $attr, $this->tag);
 
 		$this->pStack($this->ctx, $name, $attr, $ts);
 
