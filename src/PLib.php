@@ -1059,12 +1059,9 @@ class PLib
 	 *
 	 * @return string
 	 */
-	public function __toString($obj=null)
+	public function __toString()
 	{
-		if (!$obj)
-			$obj = $this;
-
-		return get_class($obj);
+		return get_class($this);
 	}
 }
 
