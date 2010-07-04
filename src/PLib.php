@@ -17,7 +17,7 @@ define('PLIB', true);
 /**
  * The PLIB version
  */
-define('PLIB_VERSION', '0.2.0');
+define('PLIB_VERSION', '0.2.1');
 /**
  * Justa a silly description
  */
@@ -1059,12 +1059,9 @@ class PLib
 	 *
 	 * @return string
 	 */
-	public function __toString($obj=null)
+	public function __toString()
 	{
-		if (!$obj)
-			$obj = $this;
-
-		return get_class($obj);
+		return get_class($this);
 	}
 }
 

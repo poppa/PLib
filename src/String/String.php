@@ -7,6 +7,8 @@
  * @version 0.2
  */
 
+require_once PLIB_INSTALL_DIR . '/Core/IStream.php';
+
 /**
  * General string class
  *
@@ -77,7 +79,7 @@ class String
  * @version 0.2
  * @since 0.2
  */
-class StringReader
+class StringReader implements IStream
 {
 	/**
 	 * The internal string
@@ -108,6 +110,11 @@ class StringReader
 
 	/**
 	 * Read `$bytes` number of bytes from the current position
+	 *
+	 * @todo
+	 *  This should probably not return `false` if `cursor+bytes > length` if
+	 *  `bytes` if more than `1` byte is read. Instead it should read upto
+	 *  `length` to better mimic `fread()`.
 	 *
 	 * @throws Exception
 	 *  If trying to read beyond the string length
@@ -170,6 +177,19 @@ class StringReader
 	}
 
 	/**
+   * Look `$bytes` ahead and reset to the previous position
+   *
+   * @param int $bytes
+   *  Number of bytes to peek
+   * @return string
+   */
+	public function Peek($bytes=1)
+	{
+		assert($bytes > 0);
+		return substr($this->string, $this->cursor, $bytes);
+	}
+
+	/**
 	 * Read one line at a time
 	 * @since 0.2
 	 */
@@ -187,6 +207,8 @@ class StringReader
 	 */
 	public function ReadToChar($char)
 	{
+		assert($this->cursor < $this->length);
+
 		$s = '';
 		$c = null;
 		while ($this->cursor < $this->length &&
@@ -196,7 +218,33 @@ class StringReader
 			$s .= $c;
 		}
 
+		$this->cursor--;
 		return $s;
+	}
+
+	public function ReadToChars(array $chars)
+	{
+		assert('$this->cursor < $this->length; // in ReadToChars()');
+
+    //$stop = implode('', $chars);
+		$s = '';
+		$c = null;
+		while ($this->cursor < $this->length &&
+		      ($c = $this->string[$this->cursor++]) &&
+		       !in_array($c, $chars)) // Seems faster
+           //!strcspn($c, $stop))
+           //!stristr($stop, $c))
+		{
+			$s .= $c;
+		}
+
+		$this->cursor--;
+		return $s;
+	}
+
+	public function BytesRead()
+	{
+		return $this->cursor;
 	}
 
 	/**
@@ -230,7 +278,7 @@ class StringReader
 	{
 		return $this->length;
 	}
-	
+
 	/**
 	 * Has the pointer reached the end of the file?
 	 * @since 0.2
