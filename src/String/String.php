@@ -76,7 +76,7 @@ class String
  *
  * @author Pontus Östlund <pontus@poppa.se>
  * @package String
- * @version 0.2
+ * @version 0.3
  * @since 0.2
  */
 class StringReader implements IStream
@@ -85,7 +85,7 @@ class StringReader implements IStream
 	 * The internal string
 	 * @var string
 	 */
-	public $string;
+	protected $string;
 	/**
 	 * The current position within the string
 	 * @var int
@@ -191,6 +191,7 @@ class StringReader implements IStream
 
 	/**
 	 * Read one line at a time
+	 *
 	 * @since 0.2
 	 */
 	public function ReadLine()
@@ -222,18 +223,21 @@ class StringReader implements IStream
 		return $s;
 	}
 
+	/**
+	 * Read upto the first occurance of `$chars`.
+	 *
+	 * @param array $chars
+	 * @return string
+	 */
 	public function ReadToChars(array $chars)
 	{
 		assert('$this->cursor < $this->length; // in ReadToChars()');
 
-    //$stop = implode('', $chars);
 		$s = '';
 		$c = null;
 		while ($this->cursor < $this->length &&
 		      ($c = $this->string[$this->cursor++]) &&
-		       !in_array($c, $chars)) // Seems faster
-           //!strcspn($c, $stop))
-           //!stristr($stop, $c))
+		       !in_array($c, $chars))
 		{
 			$s .= $c;
 		}
@@ -242,6 +246,12 @@ class StringReader implements IStream
 		return $s;
 	}
 
+	/**
+	 * How many bytes are read? Same as {@see Position()}. This is for 
+	 * compatibility with the {@see IStream} interface
+	 *
+	 * @return int
+	 */
 	public function BytesRead()
 	{
 		return $this->cursor;
@@ -281,12 +291,24 @@ class StringReader implements IStream
 
 	/**
 	 * Has the pointer reached the end of the file?
+   * 
 	 * @since 0.2
 	 */
 	public function End()
 	{
 		return $this->cursor >= $this->length;
 	}
+
+  /**
+   * Returns the entire content
+   *
+   * @since 0.3
+   * @return string
+   */
+  public function Get()
+  {
+    return $this->string;
+  }
 
 	/**
 	 * Clears the string.
@@ -296,5 +318,15 @@ class StringReader implements IStream
 		$this->string = null;
 		unset($this->string);
 	}
+
+	/**
+	 * Cast to string. Returns the content.
+	 *
+	 * @since 0.3
+	 */
+  public function __toString()
+  {
+    return $this->string;
+  }
 }
 ?>
