@@ -655,10 +655,10 @@ class HTTPResponse
 			$bytes = 0;
 			do {
         $ln = $rd->ReadLine();
-        if ($rd->End()) break;
+
         // It's an assignment
         if (((int)($bytes = hexdec($ln)) === 0))
-					continue;
+					break;
 
         $body .= $this->decode($rd->Read((int)$bytes), $enc);
 			} while (!$rd->End());

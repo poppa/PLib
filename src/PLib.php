@@ -677,7 +677,7 @@ class PLib
       require_once PLIB_INSTALL_DIR . '/DB/Sqlite_driver.php';
 
     if (!self::$db)
-      self::$db = DB::Create('sqlite://' . PLIB_SQLITE_DB)->PConnect();
+      self::$db = DB::Create('sqlite://' . PLIB_SQLITE_DB);
 
     return self::$db;
   }

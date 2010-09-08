@@ -104,7 +104,7 @@ class StringReader implements IStream
 	 */
 	public function __construct($str)
 	{
-		$this->string = str_replace("\r\n", "\n", $str);
+		$this->string = $str;
 		$this->length = strlen($this->string);
 	}
 
@@ -194,9 +194,9 @@ class StringReader implements IStream
 	 *
 	 * @since 0.2
 	 */
-	public function ReadLine()
+	public function ReadLine($nl="\n")
 	{
-		return $this->ReadToChar("\n");
+		return $this->ReadToChar($nl);
 	}
 
 	/**
