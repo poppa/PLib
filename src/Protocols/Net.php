@@ -80,6 +80,16 @@ class HTTPRequest
 	 * @var int
 	 */
 	protected $recursions = 0;
+  /**
+   * Basic authentication username
+   * @var string
+   */
+  protected $username = null;
+  /**
+   * Basic authentication password
+   * @var string
+   */
+  protected $password = null;
 
 	/**
 	 * Creates a HTTP-request object
@@ -163,6 +173,26 @@ class HTTPRequest
 		return $this->maxRedirects;
 	}
 
+  /**
+   * Setter for username to use in a basic authentication
+   *
+   * @param string $name
+   */
+  public function SetUsername($name)
+  {
+    $this->username = $name;
+  }
+
+  /**
+   * Setter for password to use in a basic authentication
+   * 
+   * @param string $word
+   */
+  public function SetPassword($word)
+  {
+    $this->password = $word;
+  }
+
 	/**
 	 * Do an arbitrary HTTP action
 	 *
@@ -209,10 +239,23 @@ class HTTPRequest
 		if (!isset($request['host']))
 			throw new HTTPRequestException("Missing host in URL ($uri) argument");
 
+    $port = 0;
 		$protocol = isset($request['scheme']) ? $request['scheme'] : false;
-		$host     = $request['host'];
-		$port     = isset($request['port']) ? (int)$request['port'] : 80;
-		$query    = isset($request['query']) ? $request['query'] : null;
+    if ($protocol != 'http') {
+      switch ($protocol) {
+        case 'https':
+          if (!isset($request['port']))
+            $port = 443;
+          break;
+      }
+    }
+		$host = $request['host'];
+		$query = isset($request['query']) ? $request['query'] : null;
+    if (!$port)
+      $port = isset($request['port']) ? (int)$request['port'] : 80;
+
+    if (isset($request['user'])) $this->username = $request['user'];
+    if (isset($request['pass'])) $this->password = $request['pass'];
 
 		if (!empty($vars))
 			$query = http_build_query($vars);
@@ -237,6 +280,11 @@ class HTTPRequest
 
 			$addHeader .= "$key: $val\r\n";
 		}
+
+    if ($this->username && $this->password) {
+      $addHeader .= "Authorization: Basic " .
+                    base64_encode($this->username . ':' . $this->password);
+    }
 
 		if ($this->cookie) {
 			$c = $this->cookie->CreateHeader(($port==443), $host, $path);
@@ -267,6 +315,8 @@ class HTTPRequest
 
 		$header = "$method $path HTTP/$this->version\r\n" .
 		          "Host: $host\r\n$addHeader\r\n";
+
+    //rprint($host . ', ' . $port . ', ' . $header);
 
 		$rawresponse = false;
 		if ($this->cache > 0)
@@ -604,8 +654,10 @@ class HTTPResponse
 			$body = '';
 			$bytes = 0;
 			do {
+        $ln = $rd->ReadLine();
+        if ($rd->End()) break;
         // It's an assignment
-        if (($bytes = hexdec($rd->ReadLine())) == 0)
+        if (((int)($bytes = hexdec($ln)) === 0))
 					continue;
 
         $body .= $this->decode($rd->Read((int)$bytes), $enc);

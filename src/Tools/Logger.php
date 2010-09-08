@@ -207,6 +207,7 @@ class Logger
   protected function getMessage($args)
   {
   	$msg = null;
+
   	if (is_array($args) && sizeof($args)) {
 		  $msg = array_shift($args);
 		  if (sizeof($args))
@@ -231,7 +232,7 @@ class Logger
       $o = array();
 
       foreach (explode("\n", $str) as $line)
-	$o[] = $this->prefix() . $line;
+				$o[] = $this->prefix() . $line;
       $str = rtrim(join("\n", $o))."\n";
     }
 
