@@ -4,7 +4,7 @@
  *
  * @author Pontus Östlund <pontus@poppa.se>
  * @package IO
- * @version 0.1
+ * @version 0.2
  */
 
 /**
@@ -97,9 +97,11 @@ class Logger
    *  Where to send the message. This depends on $type.
    * @param string $extraHeaders
    *  Only useful when message type is {@see Logger::LOG_MAIL}.
+   * @param string $truncate
+   *  If true and `$type` is `Logger::LOG_FILE` the file will be truncated
    */
   public function __construct($type=Logger::LOG_SYSTEM, $dest=null,
-                              $extraHeaders=null)
+                              $extraHeaders=null, $truncate=false)
   {
     $this->type = $type;
 
@@ -118,6 +120,9 @@ class Logger
 
       if (!$dest->IsWritable())
         throw new Exception("\"$dest\" is not writable!");
+
+			if ($truncate)
+				$dest->Truncate();
 
       $this->dest = $dest;
     }
@@ -201,11 +206,15 @@ class Logger
    */
   protected function getMessage($args)
   {
-    $msg = array_shift($args);
-    if (sizeof($args))
-      $msg = $this->format(vsprintf($msg, $args));
-    else
-      $msg = $this->format($msg);
+  	$msg = null;
+  	if (is_array($args) && sizeof($args)) {
+		  $msg = array_shift($args);
+		  if (sizeof($args))
+		    $msg = $this->format(vsprintf($msg, $args));
+		  else
+		    $msg = $this->format($msg);
+		 }
+		 else $msg = $this->format($args);
 
     return $msg;
   }
