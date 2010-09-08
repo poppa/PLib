@@ -1,0 +1,20 @@
+HTTP/1.1 200 OK
+Server: nginx/0.7.42
+Date: Tue, 20 Oct 2009 23:01:04 GMT
+Content-Type: text/html;charset=utf-8
+Connection: close
+Content-Length: 217
+Allow: GET, HEAD, POST
+Set-Cookie: anonu=psu__61fc8c81-9c87-460a-aa05-e97f693bac3f---58dd34da8f8aaff346c9b53069a5fd24; Domain=.bit.ly; expires=Tue, 20-Sep-2011 19:01:04 GMT; Path=/; Version=1
+Set-Cookie: bsession=a8d462cc-8c0c-463e-b8a5-9c7906d2f223---f8457490419b39c4889184612d37cfa9; Domain=.bit.ly; expires=Tue, 20-Sep-2011 19:01:04 GMT; Path=/; Version=1
+
+{
+    "errorCode": 0, 
+    "errorMessage": "", 
+    "results": {
+        "29Ox7X": {
+            "htmlTitle": "Merging associative arrays in PHP &laquo;  Pontus \u00d6stlund"
+        }
+    }, 
+    "statusCode": "OK"
+}

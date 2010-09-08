@@ -1,4 +1,4 @@
-<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span><br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Mysql&#160;database&#160;driver.</span><br/>
 <span style='color: #0099CC;'>&#160;*</span><br/>
@@ -11,12 +11,12 @@
 <span style='color: #0099CC;'>&#160;*&#160;@depends&#160;IDB</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@depends&#160;DBResult</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@depends&#160;IDBResult</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>*/</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Load&#160;the&#160;DB&#160;interface</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-<span style='color: #000099;'><b>require_once</b></span>&#160;<span style='color: #008800;'>&#39;Database.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;<span style='color: #008800;'>&#39;Database.php&#39;</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Mysql&#160;child&#160;class&#160;to&#160;the&#160;DB&#160;class</span><br/>
@@ -24,19 +24,19 @@
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Database</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Mysql</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;Mysql&#160;<span style='color: #000099;'><b>extends</b></span>&#160;DB&#160;implements&#160;IDB&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
+<span style='color: #000099;'><b>class</b></span>&#160;Mysql&#160;<span style='color: #000099;'><b>extends</b></span>&#160;DB&#160;implements&#160;IDB<br/>
+<span style='color: #0000FF;'>{</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Database&#160;username</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$username</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$username</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Databse&#160;password</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$password</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$password</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
@@ -48,44 +48,44 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$dbname</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$user</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$pass</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$host</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$dbname</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$user</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$pass</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>host&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$host</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbname&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$dbname</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>username&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$user</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>password&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$pass</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$host</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$dbname</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$user</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$pass</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>host&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$host</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbname&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$dbname</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>username&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$user</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>password&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$pass</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Create&#160;a&#160;Mysql&#160;database&#160;connection</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;http://php.net/mysql_connect</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;Mysql</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Connect<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_resource</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Connect<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_resource</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>init<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_connect</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>host<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>username<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>password<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>init<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_connect</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>host<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>username<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>password<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Mysql&#160;persisten&#160;connection</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;http://php.net/mysql_pconnect&#160;mysql_pconnect()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;Mysql</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;PConnect<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_resource</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;PConnect<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>is_resource</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>init<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_pconnect</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>host<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>username<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>password<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>init<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_pconnect</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>host<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>username<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>password<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Verifies&#160;the&#160;connection&#160;and&#160;selects&#160;the&#160;db&#160;choosen.</span><br/>
@@ -98,19 +98,19 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;If&#160;the&#160;selected&#160;DB&#160;doesn&#39;t&#160;exist</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;resource&#160;$dbr&#160;See&#160;{@link&#160;DB::$resource}</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;init<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_resource</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DBConnectionFail<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mysql_error</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>private</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;init<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_resource</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DBConnectionFail<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mysql_error</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>mysql_select_db</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbname<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DBNotFound<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mysql_error</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>mysql_select_db</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dbname<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DBNotFound<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mysql_error</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>unset</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>unset</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dbr</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;{@inheritdoc}</span><br/>
@@ -119,23 +119,23 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;DBQueryFail</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;mixed&#160;$args&#160;Arbitrary&#160;number&#160;of&#160;arguments</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;Mysql_DBResult</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Query<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$args</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Query<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$args</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$q</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sql<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$q</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>buildQuery<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$q</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>sql<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$q</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>buildQuery<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_query</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$q</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_query</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$q</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DBQueryFail<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mysql_error</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;DBQueryFail<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>mysql_error</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Mysql_DBResult<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Mysql_DBResult<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Escape&#160;a&#160;string&#160;input</span><br/>
@@ -143,43 +143,43 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_escape_string()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$what</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Escape<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>mysql_escape_string</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Escape<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>mysql_escape_string</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$what</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Return&#160;the&#160;last&#160;inserted&#160;id.</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_insert_id()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;InsertID<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_insert_id</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;InsertID<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_insert_id</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Close&#160;the&#160;connection</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_close()</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_close</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__destruct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_close</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>resource<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__destruct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Destruct&#160;the&#160;DB&#160;object</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_close()</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__destruct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__destruct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Close<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Mysql&#160;child&#160;class&#160;to&#160;{@link&#160;DBResult}</span><br/>
@@ -187,18 +187,18 @@
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Database</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@subpackage&#160;Mysql</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;Mysql_DBResult&#160;<span style='color: #000099;'><b>extends</b></span>&#160;DBResult&#160;implements&#160;IDBResult&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
+<span style='color: #000099;'><b>class</b></span>&#160;Mysql_DBResult&#160;<span style='color: #000099;'><b>extends</b></span>&#160;DBResult&#160;implements&#160;IDBResult<br/>
+<span style='color: #0000FF;'>{</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;resource&#160;$res</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Iterate&#160;over&#160;the&#160;result&#160;set.</span><br/>
@@ -207,12 +207,12 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@uses&#160;DBResult::$counter</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;http://php.net/mysql_fetch_object</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;object</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>counter<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_fetch_object</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>counter<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_fetch_object</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Fetch&#160;result&#160;as&#160;an&#160;associative&#160;array</span><br/>
@@ -220,34 +220,34 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_fetch_assoc()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@uses&#160;DBResult::$counter</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;FetchAssoc<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>counter<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_fetch_assoc</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;FetchAssoc<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>counter<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_fetch_assoc</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Get&#160;numer&#160;of&#160;rows&#160;in&#160;the&#160;result</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_num_rows()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_num_rows</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;NumRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_num_rows</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Get&#160;numer&#160;of&#160;affected&#160;rows&#160;in&#160;the&#160;result</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_affected_rows()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;int</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;AffectedRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_affected_rows</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;AffectedRows<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_affected_rows</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Get&#160;the&#160;result</span><br/>
@@ -256,11 +256,11 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$row</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$col</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;mixed</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Result<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_result</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Result<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_result</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$col</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Seek&#160;offset&#160;in&#160;result&#160;set.</span><br/>
@@ -268,10 +268,10 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;mysql_data_seek()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;int&#160;$offset</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;resource</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Seek<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$offset</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_data_seek</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$offset</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Seek<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$offset</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mysql_data_seek</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>result<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$offset</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+<span style='color: #0000FF;'>}</span><br/>
 <span style='color: #003366;'>?&#62;</span><br/>

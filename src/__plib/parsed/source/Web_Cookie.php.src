@@ -1,11 +1,11 @@
-<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span><br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;A&#160;simple&#160;class&#160;for&#160;handling&#160;cookies</span><br/>
 <span style='color: #0099CC;'>&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Web</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;A&#160;simple&#160;class&#160;for&#160;handling&#160;cookies</span><br/>
@@ -13,41 +13,41 @@
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Web</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;Cookie&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
+<span style='color: #000099;'><b>class</b></span>&#160;Cookie<br/>
+<span style='color: #0000FF;'>{</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;name&#160;of&#160;the&#160;cookie</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$name</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$name</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;path&#160;of&#160;the&#160;cookie</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$path</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$path</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;domain&#160;of&#160;the&#160;cookie</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$domain</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$domain</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Secure.&#160;If&#160;true&#160;only&#160;use&#160;over&#160;a&#160;secure&#160;HTTP&#160;connection&#160;(HTTPS)</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$secure</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$secure</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Only&#160;allow&#160;the&#160;cookie&#160;over&#160;HTTP,&#160;means&#160;it&#160;won&#39;t&#160;be&#160;accessible&#160;to</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;JavaScript&#160;for&#160;instance.</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@link&#160;setcookie()</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$httponly</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$httponly</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Value&#160;buffer&#160;if&#160;@see{Cookie::Append()}&#160;is&#160;used.</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$value</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$value</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;null<span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
@@ -57,26 +57,26 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$domain</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$secure</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;bool&#160;$httponly</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$path</b></span><span style='color: #0000FF;'>=</span><span style='color: #008800;'>&#34;/&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$domain</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$secure</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>,</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$httponly</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$path</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>domain&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$domain</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>secure&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$secure</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>httponly&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$httponly</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$path</b></span><span style='color: #0000FF;'>=</span><span style='color: #008800;'>&#34;/&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$domain</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$secure</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>,</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$httponly</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$path</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>domain&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$domain</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>secure&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$secure</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>httponly&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$httponly</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Append&#160;to&#160;the&#160;value&#160;buffer</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$value</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Append<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Append<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;the&#160;cookie</span><br/>
@@ -89,23 +89,23 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;true&#160;the&#160;value&#160;will&#160;be&#160;@see{serialize()}&#39;d&#160;before&#160;written&#160;to&#160;the</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;cookie</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Set<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$serialize</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_null</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Set<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$serialize</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_null</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$value</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_numeric</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$expires</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>strtotime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>time</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_numeric</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$expires</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>strtotime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>time</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$serialize</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>urlencode</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>serialize</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$serialize</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>urlencode</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>serialize</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>setcookie</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path<span style='color: #0000FF;'>,</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>domain<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>secure<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>httponly<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>setcookie</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>value<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$expires</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path<span style='color: #0000FF;'>,</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>domain<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>secure<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>httponly<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Retreive&#160;the&#160;cookie</span><br/>
@@ -114,42 +114,42 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;If&#160;the&#160;value&#160;was&#160;serialized&#160;before&#160;written&#160;to&#160;the&#160;cookie&#160;this&#160;needs&#160;to</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;be&#160;set&#160;to&#160;true&#160;when&#160;retreiving&#160;the&#160;cookie.</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$unserialize</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_COOKIE</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$c</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$_COOKIE</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$unserialize</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$c</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>unserialize</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>urldecode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$c</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$unserialize</b></span><span style='color: #0000FF;'>=</span><span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>isset</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$_COOKIE</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$c</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$_COOKIE</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$unserialize</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$c</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>unserialize</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>urldecode</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$c</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$c</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$c</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;null<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;null<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Simply&#160;deletes&#160;the&#160;cookie</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Remove<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>setcookie</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>domain<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>secure<span style='color: #0000FF;'>,</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>httponly<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Remove<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>setcookie</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>name<span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>domain<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>secure<span style='color: #0000FF;'>,</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>httponly<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Alias&#160;for&#160;@see{Cookie::Remove()}.</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Delete<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Remove<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Delete<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Remove<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+<span style='color: #0000FF;'>}</span><br/>
 <span style='color: #003366;'>?&#62;</span><br/>

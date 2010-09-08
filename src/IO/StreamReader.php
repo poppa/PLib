@@ -214,6 +214,20 @@ class StreamReader implements IStream
 	}
 
 	/**
+   * Look `$bytes` ahead and reset to the previous position
+   *
+   * @param int $bytes
+   *  Number of bytes to peek
+   * @return string
+   */
+	public function Peek($bytes=1)
+	{
+		$tmp = fread($this->resource, $bytes);
+		$this->Unread(strlen($tmp));
+		return $tmp;
+	}
+
+	/**
 	 * Returns the current offset
 	 *
 	 * @since 0.3

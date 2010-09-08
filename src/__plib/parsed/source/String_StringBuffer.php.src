@@ -1,110 +1,110 @@
-<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span><br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;StringBuffer</span><br/>
 <span style='color: #0099CC;'>&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;String</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;pontus@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;String</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;StringBuffer&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
+<span style='color: #000099;'><b>class</b></span>&#160;StringBuffer<br/>
+<span style='color: #0000FF;'>{</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;file&#160;currently&#160;being&#160;used</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor.</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#34;</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$arg</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$arg</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$arg</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$arg</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Addf<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$args</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$format</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>array_shift</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>vsprintf</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Addf<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$args</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>func_get_args</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$format</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>array_shift</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>vsprintf</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$args</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Length<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>strlen</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Length<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>strlen</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$str</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#34;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$str</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Get<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$str</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#34;&#34;</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$str</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetLineIterator<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StringLineIterator<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetLineIterator<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;StringLineIterator<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span><span style='color: #000099;'><b>string</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Magic&#160;method&#160;that&#160;converts&#160;the&#160;object&#160;into&#160;a&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;__toString<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Get<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;__toString<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Get<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 &#160;<br/>
-<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Core/Iterator.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Core/Iterator.php&#39;</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;StringSpliterator&#160;<span style='color: #000099;'><b>extends</b></span>&#160;PLibIterator&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;__constuct<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$split</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;StringSpliterator&#160;<span style='color: #000099;'><b>extends</b></span>&#160;PLibIterator<br/>
+<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;__constuct<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$split</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;HasNext<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;HasNext<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Next<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Next<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;StringLineIterator&#160;<span style='color: #000099;'><b>extends</b></span>&#160;PLibIterator&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>explode</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;\n&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>length&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #000099;'><b>class</b></span>&#160;StringLineIterator&#160;<span style='color: #000099;'><b>extends</b></span>&#160;PLibIterator<br/>
+<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>explode</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;\n&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$string</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>length&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>sizeof</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;HasNext<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>pointer<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;HasNext<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>pointer<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Next<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>pointer<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;PLibIteratorOutOfRangeException<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Next<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>array_key_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>pointer<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;PLibIteratorOutOfRangeException<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>pointer<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>container<span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>pointer<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 <span style='color: #0000FF;'>}</span><br/>

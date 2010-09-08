@@ -1,4 +1,4 @@
-<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span>&#160;<br/>
+<span style='color: #003366;'>&#60;?</span><span style='color: #000099;'><b>php</b></span><br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;Calendar</span><br/>
 <span style='color: #0099CC;'>&#160;*</span><br/>
@@ -7,16 +7,16 @@
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Calendar</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@uses&#160;PLibIterator</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@uses&#160;Date</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
+<span style='color: #0099CC;'>*/</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;We&#160;need&#160;the&#160;{@see&#160;PlibIterator}&#160;class</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Core/Iterator.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Core/Iterator.php&#39;</span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;We&#160;need&#160;the&#160;{@see&#160;Date}&#160;class</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span>&#160;<br/>
-<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Calendar/Date.php&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;*/</span><br/>
+<span style='color: #000099;'><b>require_once</b></span>&#160;PLIB_INSTALL_DIR&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/Calendar/Date.php&#39;</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;A&#160;simple&#160;calendar</span><br/>
@@ -24,157 +24,157 @@
 <span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Calendar</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;Calendar&#160;<span style='color: #000099;'><b>extends</b></span>&#160;PLibIterator&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
+<span style='color: #0099CC;'>*/</span><br/>
+<span style='color: #000099;'><b>class</b></span>&#160;Calendar&#160;<span style='color: #000099;'><b>extends</b></span>&#160;PLibIterator<br/>
+<span style='color: #0000FF;'>{</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Time&#160;zone</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$timezone</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;GMT&#39;</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$timezone</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;GMT&#39;</span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Storage&#160;for&#160;events</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$events</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$events</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;current&#160;day</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;Date</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$today</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$today</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;currently&#160;selected&#160;month</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;Date</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$now</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$now</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;from&#160;date</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;Date</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$from</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$from</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;to&#160;date</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;Date</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$to</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$to</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;current&#160;timestamp&#160;in&#160;the&#160;iterator</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$ts</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$ts</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;last&#160;timestamp</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$tsEnd</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$tsEnd</b></span><span style='color: #0000FF;'>;</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Compensate&#160;daylight&#160;savings&#160;time</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$dstCompensate</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$dstCompensate</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;Date&#160;$from</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span>Date&#160;<span style='color: #990000;'><b>$from</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$firstdayofweek</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$firstdayofweek</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$DATE_TYPE</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LITTLE_ENDIAN<span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span>Date&#160;<span style='color: #990000;'><b>$from</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$firstdayofweek</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$firstdayofweek</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$DATE_TYPE</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>LITTLE_ENDIAN<span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>today&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;{$from-&#62;year}-{$from-&#62;month}-01T05:00&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>now&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddMonths<span style='color: #0000FF;'>(</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddDays<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>-</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>today&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Date<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;{$from-&#62;year}-{$from-&#62;month}-01T05:00&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>now&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddMonths<span style='color: #0000FF;'>(</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddDays<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>-</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ndays</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>-</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday<span style='color: #0000FF;'>+</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddDays<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$ndays</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ndays</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>-</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday<span style='color: #0000FF;'>+</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddDays<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$ndays</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>7</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ndays</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>7</span><span style='color: #0000FF;'>-</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddDays<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$ndays</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>7</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ndays</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>7</span><span style='color: #0000FF;'>-</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>wday<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>AddDays<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$ndays</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tsEnd&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tsEnd&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>to<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Format<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>strftime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>now<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Format<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #ff0000;'>strftime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$format</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>now<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Set&#160;events</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;array&#160;$events</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetEvents<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #990000;'><b>$events</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$events</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$event</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>events<span style='color: #0000FF;'>[</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>strtotime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$event</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>(</span><span style='color: purple;'>3600</span><span style='color: #0000FF;'>*</span><span style='color: purple;'>5</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;SetEvents<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>array</b></span>&#160;<span style='color: #990000;'><b>$events</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$events</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$event</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>events<span style='color: #0000FF;'>[</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>strtotime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$event</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>(</span><span style='color: purple;'>3600</span><span style='color: #0000FF;'>*</span><span style='color: purple;'>5</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;See&#160;{@see&#160;PLibIterator::HasNext()}</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;HasNext<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tsEnd&#160;<span style='color: #0000FF;'>+</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dstCompensate&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: purple;'>3600</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;HasNext<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tsEnd&#160;<span style='color: #0000FF;'>+</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dstCompensate&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: purple;'>3600</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;See&#160;{@see&#160;PLibIterator::Next()}</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;CalendarDate</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Next<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;CalendarDate<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ymdShort&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>today<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ymdShort<span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>today&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Next<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;CalendarDate<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ymdShort&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>today<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ymdShort<span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>today&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>events<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>hasEvent&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>events<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>hasEvent&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>month&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>now<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>month<span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>leaf&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>month&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>now<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>month<span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>leaf&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dst<span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dstCompensate&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dstCompensate&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dst<span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dstCompensate&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>dstCompensate&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>=</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>UNIX_DAY<span style='color: #0000FF;'>;</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>+</span><span style='color: #0000FF;'>=</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>UNIX_DAY<span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$r</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Are&#160;we&#160;about&#160;to&#160;hit&#160;the&#160;first&#160;iteration&#160;or&#160;just&#160;hit&#160;the&#160;first&#160;iteration</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;First<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;First<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>&#60;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>from<span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>unixtime<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Is&#160;it&#160;the&#160;last&#160;iteration</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Last<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>+</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>UNIX_DAY&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tsEnd<span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Last<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>ts&#160;<span style='color: #0000FF;'>+</span>&#160;Date<span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span>UNIX_DAY&#160;<span style='color: #0000FF;'>&#62;</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>tsEnd<span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 <span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Converts&#160;an&#160;instance&#160;of&#160;{@see&#160;DBResult}&#160;into&#160;the&#160;internal&#160;events&#160;array.</span><br/>
@@ -182,15 +182,15 @@
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;should&#160;be&#160;the&#160;actual&#160;date&#160;to&#160;compare&#160;against.</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
 <span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;DBResult&#160;$obj</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;*/</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;DBResult2Events<span style='color: #0000FF;'>(</span>DBResult&#160;<span style='color: #990000;'><b>$obj</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$obj</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>events<span style='color: #0000FF;'>[</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>is_int</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>compare_date<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>compare_date&#160;<span style='color: #0000FF;'>:</span>&#160;<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>strtotime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>compare_date<span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>time</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-<span style='color: #0000FF;'>}</span>&#160;<br/>
+<span style='color: #0099CC;'>&#160;&#160;*/</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;DBResult2Events<span style='color: #0000FF;'>(</span>DBResult&#160;<span style='color: #990000;'><b>$obj</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$obj</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Fetch<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>events<span style='color: #0000FF;'>[</span><span style='color: #0000FF;'>]</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>is_int</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>compare_date<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>compare_date&#160;<span style='color: #0000FF;'>:</span><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>strtotime</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$row</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>compare_date<span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>time</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+<span style='color: #0000FF;'>}</span><br/>
 &#160;<br/>
 &#160;<br/>
 <span style='color: #0099CC;'>/**</span><br/>
@@ -201,16 +201,16 @@
 <span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@package&#160;Calendar</span><br/>
 <span style='color: #0099CC;'>&#160;*&#160;@depends&#160;Date</span><br/>
-<span style='color: #0099CC;'>*/</span>&#160;<br/>
-<span style='color: #000099;'><b>class</b></span>&#160;CalendarDate&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Date&#160;<br/>
-<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$today</b></span>&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$hasEvent</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$leaf</b></span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span>&#160;<br/>
+<span style='color: #0099CC;'>*/</span><br/>
+<span style='color: #000099;'><b>class</b></span>&#160;CalendarDate&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Date<br/>
+<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$today</b></span>&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$hasEvent</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #990000;'><b>$leaf</b></span>&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
 &#160;<br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$date</b></span><span style='color: #0000FF;'>)</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span>&#160;<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$date</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span>&#160;<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span>&#160;<br/>
-<span style='color: #0000FF;'>}</span>&#160;<br/>
+&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$date</b></span><span style='color: #0000FF;'>)</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
+&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$date</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
+&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
+<span style='color: #0000FF;'>}</span><br/>
 <span style='color: #003366;'>?&#62;</span><br/>

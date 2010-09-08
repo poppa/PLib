@@ -1,0 +1,74 @@
+Directories:     22
+Files:           61
+Lines:        27267
+
+File list:
+  ./README
+  ./Reflection/PLibReflection.php
+  ./RC/SVN.php
+  ./XML/XSLT.php
+  ./XML/XMLBuilder.php
+  ./XML/QName.php
+  ./XML/dtd/xhtml1-transitional.dtd
+  ./XML/dtd/xhtml-symbol.ent
+  ./XML/dtd/xhtml1-strict.dtd
+  ./XML/dtd/xhtml-lat1.ent
+  ./XML/dtd/xhtml-special.ent
+  ./XML/XMLValidator.php
+  ./COPYING
+  ./DB/SQLTablify.php
+  ./DB/Mysql_driver.php
+  ./DB/Database.php
+  ./DB/Sqlite_driver.php
+  ./Media/ID3.php
+  ./Core/Iterator.php
+  ./Core/IStream.php
+  ./Core/Version.php
+  ./ADT/ADT.php
+  ./Tools/Logger.php
+  ./CHANGELOG
+  ./Cache/Cache.php
+  ./PLib.php
+  ./Calendar/Calendar.php
+  ./Calendar/Date.php
+  ./Web/Feed.php
+  ./Web/Upload.php
+  ./Web/Cookie.php
+  ./Web/Flickr/Photoset.php
+  ./Web/Flickr/__includes/Request.php
+  ./Web/Flickr/__includes/Cache.php
+  ./Web/Flickr/__includes/Response.php
+  ./Web/Flickr/Flickr.php
+  ./Web/Flickr/Photo.php
+  ./IO/Archiver.php
+  ./IO/StdIO.php
+  ./IO/StreamReader.php
+  ./IO/Tablify.php
+  ./Parser/Markdown/PHP Markdown Extra Readme.text
+  ./Parser/Markdown/License.text
+  ./Parser/Markdown/markdown.php
+  ./Parser/Docblock.php
+  ./Parser/Syntaxer/STXMarkdown.php
+  ./Parser/Syntaxer/Syntaxer.php
+  ./Parser/HTML.php
+  ./Protocols/IMAP.php
+  ./Protocols/Net.php
+  ./plibcli.php
+  ./Graphics/GText.php
+  ./Graphics/Image.php
+  ./Graphics/GTextDTR.php
+  ./Graphics/Font.php
+  ./Graphics/_Graphics.php
+  ./docgen
+  ./psum.txt
+  ./String/StringBuffer.php
+  ./String/String.php
+  ./Security/SimpleAuth.php
+
+File types:
+  (unknown)     4
+  dtd           2
+  ent           3
+  php          49
+  text          2
+  txt           1

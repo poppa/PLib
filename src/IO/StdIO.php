@@ -32,7 +32,7 @@
  * file path is sent as argument.
  *
  * @author Pontus Östlund <pontus@poppa.se>
- * @version 0.4
+ * @version 0.4.1
  * @package IO
  */
 class File extends IO
@@ -140,6 +140,29 @@ class File extends IO
 	public function GetContents()
 	{
 		return file_get_contents($this->file);
+	}
+
+	/**
+	 * Truncates the file to `$len` length, ie empties it if `$len` is `0`
+	 *
+	 * @since 0.4.1
+	 *
+	 * @param int $len
+	 *  Truncates the file to this length
+	 * @return bool
+	 *  `true` on success, `false` otherwise
+	 */
+	public function Truncate($len=0)
+	{
+		$fh = fopen($this->path, 'w');
+		if (is_resource($fh)) {
+			ftruncate($fh, $len);
+			fclose($fh);
+			unset($fh);
+			return true;
+		}
+		unset($fh);
+		return false;
 	}
 
 	/**
@@ -436,10 +459,10 @@ class Dir extends IO
    * @throws Exception
 	 * @param string $path
 	 */
-	public static function MkdirHier($path)
+	public static function MkDirHier($path)
 	{
 		if ($path[0] != PLIB_DS) {
-			throw new Exception("The path to Dir::MkdirHier() needs to be absolute! ".
+			throw new Exception("The path to Dir::MkDirHier() needs to be absolute! ".
 			                    "Call like this: Dir::MkdirHier(realpath('../" .
 			                    "relative/path/'));");
 		}

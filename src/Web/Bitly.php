@@ -109,7 +109,7 @@ class Bitly
    *
    * @param string $username
    * @param string $apikey
-   * @param string $cachedir
+   * @param string $cache
    */
   public function __construct($username, $apikey, $cache=null)
   {
@@ -131,7 +131,7 @@ class Bitly
   {
     if ($cache != null) {
       if ($cache < 0)
-	throw new Exception("Cache time must be greater than `0'!");
+				throw new Exception("Cache time must be greater than `0'!");
 
       $this->cache = $cache;
     }
@@ -166,8 +166,8 @@ class Bitly
   {
     if ($format) {
       if (!in_array($format, array(self::FORMAT_JSON, self::FORMAT_XML))) {
-	throw new Exception("Unknown format \"$format\". Must be `Bitly::" .
-			    "FORMAT_JSON' or `Bitly::FORMAT_XML'!\n");
+				throw new Exception("Unknown format \"$format\". Must be `Bitly::" .
+			                      "FORMAT_JSON' or `Bitly::FORMAT_XML'!\n");
       }
       $this->format = $format;
     }
@@ -219,7 +219,7 @@ class Bitly
     if ($this->format == self::FORMAT_JSON) {
       $r = json_decode($r);
       if ($r->errorCode != 0)
-	throw new Exception("Bitly error ($r->errorCode): $r->errorMessage!");
+				throw new Exception("Bitly error ($r->errorCode): $r->errorMessage!");
 
       return $r->results->{$url}->shortUrl;
     }
@@ -229,7 +229,7 @@ class Bitly
   }
 
   /**
-   *Expands a shortened URL to it's original value
+   * Expands a shortened URL to it's original value
    *
    * @throws Exception
    *  If the returned HTTP status isn't `200`
@@ -320,9 +320,9 @@ class Bitly
 
     if ($cache && $this->cache && PLIB_HAS_SQLITE) {
       $cachekey = md5($method.$service.$authz['Authorization'].
-		      $this->paramsToString($p));
+		                  $this->paramsToString($p));
       if ($res = Cache::Get($cachekey))
-	return $res;
+				return $res;
 
       $docache = true;
     }
@@ -331,6 +331,7 @@ class Bitly
     // Cache the request for 30 sec even if we don't cache the result
     $q->Cache(30);
 
+    /* HTTPResponse */ 
     $response = $q->DoMethod($method, $service, $p, $authz);
 
     if (($st = $response->Status()) != 200)

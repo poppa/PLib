@@ -1,0 +1,20 @@
+HTTP/1.1 200 OK
+Server: nginx/0.7.42
+Date: Tue, 20 Oct 2009 22:29:08 GMT
+Content-Type: text/html;charset=utf-8
+Connection: close
+Content-Length: 259
+Allow: GET, HEAD, POST
+Set-Cookie: anonu=psu__7f815506-73fc-41f8-8899-a4af4f63aea3---85143dffb714b7873db765adbb655670; Domain=.bit.ly; expires=Tue, 20-Sep-2011 18:29:08 GMT; Path=/; Version=1
+Set-Cookie: bsession=a47ef59e-0ac0-454b-ab73-29bef4b911ab---56f7810989c44ac2ff84e4d29d5564b0; Domain=.bit.ly; expires=Tue, 20-Sep-2011 18:29:08 GMT; Path=/; Version=1
+
+{
+    "errorCode": 0, 
+    "errorMessage": "", 
+    "results": {
+        "3DZX6N": {
+            "longUrl": "http://github.com/poppa/Pike-Modules/blob/8bdf3da1996ed49709fc90cd497ccc1ee574526e/Social.pmod/Lastfm.pmod"
+        }
+    }, 
+    "statusCode": "OK"
+}

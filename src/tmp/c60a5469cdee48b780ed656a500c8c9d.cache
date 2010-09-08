@@ -1,0 +1,49 @@
+HTTP/1.1 200 OK
+Server: nginx/0.7.42
+Date: Mon, 19 Oct 2009 23:00:12 GMT
+Content-Type: text/html;charset=utf-8
+Connection: close
+Content-Length: 822
+Allow: GET, HEAD, POST
+Set-Cookie: anonu=psu__7c19058a-343a-46a4-a4ea-0272f9e170a4---a94e04a4ea1c622c7f8837bc03e4b87e; Domain=.bit.ly; expires=Mon, 19-Sep-2011 19:00:12 GMT; Path=/; Version=1
+Set-Cookie: bsession=4b5fa461-7fdf-4981-aab3-8c50b207515a---e9d65a1de1fdf70e0f1f594b5409345f; Domain=.bit.ly; expires=Mon, 19-Sep-2011 19:00:12 GMT; Path=/; Version=1
+
+{
+    "errorCode": 0, 
+    "errorMessage": "", 
+    "results": {
+        "clicks": 23, 
+        "hash": "mTcet", 
+        "referrers": {
+            "": {
+                "direct": 15
+            }, 
+            "bit.ly": {
+                "/": 1
+            }, 
+            "twitter.com": {
+                "/": 3
+            }, 
+            "www.facebook.com": {
+                "/home.php": 4
+            }
+        }, 
+        "userClicks": 23, 
+        "userHash": "3DZX6N", 
+        "userReferrers": {
+            "": {
+                "direct": 15
+            }, 
+            "bit.ly": {
+                "/": 1
+            }, 
+            "twitter.com": {
+                "/": 3
+            }, 
+            "www.facebook.com": {
+                "/home.php": 4
+            }
+        }
+    }, 
+    "statusCode": "OK"
+}

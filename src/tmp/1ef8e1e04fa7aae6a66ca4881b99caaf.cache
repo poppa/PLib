@@ -1,0 +1,44 @@
+HTTP/1.1 200 OK
+Server: nginx/0.7.42
+Date: Tue, 20 Oct 2009 22:54:26 GMT
+Content-Type: text/html;charset=utf-8
+Connection: close
+Content-Length: 967
+Allow: GET, HEAD, POST
+Set-Cookie: anonu=psu__89c78034-594b-4888-92ba-9c89e5e0aa29---b030a665eef9c0fdbc2c9fafbe6b756f; Domain=.bit.ly; expires=Tue, 20-Sep-2011 18:54:26 GMT; Path=/; Version=1
+Set-Cookie: bsession=5cca6fe2-dd90-4e53-98dc-98dc7aeadd33---9d6e9575947f02ae13e287206d2ac83a; Domain=.bit.ly; expires=Tue, 20-Sep-2011 18:54:26 GMT; Path=/; Version=1
+
+{
+    "errorCode": 0, 
+    "errorMessage": "", 
+    "results": {
+        "quickly-new-rails-like-rapid-development-tools-for-ubuntu.ars": {
+            "calais": {}, 
+            "calaisId": "", 
+            "calaisResolutions": {}, 
+            "contentLength": "", 
+            "contentType": "", 
+            "errorCode": 1204, 
+            "errorMessage": "Not a valid bitly hash.", 
+            "exif": {}, 
+            "globalHash": "", 
+            "hash": "", 
+            "htmlMetaDescription": "", 
+            "htmlMetaKeywords": "", 
+            "htmlTitle": "", 
+            "id3": {}, 
+            "keyword": "", 
+            "keywords": [], 
+            "longUrl": "", 
+            "metacarta": [], 
+            "mirrorUrl": "", 
+            "shortenedByUser": "", 
+            "statusCode": "ERROR", 
+            "surbl": 0, 
+            "thumbnail": {}, 
+            "users": [], 
+            "version": 1.0
+        }
+    }, 
+    "statusCode": "OK"
+}

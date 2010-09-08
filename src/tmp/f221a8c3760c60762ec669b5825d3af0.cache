@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Connection: close
+Server: Caudium/1.5.1 DEVEL
+Date: Fri, 09 Jul 2010 17:44:04 GMT
+Content-Length: 2348
+X-Got-Fish: Pike v7.6 release 112
+Last-Modified: Fri, 09 Jul 2010 17:30:00 GMT
+MIME-Version: 1.0
+Content-Type: application/octet-stream
+
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel><title>Recently Updated Pike Modules</title><link>http://modules.gotpike.org</link><description>Five most recently updated modules</description><generator>Pike 7.6.24</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><link>http://modules.gotpike.org/module_info.html?select=1.0&amp;amp;module_id=43</link><guid isPermaLink="1">http://modules.gotpike.org/module_info.html?select=1.0&amp;amp;module_id=43</guid><title>Public.Parser.JSON2 1.0</title><pubDate>2010-6-10 11:14:23</pubDate><description>This module has been merged into pike 7.8. It is not maintained anylonger. This version uses the Standards.JSON internally, which now offers the same functionality. This is intented for those who are too lazy to update their code.</description></item><item><link>http://modules.gotpike.org/module_info.html?select=1.5&amp;amp;module_id=42</link><guid isPermaLink="1">http://modules.gotpike.org/module_info.html?select=1.5&amp;amp;module_id=42</guid><title>Public.Xapian 1.5</title><pubDate>2010-3-10 09:14:37</pubDate><description>&lt;br/&gt;- Fixes for autodoc&lt;p&gt;
+</description></item><item><link>http://modules.gotpike.org/module_info.html?select=1.0&amp;amp;module_id=65</link><guid isPermaLink="1">http://modules.gotpike.org/module_info.html?select=1.0&amp;amp;module_id=65</guid><title>Public.Sound.Midi 1.0</title><pubDate>2009-12-26 08:09:01</pubDate><description>Initial check in</description></item><item><link>http://modules.gotpike.org/module_info.html?select=1.2&amp;amp;module_id=25</link><guid isPermaLink="1">http://modules.gotpike.org/module_info.html?select=1.2&amp;amp;module_id=25</guid><title>Public.Tools.ConfigFiles 1.2</title><pubDate>2009-10-25 12:18:56</pubDate><description>&lt;br/&gt;- fixes for Pike 7.8&lt;p&gt;
+</description></item><item><link>http://modules.gotpike.org/module_info.html?select=0.2&amp;amp;module_id=62</link><guid isPermaLink="1">http://modules.gotpike.org/module_info.html?select=0.2&amp;amp;module_id=62</guid><title>Public.Standards.vCard 0.2</title><pubDate>2009-6-25 10:58:40</pubDate><description>- proper support for 2.1&#xD;&lt;br/&gt;- more convenient interface with some more automatic transformation for certain complex properties&#xD;&lt;br/&gt;- some bugfixes&#xD;&lt;br/&gt;</description></item></channel>
+</rss>

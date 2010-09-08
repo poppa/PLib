@@ -11,6 +11,9 @@
  */
 
 if (PHP_SAPI == 'cli') {
+  
+if (!class_exists('PLib'))
+  require_once dirname(__FILE__) . '/PLib.php';
 
 /**
  * Clears the cli color

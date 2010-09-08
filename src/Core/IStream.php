@@ -80,6 +80,14 @@ interface IStream
 	 * @return int (0 on success, -1 otherwise)
 	 */
   public function Seek($offset, $whence=SEEK_SET);
+  /**
+   * Look `$bytes` ahead and reset to the previous position
+   *
+   * @param int $bytes
+   *  Number of bytes to peek
+   * @return string
+   */
+  public function Peek($bytes=1);
 	/**
 	 * Returns the current offset
 	 *

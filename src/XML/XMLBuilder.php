@@ -158,6 +158,7 @@ class XMLNode
 	 */
 	function AddNodeTree($tree)
 	{
+//		die($tree);
     $xdoc = new DomDocument('1.0', $this->owner->Encoding());
 		$xdoc->preserveWhiteSpace = false;
     $xdoc->loadXML($tree);

@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Server: nginx/0.7.42
+Date: Tue, 20 Oct 2009 22:50:37 GMT
+Content-Type: text/xml;charset=utf-8
+Connection: close
+Content-Length: 398
+Allow: GET, HEAD, POST
+Set-Cookie: anonu=psu__9c065b12-8f07-4fd1-83f6-3223bb3e3201---efa1f7602a7e36c8679102143bbaca69; Domain=.bit.ly; expires=Tue, 20-Sep-2011 18:50:37 GMT; Path=/; Version=1
+Set-Cookie: bsession=59cf207b-c8fb-4b5b-8a8b-7bbc0e4106bf---464d654121f46f5e98b8e1a24239c930; Domain=.bit.ly; expires=Tue, 20-Sep-2011 18:50:37 GMT; Path=/; Version=1
+
+<bitly><errorCode>0</errorCode><errorMessage></errorMessage><results><nodeKeyVal><userHash>dM3tG</userHash><shortKeywordUrl></shortKeywordUrl><hash>sDUm1</hash><nodeKey><![CDATA[http://arstechnica.com/open-source/news/2009/08/quickly-new-rails-like-rapid-development-tools-for-ubuntu.ars]]></nodeKey><shortUrl>http://bit.ly/dM3tG</shortUrl></nodeKeyVal></results><statusCode>OK</statusCode></bitly>

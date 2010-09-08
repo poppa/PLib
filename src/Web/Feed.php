@@ -284,7 +284,7 @@ abstract class AbstractThing
 	 */
 	public function GetElement($which)
 	{
-		return issetor($this->data[$which], false);
+		return isset($this->data[$which]) ? $this->data[$which] : false;
 	}
 
 	/**
@@ -559,6 +559,28 @@ abstract class AbstractItem extends AbstractThing
    * @param string|Date $value
    */
   abstract public function SetDate($value);
+
+  /**
+   * Returns the link element
+   *
+   * @param bool $firstSingle
+   *  Atom feed items can have multiple links and and have several attributes.
+   *  If this is set to true the first found link with the attribute `type`
+   *  set to `text/html` will be returned
+   * @return string|array
+   */
+  public function GetLink($firstSingle=false)
+  {
+    $lnks = $this->data['link'];
+    if (is_array($lnks) && $firstSingle) {
+      foreach ($lnks as $lnk) {
+        if (isset($lnk['type']) &&  $lnk['type'] == 'text/html')
+          return $lnk['href'];
+      }
+    }
+
+    return $lnks;
+  }
 }
 
 /**
@@ -780,10 +802,25 @@ abstract class Feed
    * Render th object to XML
    * @param AbstractChannel $chnl
    * @param bool $addHeader
-   *  If true an text/xml header will be output
+   *  If true an `application/[type]+xml` header will be output
    */
   public function Render(AbstractChannel $chnl, $addHeader=false)
   {
+  	if ($addHeader) {
+  		$ct = 'text/xml';
+
+  		if ($this instanceof RssFeed) {
+  			$ct = 'application/xml+rss';
+  		}
+  		elseif ($this instanceof AtomFeed) {
+  			$ct = 'application/atom+rss';
+  		}
+  		elseif ($this instanceof RdfFeed) {
+	  		$ct = 'application/rdf+rss';
+  		}
+
+  		header('content-type', $ct . '; charset=iso-8859-1');
+  	}
     $xdoc = new XMLDocument('1.0', $this->encoding);
     $root = $xdoc->AddNode($this->nodeName, null, $this->attributes+$this->ns);
     $root->AddNodeTree((string)$chnl);
@@ -961,9 +998,8 @@ class RssChannel extends AbstractChannel
 		$date = null;
 		if (isset($this->data['lastBuildDate']))
 			$date = $this->data['lastBuildDate'];
-
 		else if (isset($this->data['pubDate']))
-			$date = $this->data['pubdate'];
+			$date = $this->data['pubDate'];
 
 		return new Date($date);
 	}
@@ -975,7 +1011,7 @@ class RssChannel extends AbstractChannel
 	 */
 	public function GetTitle()
 	{
-		return issetor($this->data['title'], null);
+		return isset($this->data['title']) ? $this->data['title'] : null;
 	}
 
 	/**
@@ -985,7 +1021,7 @@ class RssChannel extends AbstractChannel
 	 */
 	public function GetContent()
 	{
-		return issetor($this->data['description'], null);
+		return isset($this->data['description']) ? $this->data['description']:null;
 	}
 
   public function SetTitle($value)
@@ -1074,9 +1110,9 @@ class RssItem extends AbstractItem
 	 */
 	public function GetDate()
 	{
-		$date = issetor($this->data['pubDate'], null);
+		$date = isset($this->data['pubDate']) ? $this->data['pubDate'] : null;
 		if (!$date)
-			$date = issetor($this->data['dc:date'], null);
+			$date = isset($this->data['dc:date']) ? $this->data['dc:date'] : null;
 
 		return new Date($date);
 	}
@@ -1088,7 +1124,7 @@ class RssItem extends AbstractItem
 	 */
 	public function GetTitle()
 	{
-		return issetor($this->data['title'], null);
+		return isset($this->data['title']) ? $this->data['title'] : null;
 	}
 
 	/**
@@ -1313,7 +1349,7 @@ class RdfChannel extends AbstractChannel
 	 */
 	public function GetTitle()
 	{
-		return issetor($this->data['title'], null);
+		return isset($this->data['title']) ? $this->data['title'] : null;
 	}
 
 	/**
@@ -1323,7 +1359,7 @@ class RdfChannel extends AbstractChannel
 	 */
 	public function GetContent()
 	{
-		return issetor($this->data['description'], null);
+		return isset($this->data['description']) ? $this->data['description']:null;
 	}
 
   /**
@@ -1483,9 +1519,9 @@ class AtomChannel extends AbstractChannel
 	 */
 	public function GetDate()
 	{
-		$date = issetor($this->data['updated'], null);
+		$date = isset($this->data['updated']) ? $this->data['updated'] : null;
 		if (!$date)
-			$date = issetor($this->data['published'], null);
+			$date = isset($this->data['published']) ? $this->data['published']:null;
 
 		return $date ? new Date($date) : null;
 	}
@@ -1497,7 +1533,7 @@ class AtomChannel extends AbstractChannel
 	 */
 	public function GetTitle()
 	{
-		return issetor($this->data['title'], null);
+		return isset($this->data['title']) ? $this->data['title'] : null;
 	}
 
 	/**
@@ -1508,7 +1544,7 @@ class AtomChannel extends AbstractChannel
 	 */
 	public function GetContent()
 	{
-		return issetor($this->data['summary'], null);
+		return isset($this->data['summary']) ? $this->data['summary'] : null;
 	}
 
   /**
@@ -1581,9 +1617,9 @@ class AtomEntry extends AbstractItem
 	 */
 	public function GetDate()
 	{
-		$date = issetor($this->data['updated'], null);
+		$date = isset($this->data['updated']) ? $this->data['updated'] : null;
 		if (!$date)
-			$date = issetor($this->data['published'], null);
+			$date = isset($this->data['published']) ? $this->data['published'] : null;
 
 		return $date ? new Date($date) : null;
 	}
@@ -1595,7 +1631,7 @@ class AtomEntry extends AbstractItem
 	 */
 	public function GetTitle()
 	{
-		return issetor($this->data['title'], null);
+		return isset($this->data['title']) ? $this->data['title'] : null;
 	}
 
 	/**
@@ -1606,9 +1642,9 @@ class AtomEntry extends AbstractItem
 	 */
 	public function GetContent()
 	{
-		$c = issetor($this->data['content'], null);
+		$c = isset($this->data['content']) ? $this->data['content'] : null;
 		if (!$c)
-			$c = issetor($this->data['summary'], null);
+			$c = isset($this->data['summary']) ? $this->data['summary'] : null;
 
 		return $c;
 	}

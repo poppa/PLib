@@ -1,0 +1,104 @@
+HTTP/1.1 200 OK
+Date: Tue, 18 May 2010 19:37:30 GMT
+Server: Apache/1.3.37 (Unix) mod_gzip/1.3.26.1a mod_fastcgi/FSDATA-1.1 mod_jk/1.1.0 mod_throttle/3.2.0 Embperl/2.0b8 mod_perl/1.29 PHP/4.4.3 mod_ssl/2.8.28 OpenSSL/0.9.8b
+X-Powered-By: PHP/5.2.6
+X-Pingback: http://www.poppa.se/blog/xmlrpc.php
+Last-Modified: Mon, 26 Apr 2010 00:53:48 GMT
+ETag: "15b4e44fceadb9589af48647fd9f6d59"
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: text/xml; charset=UTF-8
+
+128e
+<?xml version="1.0" encoding="UTF-8"?><!-- generator="WordPress/2.8.4" -->
+<rss version="0.92">
+<channel>
+	<title>Pontus Östlund</title>
+	<link>http://www.poppa.se/blog</link>
+	<description>My blog about web development and such</description>
+	<lastBuildDate>Mon, 26 Apr 2010 00:53:48 +0000</lastBuildDate>
+	<docs>http://backend.userland.com/rss092</docs>
+	<language>en</language>
+	
+	<item>
+		<title>Roxen Application Launcher 0.4.5</title>
+		<description>
+
+Okey, here comes an update of my Roxen Application Launcher (come again?) for Linux. 
+
+There's no major changes to this release. The connection to the Roxen server is now stored in a shared object so that it can use a "keep-alive" connection. Not that I think it matters a great ...</description>
+		<link>http://www.poppa.se/blog/roxen-application-launcher-0-4-5/</link>
+			</item>
+	<item>
+		<title>Blue Screen of Death</title>
+		<description>
+
+You don't get surprised when you get to work one morning and your monitors looks like this, given your computer is running the bless from Redmond!
+
+Man I wish I was running Linux at work as well! 
+
+(And no: I hardly drink any Coca Cola at all ;)) </description>
+		<link>http://www.poppa.se/blog/blue-screen-of-death/</link>
+			</item>
+	<item>
+		<title>GTK hacking in Pike</title>
+		<description>I've found out that it's great fun programming desktop applications and of course it gets more fun the more you learn. Now I'm doing a Twitter client in Pike - my favorite programming language - mostly because I wanted to try out GTK programming in Pike. I use the good ...</description>
+		<link>http://www.poppa.se/blog/gtk-hacking-in-pike/</link>
+			</item>
+	<item>
+		<title>Roxen Application Launcher 0.4.4</title>
+		<description>So, here's a new release of the Roxen Application Launcher for Linux (RAL). The previous versions used my home made (sloppy so) HTTP client which didn't handle redirects or secure connections - thank you tec for the feed back - since I had some major problems getting libsoup working with ...</description>
+		<link>http://www.poppa.se/blog/roxen-application-launcher-0-4-4/</link>
+			</item>
+	<item>
+		<title>Extracting text from PDFs</title>
+		<description>
+Unwanted line breaks in text copied from PDF
+
+Anybody working with information sooner or later have to copy and paste text from PDF-files. And anybody who has done that knows what a pain in the a** that is! You get actual line breaks from the visual line breaks in the PDF. ...</description>
+		<link>http://www.poppa.se/blog/extracting-text-from-pdfs/</link>
+			</item>
+	<item>
+		<title>Bitlyfier &#8211; A Bit.ly client for GNOME</title>
+		<description> For those of us tweeting - or sharing web addresses in general - these long addresses with extensive query strings you wan't to share isn't too user friendly. So we have Bit.ly, among others, that lets you shorten a URL - or give it an alias if you like ...</description>
+		<link>http://www.poppa.se/blog/bitlyfier-a-bit-ly-client-for-gnome/</link>
+			</item>
+	<item>
+		<title>JavaScript URI class</title>
+		<description>The other day I needed an URI class for JavaScript. I was doing some stuff where I needed to alter certain parts of an URI. I bet there's a couple of URI classes for JavaScript out there but I can be a bit nit-picky about code and how it's written ...</description>
+		<link>http://www.poppa.se/blog/javascript-uri-class/</link>
+			</item>
+	<item>
+		<title>New Roxen Application Launcher for Linux written in Vala</title>
+		<description>A couple of weeks ago I stumbled upon a fairly new programming language named Vala. I thought it looked promising and since Vala is developed by the GNOME project - with the purpose of making software development for, primarily, GNOME easier - and I'm an avid GNOME user I wanted ...</description>
+		<link>http://www.poppa.se/blog/new-roxen-application-launcher-for-linux-written-in-vala/</link>
+			</item>
+	<item>
+		<title>Gravatar module for Roxen</title>
+		<description>Although I'm working on some social web related Pike modules where a Gravatar module is included I needed a Gravatar module right now at work so I hacked up a standalone Gravatar Roxen module.
+
+This is how it works
+
+
+  
+    
+       ...</description>
+		<link>http://www.poppa.se/blog/gravatar-module-for-roxen/</link>
+			</item>
+	<item>
+		<title>A change of times</title>
+		<description>
+
+Times are changing! This old beer ad is in Swedish but in short it says: 
+
+
+Pripps in a new disposable pack, for the sailing tripp. Extra tip: Make a hole in the bottom of the empty pack and it will sink faster.
+
+It feels we at least have come some way ...</description>
+		<link>http://www.poppa.se/blog/a-change-of-times/</link>
+			</item>
+</channel>
+</rss>
+
+0
+

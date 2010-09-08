@@ -1,0 +1,130 @@
+HTTP/1.1 200 OK
+Date: Mon, 23 Aug 2010 17:55:04 GMT
+P3P: policyref="http://p3p.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE GOV"
+Last-Modified: Mon, 23 Aug 2010 13:50:33 GMT
+X-Served-By: www28.flickr.mud.yahoo.com
+Content-Length: 7113
+Connection: close
+Content-Type: application/atom+xml; charset=utf-8
+
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:dc="http://purl.org/dc/elements/1.1/"
+      xmlns:flickr="urn:flickr:"
+      xmlns:media="http://search.yahoo.com/mrss/">
+
+  <title>Content from Meily</title>
+  <link rel="self" href="http://api.flickr.com/services/feeds/photoset.gne?set=72157624657000389&amp;nsid=23346330%40N02&amp;lang=en-us" />
+  <link rel="alternate" type="text/html" href="http://www.flickr.com/photos/23346330@N02/sets/72157624657000389"/>
+  <id>tag:flickr.com,2005:http://www.flickr.com/photos/23346330@N02/sets/72157624657000389</id>
+  <icon>http://farm5.static.flickr.com/4094/4916703986_d7b73035c0_s.jpg</icon>
+  <subtitle>My daily portrait</subtitle>
+  <updated>2010-08-23T13:50:33Z</updated>
+  <generator uri="http://www.flickr.com/">Flickr</generator>
+
+  <entry>
+    <title>2010-08-23-084904</title>
+    <link rel="alternate" type="text/html" href="http://www.flickr.com/photos/23346330@N02/4920128906/in/set-72157624657000389/"/>
+    <id>tag:flickr.com,2005:/photo/4920128906/in/set-72157624657000389</id>
+    <published>2010-08-23T13:50:33Z</published>
+    <updated>2010-08-23T13:50:33Z</updated>
+    <dc:date.Taken>2010-08-23T15:50:29-08:00</dc:date.Taken>
+    <content type="html">			&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/people/23346330@N02/&quot;&gt;pontus.ostlund&lt;/a&gt; posted a photo:&lt;/p&gt;
+	
+&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/photos/23346330@N02/4920128906/&quot; title=&quot;2010-08-23-084904&quot;&gt;&lt;img src=&quot;http://farm5.static.flickr.com/4100/4920128906_8df3d2e61d_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;2010-08-23-084904&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+</content>
+    <author>
+      <name>pontus.ostlund</name>
+      <uri>http://www.flickr.com/people/23346330@N02/</uri>
+      <flickr:nsid>23346330@N02</flickr:nsid>
+    </author>
+    <link rel="enclosure" type="image/jpeg" href="http://farm5.static.flickr.com/4100/4920128906_c42ddb4772_o.jpg" />
+  </entry>
+
+  <entry>
+    <title>2010-08-22-171331</title>
+    <link rel="alternate" type="text/html" href="http://www.flickr.com/photos/23346330@N02/4916704004/in/set-72157624657000389/"/>
+    <id>tag:flickr.com,2005:/photo/4916704004/in/set-72157624657000389</id>
+    <published>2010-08-22T16:13:16Z</published>
+    <updated>2010-08-22T16:13:16Z</updated>
+    <dc:date.Taken>2010-08-22T18:12:24-08:00</dc:date.Taken>
+    <content type="html">			&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/people/23346330@N02/&quot;&gt;pontus.ostlund&lt;/a&gt; posted a photo:&lt;/p&gt;
+	
+&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/photos/23346330@N02/4916704004/&quot; title=&quot;2010-08-22-171331&quot;&gt;&lt;img src=&quot;http://farm5.static.flickr.com/4101/4916704004_6f2cf4c8d7_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;2010-08-22-171331&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+</content>
+    <author>
+      <name>pontus.ostlund</name>
+      <uri>http://www.flickr.com/people/23346330@N02/</uri>
+      <flickr:nsid>23346330@N02</flickr:nsid>
+    </author>
+    <link rel="enclosure" type="image/jpeg" href="http://farm5.static.flickr.com/4101/4916704004_d5f7643027_o.jpg" />
+    <category term="daily" scheme="http://www.flickr.com/photos/tags/" />
+  </entry>
+
+  <entry>
+    <title>2010-08-21-171107</title>
+    <link rel="alternate" type="text/html" href="http://www.flickr.com/photos/23346330@N02/4916704000/in/set-72157624657000389/"/>
+    <id>tag:flickr.com,2005:/photo/4916704000/in/set-72157624657000389</id>
+    <published>2010-08-22T16:13:16Z</published>
+    <updated>2010-08-22T16:13:16Z</updated>
+    <dc:date.Taken>2010-08-22T18:12:24-08:00</dc:date.Taken>
+    <content type="html">			&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/people/23346330@N02/&quot;&gt;pontus.ostlund&lt;/a&gt; posted a photo:&lt;/p&gt;
+	
+&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/photos/23346330@N02/4916704000/&quot; title=&quot;2010-08-21-171107&quot;&gt;&lt;img src=&quot;http://farm5.static.flickr.com/4096/4916704000_a646aaff87_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;2010-08-21-171107&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+</content>
+    <author>
+      <name>pontus.ostlund</name>
+      <uri>http://www.flickr.com/people/23346330@N02/</uri>
+      <flickr:nsid>23346330@N02</flickr:nsid>
+    </author>
+    <link rel="enclosure" type="image/jpeg" href="http://farm5.static.flickr.com/4096/4916704000_127bd4d236_o.jpg" />
+    <category term="daily" scheme="http://www.flickr.com/photos/tags/" />
+  </entry>
+
+  <entry>
+    <title>2010-08-20-140713</title>
+    <link rel="alternate" type="text/html" href="http://www.flickr.com/photos/23346330@N02/4916703990/in/set-72157624657000389/"/>
+    <id>tag:flickr.com,2005:/photo/4916703990/in/set-72157624657000389</id>
+    <published>2010-08-22T16:13:16Z</published>
+    <updated>2010-08-22T16:13:16Z</updated>
+    <dc:date.Taken>2010-08-22T18:12:24-08:00</dc:date.Taken>
+    <content type="html">			&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/people/23346330@N02/&quot;&gt;pontus.ostlund&lt;/a&gt; posted a photo:&lt;/p&gt;
+	
+&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/photos/23346330@N02/4916703990/&quot; title=&quot;2010-08-20-140713&quot;&gt;&lt;img src=&quot;http://farm5.static.flickr.com/4099/4916703990_858fba60c6_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;2010-08-20-140713&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+</content>
+    <author>
+      <name>pontus.ostlund</name>
+      <uri>http://www.flickr.com/people/23346330@N02/</uri>
+      <flickr:nsid>23346330@N02</flickr:nsid>
+    </author>
+    <link rel="enclosure" type="image/jpeg" href="http://farm5.static.flickr.com/4099/4916703990_2f242d122a_o.jpg" />
+    <category term="daily" scheme="http://www.flickr.com/photos/tags/" />
+  </entry>
+
+  <entry>
+    <title>2010-08-19-182636</title>
+    <link rel="alternate" type="text/html" href="http://www.flickr.com/photos/23346330@N02/4916703986/in/set-72157624657000389/"/>
+    <id>tag:flickr.com,2005:/photo/4916703986/in/set-72157624657000389</id>
+    <published>2010-08-22T16:12:23Z</published>
+    <updated>2010-08-22T16:12:23Z</updated>
+    <dc:date.Taken>2010-08-22T18:12:23-08:00</dc:date.Taken>
+    <content type="html">			&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/people/23346330@N02/&quot;&gt;pontus.ostlund&lt;/a&gt; posted a photo:&lt;/p&gt;
+	
+&lt;p&gt;&lt;a href=&quot;http://www.flickr.com/photos/23346330@N02/4916703986/&quot; title=&quot;2010-08-19-182636&quot;&gt;&lt;img src=&quot;http://farm5.static.flickr.com/4094/4916703986_d7b73035c0_m.jpg&quot; width=&quot;240&quot; height=&quot;180&quot; alt=&quot;2010-08-19-182636&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+</content>
+    <author>
+      <name>pontus.ostlund</name>
+      <uri>http://www.flickr.com/people/23346330@N02/</uri>
+      <flickr:nsid>23346330@N02</flickr:nsid>
+    </author>
+    <link rel="enclosure" type="image/jpeg" href="http://farm5.static.flickr.com/4094/4916703986_7f50f03a2f_o.jpg" />
+    <category term="daily" scheme="http://www.flickr.com/photos/tags/" />
+  </entry>
+
+
+</feed>

@@ -434,7 +434,7 @@ class Font
 	/**
 	 * Returns the version of the font
 	 *
-	 * @return float
+	 * @return string
 	 */
 	public function Version()
 	{
@@ -574,7 +574,7 @@ class FontTTF extends Font
 			$j = 0;
 			while (++$j <= $count) {
 				$entry = $rd->ReadBlock($tablebase + ($j-1)*12, 12);
-
+				$p1 = $rd->Position();
 				$namePlatformID = null;
 				$nameEncodingID = null;
 				$nameLanguageID = null;
@@ -617,13 +617,15 @@ class FontTTF extends Font
 
 				$isset[] = $nameID;
 
+				echo "$nameID: $name\n";
+				
 				switch ($nameID)
 				{
 					case 1: $this->family       = $name; break;
 					case 2: $this->subfamily    = $name; break;
 					case 3: $this->uniquename   = $name; break;
 					case 4: $this->fullname     = $name; break;
-					case 5: $this->version      = (float)$name; break;
+					case 5: $this->version      = $name; break;
 					case 6: $this->psname       = $name; break;
 					case 7: $this->trademark    = $name; break;
 					case 8: $this->manufacturer = $name; break;
