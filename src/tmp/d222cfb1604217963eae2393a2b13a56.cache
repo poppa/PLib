@@ -1,0 +1,1731 @@
+HTTP/1.1 200 OK
+Server: nginx/0.7.67
+Date: Mon, 06 Sep 2010 22:23:45 GMT
+Content-Type: application/atom+xml; charset=utf-8
+Connection: close
+Status: 200 OK
+ETag: "f22cb9a10bba824b6e0ab317b8b8a15b"
+X-Runtime: 225ms
+Content-Length: 48915
+Cache-Control: private, max-age=0, must-revalidate
+
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en-US">
+  <id>tag:github.com,2008:/poppa</id>
+  <link type="text/html" rel="alternate" href="http://github.com/poppa"/>
+  <link type="application/atom+xml" rel="self" href="http://github.com/poppa.atom"/>
+  <title>poppa's Activity</title>
+  <updated>2010-09-06T13:08:40-07:00</updated>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/301706312</id>
+    <published>2010-09-06T13:08:40-07:00</published>
+    <updated>2010-09-06T13:08:40-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/b39dcd5b97...efa2f3ec4a"/>
+    <title>poppa pushed to master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PlayStation/commit/efa2f3ec4ae35a54255195dd2cd988715e52cd70"&gt;efa2f3e&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Twitter example updated&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/301689886</id>
+    <published>2010-09-06T12:38:45-07:00</published>
+    <updated>2010-09-06T12:38:45-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/7475269d69...b39dcd5b97"/>
+    <title>poppa pushed to master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PlayStation/commit/b39dcd5b977e78dc43686a0a172d9d8ab75f0602"&gt;b39dcd5&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Twitter example&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/301689376</id>
+    <published>2010-09-06T12:36:28-07:00</published>
+    <updated>2010-09-06T12:36:28-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/024e816df8...dfdd495a04"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/dfdd495a042a77abfcb0590df554c450a4c01c05"&gt;dfdd495&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Some updates to Flickr and Twitter&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/297160893</id>
+    <published>2010-09-01T07:40:30-07:00</published>
+    <updated>2010-09-01T07:40:30-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/51aba53990...024e816df8"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/024e816df8918bdb8708151a0ab1c61c485dd0ae"&gt;024e816&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Missed changing String.string_to_hex to Crypt.string_to_hex in Pike 7.4 compat mode&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/296240037</id>
+    <published>2010-08-31T11:21:06-07:00</published>
+    <updated>2010-08-31T11:21:06-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/1be9701083...51aba53990"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/51aba5399084c08175ef6976f62209e0823587eb"&gt;51aba53&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Fixed some bugs that occured in Pike 7.4. Haven't managed to fix non-ascii chars in Windows though&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:WatchEvent/295186045</id>
+    <published>2010-08-30T11:04:26-07:00</published>
+    <updated>2010-08-30T11:04:26-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/pikelang/Pike-Modules"/>
+    <title>poppa started watching pikelang/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+&lt;div class="details"&gt;
+  
+  &lt;div class="message"&gt;
+    
+      Pike-Modules's description:
+      &lt;blockquote&gt;
+        Various Pike modules
+      &lt;/blockquote&gt;
+    
+  &lt;/div&gt;
+&lt;/div&gt;
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:WatchEvent/295177974</id>
+    <published>2010-08-30T10:48:36-07:00</published>
+    <updated>2010-08-30T10:48:36-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/pikelang/Pike"/>
+    <title>poppa started watching pikelang/Pike</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+&lt;div class="details"&gt;
+  
+  &lt;div class="message"&gt;
+    
+      Pike's description:
+      &lt;blockquote&gt;
+        Pike is a dynamic programming language with a syntax similar to Java and C. It is simple to learn, does not require long compilation passes and has powerful built-in data types allowing simple and really fast data manipulation.
+      &lt;/blockquote&gt;
+    
+  &lt;/div&gt;
+&lt;/div&gt;
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/295163235</id>
+    <published>2010-08-30T10:32:17-07:00</published>
+    <updated>2010-08-30T10:32:17-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/eae4f1292a...1be9701083"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/1be97010838ed0a49ae8dab0b3aa2a0d12f685cd"&gt;1be9701&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Removed a werror lying around&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/295112541</id>
+    <published>2010-08-30T09:53:39-07:00</published>
+    <updated>2010-08-30T09:53:39-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/42cf339a6e...eae4f1292a"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/eae4f1292abd5c1fbace0b772de75168f32f0748"&gt;eae4f12&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Fixed a bug where non-ascii chars would fck up the oauth signature&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/291481859</id>
+    <published>2010-08-26T13:13:37-07:00</published>
+    <updated>2010-08-26T13:13:37-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/MediaDB/compare/f381865256...b02fce8338"/>
+    <title>poppa pushed to master at poppa/MediaDB</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/MediaDB/commit/b02fce8338d66a836fe3fb0c2f4e36d4a0779148"&gt;b02fce8&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Updates from work. A lot working, a lot left to do&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/287884385</id>
+    <published>2010-08-23T13:49:18-07:00</published>
+    <updated>2010-08-23T13:49:18-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/e933be100c...42cf339a6e"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/42cf339a6e5e299f0ab2ad343a6100055555a1cd"&gt;42cf339&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Merge branch 'master' of github.com:poppa/Pike-Modules&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/f1d3bf332cf187cb69b5742b084baee279150e79"&gt;f1d3bf3&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Added a sync upload methos to the Flickr api. Only handles images at the moment. Video support is on its way.&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/a6a3898726423600262ffb7c7db0db53cfe0d0ad"&gt;a6a3898&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Added a sync upload methos to the Flickr api. Only handles images at the moment. Video support is on its way.&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/284784011</id>
+    <published>2010-08-19T19:06:32-07:00</published>
+    <updated>2010-08-19T19:06:32-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/aa5fdf9e4e...e933be100c"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/e933be100c56363a8a939c584ed2c4543b36d1f0"&gt;e933be1&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Added an install instruction&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/b962406bc0f97efb63bc3d74db631e89ac7f04ea"&gt;b962406&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Merge branch 'master' of github.com:poppa/Pike-Modules&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/17fad84fbf96472372c6faa115faa7a396d8fb24"&gt;17fad84&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Local change to pike-project. Stashing&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/279361416</id>
+    <published>2010-08-14T05:09:03-07:00</published>
+    <updated>2010-08-14T05:09:03-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/224cbe3c8f...aa5fdf9e4e"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/aa5fdf9e4e8c0a9496945d3291468201ecd1b707"&gt;aa5fdf9&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Merge branch 'master' of github.com:poppa/Pike-Modules&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/15ebdf9cd61ce72581c3abf423f9ad470a34bef5"&gt;15ebdf9&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;A fix in pike-project. Checking for constant GTK2 wasn't enough, now also checking for GTK2.gtk_init&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/274508784</id>
+    <published>2010-08-09T13:38:57-07:00</published>
+    <updated>2010-08-09T13:38:57-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/8218bf6602...224cbe3c8f"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/224cbe3c8f7ba2b0fed52ef44f0652fe555b5808"&gt;224cbe3&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Merge branch 'master' of github.com:poppa/Pike-Modules&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/0bb0470acd07ce02880641e339582f9bcfa1b497"&gt;0bb0470&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Some Syntaxer updates&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/274326843</id>
+    <published>2010-08-09T11:32:10-07:00</published>
+    <updated>2010-08-09T11:32:10-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/6f82cceb4b...8218bf6602"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/8218bf6602415d2ab0a1e57ee6e724715681ae61"&gt;8218bf6&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Updates to the WSDL module&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/254059034</id>
+    <published>2010-07-17T14:07:26-07:00</published>
+    <updated>2010-07-17T14:07:26-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/6178f3de10...6f82cceb4b"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/6f82cceb4b40d268c9e415378cf1f02e68149e1f"&gt;6f82cce&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;pike-project for creating stubs for Pike modules, both cmod and pmod.&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/246896939</id>
+    <published>2010-07-08T13:49:40-07:00</published>
+    <updated>2010-07-08T13:49:40-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/0cc2a1f824...6178f3de10"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/6178f3de103ac85411a029bcc1613a0cd5513ba6"&gt;6178f3d&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Hm the JSON.pmod was not UTF-8 encoded since I copied it via an USB stick from Winblows at work&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/246884042</id>
+    <published>2010-07-08T13:41:24-07:00</published>
+    <updated>2010-07-08T13:41:24-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/7aa3e3a016...0cc2a1f824"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/0cc2a1f824bb272c3ee631552e5adc5ebb6d0535"&gt;0cc2a1f&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Adding new rewritten version of JSON&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/bccc1601b82885b0f1c7595d9b5a437501a4afc4"&gt;bccc160&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Removing JSON to be replaced with a new version&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/246073663</id>
+    <published>2010-07-07T16:37:27-07:00</published>
+    <updated>2010-07-07T16:37:27-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/de3e62b601...7aa3e3a016"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/7aa3e3a01619f8392c9d318770b7f99915ea6f8c"&gt;7aa3e3a&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Added the Twingly module which at present time has methods for pinging Twingly about updates&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/243923050</id>
+    <published>2010-07-04T17:20:28-07:00</published>
+    <updated>2010-07-04T17:20:28-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PLib/compare/bc2d743f8e...2d80327828"/>
+    <title>poppa pushed to master at poppa/PLib</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PLib/commit/2d80327828957050139f318f505aae678fcebfa9"&gt;2d80327&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Some additions to StringReader().&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PLib/commit/52ea10e00fc398b65d8ef703a3259afd6f4a6ea3"&gt;52ea10e&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Merge branch 'master' of github.com:poppa/PLib&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PLib/commit/4097dd102f381fac1b17e5d160b781244c978bd8"&gt;4097dd1&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Stash&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/243637417</id>
+    <published>2010-07-04T04:01:55-07:00</published>
+    <updated>2010-07-04T04:01:55-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PLib/compare/860fe42448...bc2d743f8e"/>
+    <title>poppa pushed to master at poppa/PLib</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;strong&gt;&lt;span class='committer'&gt;Pontus Östlund&lt;/span&gt;&lt;/strong&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PLib/commit/bc2d743f8e53d9c545bce15fa3e62b6c902f200f"&gt;bc2d743&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Fixed a bug in PLib::__toString() where it could take an argument. That's pure wrong in newer versions of PHP. Also made StringReader implement IStream&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/243254145</id>
+    <published>2010-07-03T04:59:19-07:00</published>
+    <updated>2010-07-03T04:59:19-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Roxen-Application-Launcher/compare/532f4ec059...93bead6339"/>
+    <title>poppa pushed to master at poppa/Roxen-Application-Launcher</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;strong&gt;&lt;span class='committer'&gt;Pontus Östlund&lt;/span&gt;&lt;/strong&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Roxen-Application-Launcher/commit/93bead6339e4e2e6f77f9c7e3540949fdadbab9c"&gt;93bead6&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Updated to compile with Vala 0.9.1. No other changes&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/243162138</id>
+    <published>2010-07-03T01:42:09-07:00</published>
+    <updated>2010-07-03T01:42:09-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Bitlyfier/compare/b99f60a05c...07c868b66f"/>
+    <title>poppa pushed to master at poppa/Bitlyfier</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;strong&gt;&lt;span class='committer'&gt;Pontus Östlund&lt;/span&gt;&lt;/strong&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Bitlyfier/commit/07c868b66f677c7968c3f6bf7608b945acb4a786"&gt;07c868b&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Made it compile with Vala 0.9.1&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/242758160</id>
+    <published>2010-07-02T10:38:16-07:00</published>
+    <updated>2010-07-02T10:38:16-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/74f8c78e21...de3e62b601"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/de3e62b6013101a49886347fd2449223f855a461"&gt;de3e62b&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;New enhanced version of Syntaxer.pmod&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/241148073</id>
+    <published>2010-06-30T16:46:37-07:00</published>
+    <updated>2010-06-30T16:46:37-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/31892939c9...7475269d69"/>
+    <title>poppa pushed to master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PlayStation/commit/7475269d697b46da9b2544836b3c5ea10d9de706"&gt;7475269&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Made jsmin.vala compile on Winblows as well&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/241124453</id>
+    <published>2010-06-30T16:14:32-07:00</published>
+    <updated>2010-06-30T16:14:32-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/9e1c7cd2cf...74f8c78e21"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/74f8c78e213802f672d52fc9d249159fc3d527fd"&gt;74f8c78&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Jadad jada...forgot a thing&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/241116303</id>
+    <published>2010-06-30T16:09:33-07:00</published>
+    <updated>2010-06-30T16:09:33-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/758ea95731...9e1c7cd2cf"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/9e1c7cd2cf6bbc8f927f1b14df47f2ea33668fb4"&gt;9e1c7cd&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Made some minor optimizations to JSMin&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/237978477</id>
+    <published>2010-06-27T16:55:55-07:00</published>
+    <updated>2010-06-27T16:55:55-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/Pike-Modules/compare/6b34c8ada3...758ea95731"/>
+    <title>poppa pushed to master at poppa/Pike-Modules</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/Pike-Modules/commit/758ea95731603d5d9cb5f821a8d567486242a200"&gt;758ea95&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Fixed a lot with documentation. Soon there'll be a documentation site. Added some updates to SimpleSOAP and WSDL and XSD from work.&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/237940295</id>
+    <published>2010-06-27T16:19:32-07:00</published>
+    <updated>2010-06-27T16:19:32-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/3cc1a1894e...31892939c9"/>
+    <title>poppa pushed to master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PlayStation/commit/31892939c90d894ad7311edd49d01263eadef5b7"&gt;3189293&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Yeah, missed some...&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/237939920</id>
+    <published>2010-06-27T16:16:47-07:00</published>
+    <updated>2010-06-27T16:16:47-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/4b2b2dc3ad...3cc1a1894e"/>
+    <title>poppa pushed to master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PlayStation/commit/3cc1a1894ead62a304bf00e1cbd9b7d2ba5dc0a2"&gt;3cc1a18&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Jada jada&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/237818387</id>
+    <published>2010-06-27T11:10:48-07:00</published>
+    <updated>2010-06-27T11:10:48-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/6d486d5dea...4b2b2dc3ad"/>
+    <title>poppa pushed to master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PlayStation/commit/4b2b2dc3adf9c3a307c3f020934dba86d23b4a59"&gt;4b2b2dc&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Misc  updates and additions&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/237748931</id>
+    <published>2010-06-27T06:50:26-07:00</published>
+    <updated>2010-06-27T06:50:26-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/bc152a2fd2...6d486d5dea"/>
+    <title>poppa pushed to master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/PlayStation/commit/6d486d5deab530770a1eee120ed6f13108114feb"&gt;6d486d5&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;First addition of code&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:CreateEvent/237717477</id>
+    <published>2010-06-27T04:03:48-07:00</published>
+    <updated>2010-06-27T04:03:48-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation/compare/master"/>
+    <title>poppa created branch master at poppa/PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+  &lt;div class="message"&gt;
+    
+      New branch is at
+      &lt;a href="http://github.com/poppa/PlayStation/tree/master"&gt;poppa/PlayStation/tree/master&lt;/a&gt;
+      
+    
+  &lt;/div&gt;
+&lt;/div&gt;
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:CreateEvent/237716148</id>
+    <published>2010-06-27T03:55:55-07:00</published>
+    <updated>2010-06-27T03:55:55-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/PlayStation"/>
+    <title>poppa created repository PlayStation</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+  &lt;div class="message"&gt;
+    
+      Various scripts and such
+    
+  &lt;/div&gt;
+&lt;/div&gt;
+</content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:PushEvent/208133053</id>
+    <published>2010-05-18T14:51:59-07:00</published>
+    <updated>2010-05-18T14:51:59-07:00</updated>
+    <link type="text/html" rel="alternate" href="http://github.com/poppa/MediaDB/compare/39452f14e8...f381865256"/>
+    <title>poppa pushed to master at poppa/MediaDB</title>
+    <author>
+      <name>poppa</name>
+      <uri>http://github.com/poppa</uri>
+    </author>
+    <media:thumbnail height="30" width="30" url="http://www.gravatar.com/avatar/f3e4e89a47d9c676621c12622652d7fa?s=30&amp;d=http%3A%2F%2Fgithub.com%2Fimages%2Fgravatars%2Fgravatar-140.png"/>
+    <content type="html">
+
+
+
+
+
+
+&lt;div class="details"&gt;
+  
+
+  
+    &lt;div class="commits"&gt;
+    &lt;ul&gt;
+    
+      
+      &lt;li&gt;
+        
+          &lt;a href="http://github.com/poppa" class="committer"&gt;poppa&lt;/a&gt;
+        
+        committed
+        &lt;code&gt;&lt;a href="http://github.com/poppa/MediaDB/commit/f381865256d48c1e0e75beabaa1d386d3a2181b9"&gt;f381865&lt;/a&gt;&lt;/code&gt;
+
+        &lt;div class="message"&gt;
+          &lt;blockquote&gt;Begun on the filesystem watchers. Also generated some documentation.&lt;/blockquote&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+    
+
+    
+    &lt;/ul&gt;
+    &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+</content>
+  </entry>
+</feed>
+

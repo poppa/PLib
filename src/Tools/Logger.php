@@ -201,8 +201,13 @@ class Logger
    */
   protected function getMessage($args)
   {
-    $msg = array_shift($args);
-    if (sizeof($args))
+  	$msg = null;
+  	if (is_array($args))
+    	$msg = array_shift($args);
+    else
+    	$msg = $args;
+    	
+    if (is_array($msg) && sizeof($args))
       $msg = $this->format(vsprintf($msg, $args));
     else
       $msg = $this->format($msg);

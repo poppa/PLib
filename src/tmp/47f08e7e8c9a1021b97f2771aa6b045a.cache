@@ -1,0 +1,219 @@
+HTTP/1.1 200 OK
+Date: Mon, 06 Sep 2010 22:23:40 GMT
+Server: hi
+Status: 200 OK
+X-Transaction: 1283811820-84441-12882
+X-RateLimit-Limit: 150
+ETag: "9ddb868c1245301ad7996515afe94e69"
+Last-Modified: Mon, 06 Sep 2010 22:23:40 GMT
+X-RateLimit-Remaining: 147
+X-Runtime: 0.01084
+Content-Type: application/rss+xml; charset=utf-8
+Content-Length: 11326
+Pragma: no-cache
+X-RateLimit-Class: api
+X-Revision: DEV
+Expires: Tue, 31 Mar 1981 05:00:00 GMT
+Cache-Control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0
+X-RateLimit-Reset: 1283813350
+Set-Cookie: k=83.191.226.134.1283811820714588; path=/; expires=Mon, 13-Sep-10 22:23:40 GMT; domain=.twitter.com
+Set-Cookie: guest_id=128381182072229353; path=/; expires=Wed, 06 Oct 2010 22:23:40 GMT
+Set-Cookie: _twitter_sess=BAh7CDoPY3JlYXRlZF9hdGwrCLPEJekqAToHaWQiJWY5NDg4MDVlM2NmMzBh%250AYzdmMmY4YTE1YmE3ZjFhMDBjIgpmbGFzaElDOidBY3Rpb25Db250cm9sbGVy%250AOjpGbGFzaDo6Rmxhc2hIYXNoewAGOgpAdXNlZHsA--579afecf06e7ac4e0410cf93371b9bd0b0731646; domain=.twitter.com; path=/
+Vary: Accept-Encoding
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+Connection: close
+
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:georss="http://www.georss.org/georss" xmlns:twitter="http://api.twitter.com">
+  <channel>
+    <title>Twitter / poppanator</title>
+    <link>http://twitter.com/poppanator</link>
+    <atom:link type="application/rss+xml" rel="self" href="http://twitter.com/statuses/user_timeline/26198368.rss"/>
+    <description>Twitter updates from Pontus &#214;stlund / poppanator.</description>
+    <language>en-us</language>
+    <ttl>40</ttl>
+  <item>
+    <title>poppanator: I've got #SOAP in my eyes #fb</title>
+    <description>poppanator: I've got #SOAP in my eyes #fb</description>
+    <pubDate>Fri, 03 Sep 2010 13:35:24 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/22887309582</guid>
+    <link>http://twitter.com/poppanator/statuses/22887309582</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: @bdoughan Oh, that would be much, much appreciated :) I'll put up an explaination of my problem...</title>
+    <description>poppanator: @bdoughan Oh, that would be much, much appreciated :) I'll put up an explaination of my problem...</description>
+    <pubDate>Fri, 03 Sep 2010 06:38:46 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/22866255419</guid>
+    <link>http://twitter.com/poppanator/statuses/22866255419</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: Anyone with a black belt in #JAXB bindings? Anyone? GRRRRRRR!</title>
+    <description>poppanator: Anyone with a black belt in #JAXB bindings? Anyone? GRRRRRRR!</description>
+    <pubDate>Thu, 02 Sep 2010 14:04:02 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/22800555468</guid>
+    <link>http://twitter.com/poppanator/statuses/22800555468</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: @webhaven We just opened our regions first public &quot;charger&quot; where a Tesla did the premiere charge. A cool car. http://bit.ly/c6zIJ9</title>
+    <description>poppanator: @webhaven We just opened our regions first public &quot;charger&quot; where a Tesla did the premiere charge. A cool car. http://bit.ly/c6zIJ9</description>
+    <pubDate>Tue, 31 Aug 2010 18:13:26 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/22638276753</guid>
+    <link>http://twitter.com/poppanator/statuses/22638276753</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: This is a pretty cool electric car: http://www.teslamotors.com/roadster</title>
+    <description>poppanator: This is a pretty cool electric car: http://www.teslamotors.com/roadster</description>
+    <pubDate>Mon, 30 Aug 2010 14:11:37 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/22527335196</guid>
+    <link>http://twitter.com/poppanator/statuses/22527335196</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: Tjoho! Inte m&#229;nga timmar kvar tills man f&#229;r g&#229; och jobba igen!</title>
+    <description>poppanator: Tjoho! Inte m&#229;nga timmar kvar tills man f&#229;r g&#229; och jobba igen!</description>
+    <pubDate>Sun, 22 Aug 2010 15:02:06 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/21835773729</guid>
+    <link>http://twitter.com/poppanator/statuses/21835773729</link>
+    <twitter:source>&lt;a href=&quot;https://launchpad.net/gwibber/&quot; rel=&quot;nofollow&quot;&gt;Gwibber&lt;/a&gt;</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: Bug hunting!</title>
+    <description>poppanator: Bug hunting!</description>
+    <pubDate>Sun, 22 Aug 2010 14:52:45 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/21835089868</guid>
+    <link>http://twitter.com/poppanator/statuses/21835089868</link>
+    <twitter:source>&lt;a href=&quot;https://launchpad.net/gwibber/&quot; rel=&quot;nofollow&quot;&gt;Gwibber&lt;/a&gt;</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: @stefanjanson Hehe, tack! Var p&#229; semester och .se hade fel adress till mig (i.e ingen r&#228;kning) osv. Nu &#228;r det l&#246;st i alla fall!</title>
+    <description>poppanator: @stefanjanson Hehe, tack! Var p&#229; semester och .se hade fel adress till mig (i.e ingen r&#228;kning) osv. Nu &#228;r det l&#246;st i alla fall!</description>
+    <pubDate>Fri, 20 Aug 2010 12:54:33 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/21661917150</guid>
+    <link>http://twitter.com/poppanator/statuses/21661917150</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: Vacation is coming to an end. Wrote a simple #GTK app for creating #Pike (C) module stubs: http://bit.ly/bJPSUK</title>
+    <description>poppanator: Vacation is coming to an end. Wrote a simple #GTK app for creating #Pike (C) module stubs: http://bit.ly/bJPSUK</description>
+    <pubDate>Thu, 19 Aug 2010 22:28:17 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/21612890944</guid>
+    <link>http://twitter.com/poppanator/statuses/21612890944</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: My very first #Pike #C module is becomming usable. A #libnotify binding. Still some stuff to resolve though. http://bit.ly/9hE1NM</title>
+    <description>poppanator: My very first #Pike #C module is becomming usable. A #libnotify binding. Still some stuff to resolve though. http://bit.ly/9hE1NM</description>
+    <pubDate>Wed, 14 Jul 2010 08:42:16 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/18505490494</guid>
+    <link>http://twitter.com/poppanator/statuses/18505490494</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: RT @alonswartz: The Unix family tree http://post.ly/mzKI</title>
+    <description>poppanator: RT @alonswartz: The Unix family tree http://post.ly/mzKI</description>
+    <pubDate>Tue, 13 Jul 2010 11:18:12 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/18429236233</guid>
+    <link>http://twitter.com/poppanator/statuses/18429236233</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: #Java, #JAXB, #JAX-WS is making me craaaaaazy! How freaking complicated does it have to be?</title>
+    <description>poppanator: #Java, #JAXB, #JAX-WS is making me craaaaaazy! How freaking complicated does it have to be?</description>
+    <pubDate>Tue, 13 Jul 2010 09:18:34 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/18424129311</guid>
+    <link>http://twitter.com/poppanator/statuses/18424129311</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: Learning howto make Pike modules in C</title>
+    <description>poppanator: Learning howto make Pike modules in C</description>
+    <pubDate>Sun, 11 Jul 2010 11:15:25 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/18264575420</guid>
+    <link>http://twitter.com/poppanator/statuses/18264575420</link>
+    <twitter:source>&lt;a href=&quot;https://launchpad.net/gwibber/&quot; rel=&quot;nofollow&quot;&gt;Gwibber&lt;/a&gt;</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: @twingly Thanks! Now you can add #Roxen CMS as a supported plattform as well ;)</title>
+    <description>poppanator: @twingly Thanks! Now you can add #Roxen CMS as a supported plattform as well ;)</description>
+    <pubDate>Fri, 09 Jul 2010 12:22:41 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/18113630754</guid>
+    <link>http://twitter.com/poppanator/statuses/18113630754</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: Pingly - a new #Roxen module for automatic #Twingly pinging. http://bit.ly/bNapsJ</title>
+    <description>poppanator: Pingly - a new #Roxen module for automatic #Twingly pinging. http://bit.ly/bNapsJ</description>
+    <pubDate>Fri, 09 Jul 2010 09:53:42 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/18106512361</guid>
+    <link>http://twitter.com/poppanator/statuses/18106512361</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: RT @koreus Java 4-Ever http://bit.ly/9DbwgE 
+Just hilarious :)</title>
+    <description>poppanator: RT @koreus Java 4-Ever http://bit.ly/9DbwgE 
+Just hilarious :)</description>
+    <pubDate>Wed, 30 Jun 2010 14:33:13 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/17418205820</guid>
+    <link>http://twitter.com/poppanator/statuses/17418205820</link>
+    <twitter:source>&lt;a href=&quot;http://tweetmeme.com&quot; rel=&quot;nofollow&quot;&gt;TweetMeme&lt;/a&gt;</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: After months of inactivity I can announce a new #Roxen module: http://bit.ly/98V88c</title>
+    <description>poppanator: After months of inactivity I can announce a new #Roxen module: http://bit.ly/98V88c</description>
+    <pubDate>Mon, 28 Jun 2010 14:48:24 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/17256333141</guid>
+    <link>http://twitter.com/poppanator/statuses/17256333141</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: Dusted off &quot;The Internet Galaxy&quot; (http://bit.ly/bUX5gy) by Manuel Castells (one of our time's greatest sociologists). It's worth reading.</title>
+    <description>poppanator: Dusted off &quot;The Internet Galaxy&quot; (http://bit.ly/bUX5gy) by Manuel Castells (one of our time's greatest sociologists). It's worth reading.</description>
+    <pubDate>Sun, 25 Apr 2010 16:24:06 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/12829911356</guid>
+    <link>http://twitter.com/poppanator/statuses/12829911356</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: @hellquist Perhaps in a few years there will be no proprietary code. Free software for the world ;)</title>
+    <description>poppanator: @hellquist Perhaps in a few years there will be no proprietary code. Free software for the world ;)</description>
+    <pubDate>Fri, 16 Apr 2010 07:16:31 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/12270039258</guid>
+    <link>http://twitter.com/poppanator/statuses/12270039258</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  <item>
+    <title>poppanator: How about this method generated from s SOAP service: createINPUTREGISTRERASTALLNINGARRAYITEMMPFUNKTIONSID()</title>
+    <description>poppanator: How about this method generated from s SOAP service: createINPUTREGISTRERASTALLNINGARRAYITEMMPFUNKTIONSID()</description>
+    <pubDate>Mon, 12 Apr 2010 08:24:44 +0000</pubDate>
+    <guid>http://twitter.com/poppanator/statuses/12035969711</guid>
+    <link>http://twitter.com/poppanator/statuses/12035969711</link>
+    <twitter:source>web</twitter:source>
+    <twitter:place/>
+  </item>
+  </channel>
+</rss>

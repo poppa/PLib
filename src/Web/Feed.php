@@ -1174,7 +1174,7 @@ class RssItem extends AbstractItem
 	 */
 	protected function parse_description(DOMElement  $n)
 	{
-		if ($n->firstChild->nodeType == XML_CDATA_SECTION_NODE)
+		if ($n->firstChild && $n->firstChild->nodeType == XML_CDATA_SECTION_NODE)
 			$this->data[$n->nodeName] = $n->nodeValue;
 		else
 			$this->data[$n->nodeName]  = parent::innerHTML($n);
