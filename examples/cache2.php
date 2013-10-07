@@ -3,7 +3,7 @@
   Run on console: php cache2.php
 
   This is the exact same script as cache.php except in this script a
-  Cache object is used instead of the convenience function is PLib/cache.php
+  Cache object is used instead of the convenience functions in PLib/cache.php
 */
 
 require_once '../src/PLib.php';
