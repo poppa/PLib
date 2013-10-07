@@ -13,7 +13,9 @@ namespace PLib;
  */
 require_once PLIB_PATH . '/includes/istream.php';
 
-// Uses File
+/**
+ * Uses PLib\File
+ */
 require_once PLIB_PATH . '/io.php';
 
 /**
@@ -21,12 +23,11 @@ require_once PLIB_PATH . '/io.php';
  * The file it self will never be read into memory wich makes this class
  * handy when dealing with large files.
  *
+ * @author Pontus Östlund <poppanator@gmail.com>
  * @example
  *  $reader = new PLib\StreamReader ('/really/large/file.log');
  *  while (false !== ($line = $reader->read_line ()))
  *    echo $line;
- *
- * @author Pontus Östlund <poppanator@gmail.com>
  */
 class StreamReader implements IStream
 {
@@ -228,6 +229,22 @@ class StreamReader implements IStream
   {
     $tmp = fread ($this->resource, $bytes);
     $this->unread (strlen ($tmp));
+    return $tmp;
+  }
+
+  /**
+   * Look behind `$bytes`.
+   *
+   * @param int $bytes
+   * @return string
+   */
+  public function look_behind ($bytes=1)
+  {
+    $pos = $this->position ();
+    fseek ($this->resource, $pos-1-$bytes, SEEK_SET);
+    $tmp = fread ($this->resource, $bytes);
+    fseek ($this->resource, $pos, SEEK_SET);
+
     return $tmp;
   }
 

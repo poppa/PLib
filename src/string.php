@@ -7,8 +7,11 @@
  * @version 0.2
  */
 
-namespace PLIB;
+namespace PLib;
 
+/**
+ * Requires the IStream interface
+ */
 require_once PLIB_PATH . '/includes/istream.php';
 
 /**
@@ -21,14 +24,13 @@ class String
   /**
    * Implodes an array by joining with `$glue`
    *
-   * <code>
-   * $list = array('One', 'Two', 'Three', 'Four');
-   * echo String::implode_nicely($list);
-   * // One, Two, Three and Four
+   * @example
+   *  $list = array('One', 'Two', 'Three', 'Four');
+   *  echo String::implode_nicely($list);
+   *  // One, Two, Three and Four
    *
-   * echo String::implode_nicely($list, 'or');
-   * // One, Two, Three or Four
-   * </code>
+   *  echo String::implode_nicely($list, 'or');
+   *  // One, Two, Three or Four
    *
    * @param array $a
    * @param string $glue
@@ -62,11 +64,13 @@ class StringReader implements IStream
    * @var string
    */
   protected $string;
+
   /**
    * The current position within the string
    * @var int
    */
   protected $cursor = 0;
+
   /**
    * The length of the string
    * @var int
@@ -104,6 +108,7 @@ class StringReader implements IStream
 
     $str = substr ($this->string, $this->cursor, $bytes);
     $this->cursor += $bytes;
+
     return $str;
   }
 
@@ -166,6 +171,20 @@ class StringReader implements IStream
   }
 
   /**
+   * Look behind `$bytes`.
+   *
+   * @param int $bytes
+   * @return string
+   */
+  public function look_behind ($bytes=1)
+  {
+    if ($this->cursor - $bytes < 0)
+      return null;
+
+    return substr ($this->string, $this->cursor - 1 - $bytes, $bytes);
+  }
+
+  /**
    * Read one line at a time
    *
    * @since 0.2
@@ -206,7 +225,7 @@ class StringReader implements IStream
    */
   public function read_to_chars (array $chars)
   {
-    assert('$this->cursor < $this->length; // in read_to_chars ()');
+    assert ('$this->cursor < $this->length; // in read_to_chars ()');
 
     $s = '';
     $c = null;
@@ -299,7 +318,7 @@ class StringReader implements IStream
    *
    * @since 0.3
    */
-  public function __toString()
+  public function __toString ()
   {
     return $this->string;
   }

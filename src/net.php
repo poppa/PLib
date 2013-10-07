@@ -5,12 +5,9 @@
  * @author Pontus Östlund <poppanator@gmail.com>
  * @license GPL License 2
  * @version 0.3
- * @package Protocols
- * @example Net.xmpl
- * @uses StringReader
  */
 
-namespace PLIB\Net;
+namespace PLib\Net;
 
 /**
  * The {@see HTTPResponse} needs the {@link StringReader} class.
@@ -23,8 +20,6 @@ require_once PLIB_PATH . '/string.php';
  * @author Pontus Östlund <poppanator@gmail.com>
  * @version 0.1
  * @since 0.3
- * @package Protocols
- * @subpackage HTTP
  */
 class HTTPRequest
 {
@@ -33,11 +28,13 @@ class HTTPRequest
    * @var int
    */
   public $timeout = 30;
+
   /**
    * Default transfer encoding
    * @var string
    */
   public $encoding = 'UTF-8';
+
   /**
    * Request headers.
    * @var array
@@ -46,47 +43,56 @@ class HTTPRequest
     'User-Agent' => 'PLib HTTPClient (http://plib.poppa.se)',
     'Connection' => 'Close'
   );
+
   /**
    * HTTP version to use for the request
    * @var string
    */
   protected $httpVersion = '1.1';
+
   /**
    * Use persistent connection or not.
    * @var bool
    */
   protected $keepAlive = false;
+
   /**
    * How many redirects to follow.
    * @var int
    */
   protected $maxRedirects = 5;
+
   /**
    * A cookie jar, if we wan't to keep cookie information
    * @var HTTPCookie
    */
   protected $cookie = null;
+
   /**
    * Number of seconds to use a cached version of the request.
    * 0 means don't use cache at all
    * @var int
    */
   protected $cache = 0;
+
   /**
    * Key for a request's cache (MD5 sum of the request header)
    * @var string
    */
   protected $cachekey = null;
+
   /**
    * Keeps track of the number of redirects
    * @var int
    */
   protected $recursions = 0;
+
   /**
    * Basic authentication username
    * @var string
    */
   protected $username = null;
+
   /**
    * Basic authentication password
    * @var string
@@ -451,7 +457,7 @@ class HTTPRequest
    *  This should be the entire request header
    * @return string
    */
-  protected function create_cache_key($in)
+  protected function create_cache_key ($in)
   {
     return md5 ($in);
   }
@@ -466,11 +472,11 @@ class HTTPRequest
    * @param int $code
    *  The request status code
    */
-  protected function write_cache($header, $response, $code)
+  protected function write_cache ($header, $response, $code)
   {
-    if (in_array($code, array(200, 201, 202))) {
-      $key = $this->create_cache_key($header);
-      file_put_contents(Net::tmpdir() . "/$key.cache", $response);
+    if (in_array ($code, array(200, 201, 202))) {
+      $key = $this->create_cache_key ($header);
+      file_put_contents (Net::tmpdir () . "/$key.cache", $response);
       $this->cachekey = $key;
     }
   }
@@ -483,19 +489,19 @@ class HTTPRequest
    *  The raw request header
    * @return string|bool
    */
-  protected function get_cache($header)
+  protected function get_cache ($header)
   {
-    $key = $this->create_cache_key($header);
-    $file = Net::tmpdir() . "/$key.cache";
+    $key = $this->create_cache_key ($header);
+    $file = Net::tmpdir () . "/$key.cache";
 
-    if (file_exists($file)) {
-      $mtime = filemtime($file);
-      if (time() < ($mtime + $this->cache)) {
+    if (file_exists ($file)) {
+      $mtime = filemtime ($file);
+      if (time () < ($mtime + $this->cache)) {
         $this->cache = 0;
         return $file;
       }
       else
-        unlink($file);
+        unlink ($file);
     }
 
     return false;
@@ -516,26 +522,31 @@ class HTTPResponse
    * @var string
    */
   protected $rawData = null;
+
   /**
    * The raw header part of the raw response
    * @var string
    */
   protected $rawHeader = null;
+
   /**
    * The parsed headers
    * @var array
    */
   protected $headers = array();
+
   /**
    * The parsed data part of the response
    * @var string
    */
   protected $data = null;
+
   /**
    * The HTTP status code of the response
    * @var int
    */
   protected $status = 0;
+
   /**
    * The HTTP version used for the reponse
    * @var string
@@ -622,10 +633,10 @@ class HTTPResponse
    * @return string|int|bool
    *  Returns false if the wanted header isn't set.
    */
-  public function get_header($which)
+  public function get_header ($which)
   {
-    $which = strtolower($which);
-    if (isset($this->headers[$which]))
+    $which = strtolower ($which);
+    if (isset ($this->headers[$which]))
       return $this->headers[$which];
 
     return false;
@@ -636,7 +647,7 @@ class HTTPResponse
    *
    * @return string
    */
-  public function __toString()
+  public function __toString ()
   {
     return $this->data;
   }
@@ -649,19 +660,19 @@ class HTTPResponse
    */
   protected function parse ($data)
   {
-    $pos = strpos($data, "\r\n\r\n");
+    $pos = strpos ($data, "\r\n\r\n");
 
     if (!$pos)
-      throw new HTTPResponseException("Couldn't parse response header!");
+      throw new HTTPResponseException ("Couldn't parse response header!");
 
-    $header = substr($data, 0, $pos);
-    $body   = substr($data, $pos+4);
+    $header = substr ($data, 0, $pos);
+    $body   = substr ($data, $pos+4);
 
-    $this->parse_header($header);
+    $this->parse_header ($header);
 
-    $enc = $this->get_header('content-encoding');
+    $enc = $this->get_header ('content-encoding');
 
-    if ($this->get_header('transfer-encoding') == 'chunked') {
+    if ($this->get_header ('transfer-encoding') == 'chunked') {
       $rd = new PLib\StringReader ($body);
       $body = '';
       $bytes = 0;
@@ -669,17 +680,17 @@ class HTTPResponse
         $ln = $rd->read_line ();
 
         // It's an assignment
-        if (((int)($bytes = hexdec($ln)) === 0))
+        if (((int)($bytes = hexdec ($ln)) === 0))
           break;
 
-        $body .= $this->decode($rd->read ((int)$bytes), $enc);
+        $body .= $this->decode ($rd->read ((int)$bytes), $enc);
       } while (!$rd->end ());
 
       $rd->dispose ();
     }
 
     $this->data = $body;
-    unset($body, $header);
+    unset ($body, $header);
   }
 
   /**
@@ -687,19 +698,20 @@ class HTTPResponse
    *
    * @param string $header
    */
-  protected function parse_header($header)
+  protected function parse_header ($header)
   {
     $this->rawHeader = $header;
-    $lines = explode("\r\n", $header);
+    $lines = explode ("\r\n", $header);
+
     //! Get the first line with status and such...
-    if (preg_match('#HTTP/(\d\.\d) ([0-9]+)#', array_shift($lines), $m)) {
+    if (preg_match ('#HTTP/(\d\.\d) ([0-9]+)#', array_shift ($lines), $m)) {
       $this->version = $m[1];
       $this->status  = (int)$m[2];
     }
 
     foreach ($lines as $line) {
-      preg_match('/^(.*?): *(.*?)$/', $line, $m);
-      $this->headers[strtolower($m[1])] = $m[2];
+      preg_match ('/^(.*?): *(.*?)$/', $line, $m);
+      $this->headers[strtolower ($m[1])] = $m[2];
     }
   }
 
@@ -730,11 +742,13 @@ class HTTPCookie
    * @var string
    */
   private $name;
+
   /**
    * The path where to store the cookie files
    * @var string
    */
   private $path = PLIB_TMP_DIR;
+
   /**
    * The full path to the cookie file
    * @var string
@@ -757,17 +771,19 @@ class HTTPCookie
    * @param string $path
    *  The path where to save the cookie file
    */
-  public function __construct($name, $path=null)
+  public function __construct ($name, $path=null)
   {
     $this->name = $name;
+
     if ($path)
       $this->path = $path;
 
-    if (!is_writable($this->path))
-      throw new Exception("The path \"$this->path\" is not writable so " .
-                          "cookies can not be saved");
+    if (!is_writable ($this->path)) {
+      throw new Exception ("The path \"$this->path\" is not writable so " .
+                           "cookies can not be saved");
+    }
 
-    $this->cookiejar = $this->path . DIRECTORY_SEPARATOR . $this->name;
+    $this->cookiejar = PLib\combine_path ($this->path, $this->name);
   }
 
   /**
@@ -778,7 +794,7 @@ class HTTPCookie
    *  The raw unparsed cookie
    * @return bool
    */
-  public function set($domain, $cookie)
+  public function set ($domain, $cookie)
   {
     $cparts = array_map ("trim", explode (";", $cookie));
 
@@ -793,10 +809,10 @@ class HTTPCookie
 
     $v = array();
     foreach ($cparts as $cpart) {
-      if (!preg_match('/(.*?)=(.*)/', $cpart, $m))
+      if (!preg_match ('/(.*?)=(.*)/', $cpart, $m))
         continue;
 
-      list(, $name, $val) = $m;
+      list (, $name, $val) = $m;
 
       if (array_key_exists ($name, $c))
         $c[$name] = $val;
@@ -820,7 +836,7 @@ class HTTPCookie
     if (!is_resource ($fh))
       return false;
 
-    $value = sprintf(
+    $value = sprintf (
       "%s\t%s\t%s\t%s\t%s\t%s\n",
       $c['domain'], $c['path'], $c['expires'], $c['secure'],
       $v['name'], $v['value']
@@ -861,30 +877,31 @@ class HTTPCookie
   {
     $file = $this->cookiejar;
 
-    if (!file_exists($file))
+    if (!file_exists ($file))
       return false;
 
-    if ($_path[strlen($_path)-1] != '/')
-      $_path = dirname($_path);
+    if ($_path[strlen ($_path)-1] != '/')
+      $_path = dirname ($_path);
 
-    $fh = @fopen($file, 'r');
-    if (!is_resource($fh))
+    $fh = @fopen ($file, 'r');
+    if (!is_resource ($fh))
       return false;
 
-    $now = time();
+    $now = time ();
     $ret = array();
 
-    while ($ci = fscanf($fh, "%s\t%s\t%s\t%s\t%s\t%s\n")) {
-      list($domain, $path, $expires, $secure, $name, $value) = $ci;
+    while ($ci = fscanf ($fh, "%s\t%s\t%s\t%s\t%s\t%s\n")) {
+      list ($domain, $path, $expires, $secure, $name, $value) = $ci;
 
       if ($domain[0] == ".")
-        $_domain = substr($_domain, strpos($_domain, '.'));
+        $_domain = substr ($_domain, strpos ($_domain, '.'));
 
-      if ($domain == $_domain && $this->path_in_path($path, $_path)) {
-        $strlen   = strlen(join("\t", $ci));
-        $position = ftell($fh) - $strlen - 1;
+      if ($domain == $_domain && $this->path_in_path ($path, $_path)) {
+        $strlen   = strlen (join ("\t", $ci));
+        $position = ftell ($fh) - $strlen - 1;
+
         if ($expires > $now) {
-          array_push($ret, array(
+          array_push ($ret, array(
             'domain'   => $domain,
             'path'     => $path,
             'expires'  => $expires,
@@ -918,10 +935,10 @@ class HTTPCookie
    * @param string $name
    * @return string|bool
    */
-  public function create_header($secure=false, $domain=null, $path=null,
-                                $name=null)
+  public function create_header ($secure=false, $domain=null, $path=null,
+                                 $name=null)
   {
-    if (empty($this->cookies))
+    if (empty ($this->cookies))
       $this->get ($domain, $path, $name);
 
     if (empty ($this->cookies))
@@ -950,18 +967,18 @@ class HTTPCookie
    *  The request path
    * @return bool
    */
-  private function path_in_path($cookie, $request)
+  private function path_in_path ($cookie, $request)
   {
     if ($cookie == '/')
       return true;
 
-    $cookie = trim($cookie, '/');
-    $request = trim($request, '/');
+    $cookie = trim ($cookie, '/');
+    $request = trim ($request, '/');
 
-    if (strlen($request) < strlen($cookie))
+    if (strlen ($request) < strlen ($cookie))
       return false;
 
-    if (substr($request, 0, strlen($cookie)) == $cookie)
+    if (substr ($request, 0, strlen ($cookie)) == $cookie)
       return true;
 
     return false;
@@ -970,14 +987,10 @@ class HTTPCookie
   /**
    * Converts the object to a string
    *
-   * @see PLib::__toString()
    * @return string
    */
-  public function __toString()
+  public function __toString ()
   {
-    if (class_exists('PLib'))
-      return PLib::__toString($this);
-
     return "HTTPCookie($this->cookiejar)";
   }
 }
@@ -1164,7 +1177,7 @@ class Net
     $line = null;
     if (!headers_sent ($file, $line)) {
       $desc = Net::status_description ($code);
-      header("HTTP/1.1 $code $desc");
+      header ("HTTP/1.1 $code $desc");
       echo "<h1>$code <small>$desc</small></h1>";
       die;
     }
@@ -1194,10 +1207,10 @@ class Net
   public static function query_to_array ($querystring)
   {
     $out = array();
-    $parts = explode('&', $querystring);
+    $parts = explode ('&', $querystring);
 
     foreach ($parts as $part) {
-      list($k, $v) = explode('=', $part);
+      list ($k, $v) = explode ('=', $part);
       $out[$k] = $v;
     }
 

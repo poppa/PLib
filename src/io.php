@@ -4,7 +4,6 @@
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  * @license GPL License 3
- * @package PLib
  * @example
  *  //! List the content of this directory sorted on file name
  *  $dir = new PLib\Dir ('.');
@@ -22,7 +21,7 @@
  *  }
  */
 
-namespace PLIB;
+namespace PLib;
 
 /**
  * Class for handling filesystem files.
@@ -32,7 +31,6 @@ namespace PLIB;
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  * @version 0.4.1
- * @package IO
  */
 class File extends IO
 {
@@ -41,11 +39,13 @@ class File extends IO
    * @const int
    */
   const Kb = 1024;
+
   /**
    * 1 Mb in bytes
    * @const int
    */
   const Mb = 1048576;
+
   /**
    * 1 Gb in bytes
    * @const int
@@ -53,13 +53,53 @@ class File extends IO
   const Gb = 1073741824;
 
   private $file;
+
+  /**
+   * Path of the file
+   * @var string
+   */
   public  $path;
+
+  /**
+   * File size
+   * @var int
+   */
   public  $size;
+
+  /**
+   * File type
+   * @var string
+   */
   public  $filetype;
+
+  /**
+   * File modification time
+   * @var int
+   */
   public  $mtime;
+
+  /**
+   * File creation time
+   * @var int
+   */
   public  $ctime;
+
+  /**
+   * File name
+   * @var string
+   */
   public  $name;
+
+  /**
+   * Human readable file size. Like 4.6 kb
+   * @var string
+   */
   public  $nicesize;
+
+  /**
+   * File extension
+   * @var string
+   */
   public  $extension = 'unknown';
 
   /**
@@ -122,9 +162,9 @@ class File extends IO
    */
   public function rename ($new_name)
   {
-    $nn = dirname ($this->file) . '/' . $new_name;
+    $nn = PLib\combine_path (dirname ($this->file), $new_name);
     rename ($this->path, $nn);
-    $this->init_file($nn);
+    $this->init_file ($nn);
 
     return $this->path;
   }
@@ -239,6 +279,7 @@ class File extends IO
  * information. The contents of the directory will be also be collected and can
  * be easily looped through
  *
+ * @author Pontus Östlund <poppanator@gmail.com>
  * @example
  *  $dir = new Dir('/path/to/dir');
  *  // Loop through the contents of the directory and show only PHP files.
@@ -246,11 +287,6 @@ class File extends IO
  *  while ($f = $dir->emit('*.php')) {
  *    echo $f->path ($f->niceSize()) . "<br/>";
  *  }
- *
- * For a more extensive example see the docblock for {@link IO}
- *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @package IO
  */
 class Dir extends IO
 {
@@ -258,10 +294,34 @@ class Dir extends IO
   private $glob_pattern;
   private $contents_index;
 
+  /**
+   * Directory path
+   * @var string
+   */
   public $path;
+
+  /**
+   * Directory name
+   * @var string
+   */
   public $name;
+
+  /**
+   * Number of files/directories in this directory
+   * @var int
+   */
   public $size;
+
+  /**
+   * File type
+   * @var string
+   */
   public $filetype;
+
+  /**
+   * Array of File/Dir objects in this directory
+   * @var array
+   */
   public $contents;
 
   /**
@@ -270,7 +330,7 @@ class Dir extends IO
    * @throws Exception
    * @param string $dir
    */
-  public function __construct($dir)
+  public function __construct ($dir)
   {
     $this->dir = realpath ($dir);
 
@@ -331,6 +391,7 @@ class Dir extends IO
           $order = SORT_DESC;
           $key = substr ($key, 1);
         }
+
         $l = $this->mk_sortarray ($a, $key);
         $this->_usort_int ($l);
         break;
@@ -430,6 +491,7 @@ class Dir extends IO
           )
         );
       }
+
       closedir ($fh);
       unset ($fh);
     }
@@ -461,9 +523,10 @@ class Dir extends IO
   public static function mkdirhier ($path)
   {
     if ($path[0] != DIRECTORY_SEPARATOR) {
-      throw new Exception ("The path to Dir::mkdirhier() needs to be absolute! ".
-                           "Call like this: Dir::mkdirhier(realpath('../" .
-                           "relative/path/'));");
+      $message = "The path to Dir::mkdirhier() needs to be absolute! ".
+                 "Call like this: Dir::mkdirhier(realpath('../" .
+                 "relative/path/'));";
+      throw new \Exception ($message);
     }
 
     $path  = trim ($path, DIRECTORY_SEPARATOR);
@@ -535,11 +598,17 @@ abstract class IO
   protected $filetype;
   protected $path;
 
+  /**
+   * Check if path of object is writable
+   */
   public function is_writable ()
   {
     return is_writable ($this->path);
   }
 
+  /**
+   * Check if path of object is readable
+   */
   public function is_readable ()
   {
     return is_readable ($this->path);
@@ -601,7 +670,7 @@ abstract class IO
    *
    * @return string
    */
-  public function __toString()
+  public function __toString ()
   {
     return $this->path;
   }

@@ -11,6 +11,7 @@ namespace PLib;
 /**
  * Class representing a version, like 1.2, 0.2.345 etc
  *
+ * @author Pontus Östlund <poppanator@gmail.com>
  * @example
  *  $v1 = new Version (2, 2, 135);
  *  $v2 = new Version ("1.13");
@@ -39,8 +40,6 @@ namespace PLib;
  *  $v1->minor = 3;
  *
  *  echo (string)$v1; // 2.3.135
- *
- * @author Pontus Östlund <poppanator@gmail.com>
  */
 class Version
 {

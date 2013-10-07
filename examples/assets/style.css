@@ -1,0 +1,18 @@
+@charset "utf-8";
+
+BODY {
+  margin: 0;
+  padding: 0;
+  font: 80%/140% verdana, sans-serif;
+  /*background: #8c8c8c url(img/bg2.jpg) repeat-x;*/
+  }
+.width {
+  width: 980px;
+  margin: 0px auto;
+  }
+#header {
+  padding: 0px 0px 0px 0px;
+  font-family: arial, sans-serif;
+  background: url('img/header-bg .png') repeat-x;
+  margin-bottom: 25px;
+  }

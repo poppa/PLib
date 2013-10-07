@@ -6,7 +6,7 @@
  * @license GPL License 3
  */
 
-namespace PLIB;
+namespace PLib;
 
 /**
  * Streaming interface.
@@ -97,6 +97,14 @@ interface IStream
    * @return string
    */
   public function peek ($bytes=1);
+
+  /**
+   * Look behind `$bytes`.
+   *
+   * @param int $bytes
+   * @return string
+   */
+  public function look_behind ($bytes=1);
 
   /**
    * Returns the current offset
