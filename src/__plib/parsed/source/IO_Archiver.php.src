@@ -1,432 +1,0 @@
-<span style='color: #003366;'>&#60;?</span>php<br/>
-<span style='color: #0099CC;'>/**</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;Archive&#160;unpacker/packer</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;This&#160;is&#160;pretty&#160;much&#160;a&#160;platform&#160;agnostic&#160;class.&#160;It&#160;only&#160;works&#160;on&#160;*nix.</span><br/>
-<span style='color: #0099CC;'>&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;File</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@uses&#160;Dir</span><br/>
-<span style='color: #0099CC;'>*/</span><br/>
-<br/>
-<span style='color: #0099CC;'>/**</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;We&#160;need&#160;the&#160;{@see&#160;File}&#160;class</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span><br/>
-<span style='color: #000099;'><b>require_once</b></span>&#160;<span style='color: #008800;'>&#39;StdIO.php&#39;</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-<span style='color: #0099CC;'>/**</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;Class&#160;Archiver</span><br/>
-<span style='color: #0099CC;'>&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;This&#160;is&#160;the&#160;wrapper&#160;class&#160;for&#160;ArchivePack&#160;and&#160;ArchiveUnpack.</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;The&#160;class&#160;unpacks&#160;and&#160;packs&#160;different&#160;types&#160;of&#160;archive&#160;files.</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;What&#160;archives&#160;can&#160;be&#160;uses&#160;depends&#160;on&#160;what&#160;softwares&#160;are&#160;installed</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;on&#160;the&#160;server&#160;running&#160;the&#160;script&#160;since&#160;the&#160;class&#160;executes&#160;shell</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;commands.&#160;This&#160;class&#160;does&#160;only&#160;work&#160;on&#160;*nix&#160;at&#160;this&#160;state,&#160;but</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;it&#160;would&#39;nt&#160;take&#160;much&#160;effort&#160;to&#160;make&#160;it&#160;work&#160;on&#160;Windows.</span><br/>
-<span style='color: #0099CC;'>&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
-<span style='color: #0099CC;'>*/</span><br/>
-<span style='color: #000099;'><b>class</b></span>&#160;Archiver<br/>
-<span style='color: #0000FF;'>{</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;If&#160;no&#160;directory&#160;is&#160;specified&#160;where&#160;the&#160;archive&#160;should&#160;either&#160;be&#160;created&#160;or</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;extracted&#160;this&#160;is&#160;where&#160;the&#160;work&#160;will&#160;be&#160;done.</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #990000;'><b>$tmpdir</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;/tmp&#39;</span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Array&#160;to&#160;keep&#160;errors&#160;in</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$_err</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Flag&#160;that&#160;tells&#160;if&#160;something&#160;went&#160;bananas</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$error</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Hidden&#160;constructor</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$tmpdir</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_dir</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tmpdir</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;The&#160;temporary&#160;directory&#160;\&#34;&#34;</span><span style='color: #0000FF;'>.</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tmpdir</b></span><span style='color: #0000FF;'>.</span><span style='color: #008800;'>&#34;\&#34;&#160;is&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;not&#160;not&#160;a&#160;directory!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_writable</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tmpdir</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;The&#160;temporary&#160;directory&#160;\&#34;&#34;</span><span style='color: #0000FF;'>.</span><span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tmpdir</b></span><span style='color: #0000FF;'>.</span><span style='color: #008800;'>&#34;\&#34;&#160;is&#160;&#34;</span>&#160;<span style='color: #0000FF;'>.</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#34;not&#160;writable!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Execute&#160;a&#160;shellcommand</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$cmd</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;_exec<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$retArr</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$retStr</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cmd</b></span>&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>escapeshellcmd</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$res</b></span>&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>exec</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;$cmd&#160;2&#62;&#38;1&#160;&#62;/dev/null;&#160;echo&#160;$?&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$res</b></span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Could&#160;not&#160;execute&#160;\&#34;$cmd\&#34;:&#160;$res&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Recursively&#160;clean&#160;a&#160;directory</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$dir</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;void</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;_clean<span style='color: #0000FF;'>(</span>Dir&#160;<span style='color: #990000;'><b>$dir</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-<br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Get&#160;the&#160;command&#160;for&#160;$archiveType</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$arrayAllowed</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Array&#160;to&#160;look&#160;in</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$arrayCommand</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;array&#160;to&#160;return&#160;from</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$archiveType</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;Type&#160;to&#160;look&#160;for</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;mixed</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;_getCommand<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$arrayAllowed</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$arrayCommand</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$archiveType</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$arrayAllowed</b></span>&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$key</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>in_array</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$archiveType</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$val</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$arrayCommand</b></span><span style='color: #0000FF;'>[</span><span style='color: #990000;'><b>$key</b></span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Generates&#160;a&#160;random&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>static</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;GetTmpId<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;list<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$usec</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$sec</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>explode</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;&#160;&#34;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>microtime</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ID</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$sec</b></span>&#160;<span style='color: #0000FF;'>-</span>&#160;<span style='color: purple;'>1007700000</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #ff0000;'>str_pad</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>int</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$usec</b></span>&#160;<span style='color: #0000FF;'>*</span>&#160;<span style='color: purple;'>1000000</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>6</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;0&#34;</span><span style='color: #0000FF;'>,</span>&#160;STR_PAD_LEFT<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$ID</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>str_pad</span><span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>rand</span><span style='color: #0000FF;'>(</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>999</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>3</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;0&#34;</span><span style='color: #0000FF;'>,</span>&#160;STR_PAD_LEFT<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$ID</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>/**</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;This&#160;class&#160;packs&#160;files&#160;and&#160;directories&#160;into&#160;a&#160;given&#160;archive&#160;type.</span><br/>
-<span style='color: #0099CC;'>&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span><br/>
-<span style='color: #000099;'><b>class</b></span>&#160;ArchiverPack&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Archiver<br/>
-<span style='color: #0000FF;'>{</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;type&#160;of&#160;archive&#160;to&#160;pack</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$_type</b></span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;name&#160;of&#160;the&#160;archive</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>var</b></span>&#160;<span style='color: #990000;'><b>$_name</b></span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;destination&#160;where&#160;to&#160;put&#160;the&#160;archive</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>var</b></span>&#160;<span style='color: #990000;'><b>$_dest</b></span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Mode&#160;on&#160;the&#160;archive&#160;when&#160;packed</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;int</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>var</b></span>&#160;<span style='color: #990000;'><b>$_chmod</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: purple;'>0666</span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;The&#160;files&#160;to&#160;pack</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>var</b></span>&#160;<span style='color: #990000;'><b>$_files</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Commands&#160;for&#160;each&#160;archive&#160;type</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>var</b></span>&#160;<span style='color: #990000;'><b>$_packCMD</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;Pack&#160;zip-files&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;zip&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;zip&#160;-jr&#160;&#38;_DEST_&#38;&#160;&#38;_SOURCE_&#38;&#39;</span><span style='color: #0000FF;'>,</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;Pack&#160;tgz:s&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;tgz&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;tar&#160;czf&#160;&#38;_DEST_&#38;&#160;&#38;_SOURCE_&#38;&#39;</span><span style='color: #0000FF;'>,</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;Pack&#160;tbz2&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;tbz2&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;tar&#160;cjf&#160;&#38;_DEST_&#38;&#160;&#38;_SOURCE_&#38;&#39;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Allowed&#160;archive&#160;types</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>var</b></span>&#160;<span style='color: #990000;'><b>$_packAllowed</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;zip&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;zip&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;tgz&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;tar.gz&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;tgz&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;tbz2&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;tar.bz2&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;tbz2&#39;</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$type</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Type&#160;of&#160;archive</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$name</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Name&#160;of&#160;the&#160;archive</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$dest</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Destination&#160;where&#160;to&#160;put&#160;the&#160;archive</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$chmod</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Mode&#160;to&#160;set&#160;the&#160;archive&#160;to</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$type</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$dest</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$chmod</b></span><span style='color: #0000FF;'>=</span><span style='color: purple;'>0666</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dest</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>rtrim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dest</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;else<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tmpdir</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;Add&#160;a&#160;dot&#160;at&#160;the&#160;beginning&#160;of&#160;the&#160;type&#160;if&#160;not&#160;already&#160;done.</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_type&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;.&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #ff0000;'>ltrim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$type</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;.&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_name&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>trim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$name</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_dir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;The&#160;directory&#160;\&#34;$this-&#62;_dest\&#34;&#160;does&#160;not&#160;exist&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_writable</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;The&#160;directory&#160;\&#34;$this-&#62;_dest\&#34;&#160;is&#160;not&#160;writable&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_chmod&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$chmod</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Add&#160;a&#160;file&#160;to&#160;the&#160;archive.</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$file</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;&#160;The&#160;file&#160;to&#160;add&#160;to&#160;the&#160;archive</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;bool</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>file_exists</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;The&#160;file&#160;\&#34;$file\&#34;&#160;does&#160;not&#160;exist&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>array_push</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_files<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Tries&#160;to&#160;pack&#160;the&#160;archive.&#160;If&#160;no&#160;$folder&#160;is&#160;given&#160;it&#160;means&#160;we&#160;should&#160;pack</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;an&#160;entire&#160;directory.&#160;If&#160;no&#160;name&#160;is&#160;given&#160;for&#160;the&#160;archive&#160;we&#160;take&#160;the&#160;name</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;of&#160;the&#160;first&#160;file&#160;added&#160;or&#160;the&#160;directory&#160;name.</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$folder</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;mixed</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Pack<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$folder</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>empty</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_files<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>&#38;</span><span style='color: #0000FF;'>&#38;</span>&#160;<span style='color: #000099;'><b>empty</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$folder</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;There&#39;s&#160;no&#160;files&#160;to&#160;pack!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$folder</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_dir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$folder</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;\&#34;$folder\&#34;&#160;is&#160;not&#160;a&#160;directory&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$folder</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>realpath</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$folder</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #ff0000;'>is_writable</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;\&#34;$folder\&#34;&#160;is&#160;not&#160;writable&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_files&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$firstFile</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$folder</b></span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$folder</b></span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_files<span style='color: #0000FF;'>[</span><span style='color: purple;'>0</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;If&#160;no&#160;name&#160;is&#160;specified&#160;we&#160;grab&#160;the&#160;name&#160;of&#160;either</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//!&#160;the&#160;directory&#160;or&#160;the&#160;first&#160;file&#160;added&#160;to&#160;the&#160;archive.</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_name<span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$typeOf</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$folder</b></span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #ff0000;'>is_file</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$firstFile</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #008800;'>&#39;file&#39;</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #008800;'>&#39;dir&#39;</span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #008800;'>&#39;dir&#39;</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$tsource</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>rtrim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$firstFile</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$packName</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>split</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$tsource</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_name&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$packName</b></span><span style='color: #0000FF;'>[</span><span style='color: #ff0000;'>count</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$packName</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>-</span><span style='color: purple;'>1</span><span style='color: #0000FF;'>]</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$typeOf</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;file&#39;</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_name&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_name<span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>0</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #ff0000;'>strrpos</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_name<span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#34;.&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_name&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_type<span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;Grab&#160;the&#160;command</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cmd</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_getCommand<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_packAllowed<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_packCMD<span style='color: #0000FF;'>,</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #ff0000;'>substr</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_type<span style='color: #0000FF;'>,</span>&#160;<span style='color: purple;'>1</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cmd</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Couldn&#39;t&#160;find&#160;a&#160;command&#160;for&#160;type&#160;\&#34;$this-&#62;_type\&#34;&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$content</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #008800;'>&#39;&#39;</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$chdir</b></span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$folder</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_files&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$content</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$file</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#160;&#34;</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>else</b></span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$currDir</b></span>&#160;&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>realpath</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;.&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>chdir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$folder</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Couldn&#39;t&#160;change&#160;directory&#160;to:&#160;$folder&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_packDir<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;.&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>foreach</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_files&#160;<span style='color: #000099;'><b>as</b></span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$content</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$file</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#34;&#160;&#34;</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$chdir</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cmd</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>str_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;&#38;_DEST_&#38;&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cmd</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>str_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;&#38;_SOURCE_&#38;&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$content</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_exec<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>chmod</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_chmod<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$chdir</b></span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>chdir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$currDir</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_dest<span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Recursively&#160;loops&#160;through&#160;a&#160;directory&#160;structure&#160;and&#160;adds&#160;each&#160;file&#160;and</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;directory&#160;to&#160;the&#160;_files&#160;array.&#160;This&#160;method&#160;is&#160;used&#160;when&#160;packing&#160;an&#160;entire</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;directory.</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$dir</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;_packDir<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dir</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0099CC;'>//&#160;It&#39;s&#160;an&#160;assigment</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$dh</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>opendir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dir</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Couldn&#39;t&#160;open&#160;directory&#160;for&#160;reading:&#160;$targetDir&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>while</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #000099;'><b>false</b></span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$f</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>readdir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dh</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #ff0000;'>preg_match</span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;/^\.\.?$/&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$f</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>continue</b></span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>is_file</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dir</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$f</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>Add<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dir</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$f</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>false</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>elseif</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>is_dir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dir</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$f</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_packDir<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dir</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$f</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>closedir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$dh</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #000099;'><b>true</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<span style='color: #0000FF;'>}</span>&#160;<span style='color: #0099CC;'>//&#160;ArchiverPack</span><br/>
-<br/>
-<span style='color: #0099CC;'>/**</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;This&#160;class&#160;unpacks&#160;archive&#160;files.</span><br/>
-<span style='color: #0099CC;'>&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@author&#160;Pontus&#160;Östlund&#160;&#60;spam@poppa.se&#62;</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@version&#160;0.1</span><br/>
-<span style='color: #0099CC;'>&#160;*&#160;@package&#160;IO</span><br/>
-<span style='color: #0099CC;'>&#160;*/</span><br/>
-<span style='color: #000099;'><b>class</b></span>&#160;ArchiverUnpack&#160;<span style='color: #000099;'><b>extends</b></span>&#160;Archiver<br/>
-<span style='color: #0000FF;'>{</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Commands&#160;for&#160;unpacking&#160;an&#160;archive&#160;file</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$_unPackCMD</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;unpack&#160;zip&#160;files&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;unzip&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;unzip&#160;&#38;_FILE_&#38;&#160;-d&#160;&#38;_DEST_&#38;&#39;</span><span style='color: #0000FF;'>,</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;unpack&#160;tar.gz&#160;and&#160;tgz&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;untgz&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;tar&#160;zxfC&#160;&#38;_FILE_&#38;&#160;&#38;_DEST_&#38;&#39;</span><span style='color: #0000FF;'>,</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;unpack&#160;tar.bz2&#160;and&#160;tbz2&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;unbzip&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #008800;'>&#39;tar&#160;jxfC&#160;&#38;_FILE_&#38;&#160;&#38;_DEST_&#38;&#39;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Allowed&#160;filetypes&#160;to&#160;unpack</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@var&#160;array</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>protected</b></span>&#160;<span style='color: #990000;'><b>$_unPackAllowed</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;zip&#160;files&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;unzip&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;zip&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;tar.gz&#160;and&#160;tgz&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;untgz&#39;</span>&#160;&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;tar.gz&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;tgz&#39;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>,</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;&#160;/**&#160;tar.bz2&#160;and&#160;tbz2&#160;*/</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #008800;'>&#39;unbzip&#39;</span>&#160;<span style='color: #0000FF;'>=</span><span style='color: #0000FF;'>&#62;</span>&#160;<span style='color: #000099;'><b>array</b></span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;tar.bz2&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;tbz2&#39;</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Constructor</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;<span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>parent</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #FF7777;'>__construct</span><span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-<span style='color: #0099CC;'>&#160;&#160;/**</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;Tries&#160;to&#160;unpack&#160;an&#160;archive</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$file</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;file&#160;to&#160;unpack</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string&#160;$location</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;The&#160;location&#160;to&#160;unpack&#160;the&#160;archive&#160;to</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@param&#160;string</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;&#160;Creates&#160;a&#160;sub&#160;directory&#160;in&#160;location&#160;and&#160;unpack&#160;into&#160;that.</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@return&#160;mixed</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*&#160;@throws&#160;Exception</span><br/>
-<span style='color: #0099CC;'>&#160;&#160;&#160;*/</span><br/>
-&#160;&#160;<span style='color: #000099;'><b>public</b></span>&#160;<span style='color: #000099;'><b>function</b></span>&#160;Extract<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$location</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$subdir</b></span><span style='color: #0000FF;'>=</span>null<span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$file</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;File<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$unPackTo</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$location</b></span>&#160;<span style='color: #0000FF;'>?</span>&#160;<span style='color: #990000;'><b>$location</b></span>&#160;<span style='color: #0000FF;'>:</span>&#160;<span style='color: #000099;'><b>self</b></span><span style='color: #0000FF;'>:</span><span style='color: #0000FF;'>:</span><span style='color: #990000;'><b>$tmpdir</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$unPackTo</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>rtrim</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$unPackTo</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$subdir</b></span><span style='color: #0000FF;'>)</span>&#160;<span style='color: #0000FF;'>{</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #0000FF;'>@</span><span style='color: #ff0000;'>mkdir</span><span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$unPackTo</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #990000;'><b>$subdir</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Couldn&#39;t&#160;create&#160;the&#160;subdirectory&#160;\&#34;$subdir\&#34;&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$unPackTo</b></span>&#160;<span style='color: #0000FF;'>.</span><span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$subdir</b></span>&#160;<span style='color: #0000FF;'>.</span>&#160;<span style='color: #008800;'>&#39;/&#39;</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$type</b></span>&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>extension<span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cmd</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_getCommand<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_unPackAllowed<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_unPackCMD<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$type</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>if</b></span>&#160;<span style='color: #0000FF;'>(</span><span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$type</b></span>&#160;<span style='color: #0000FF;'>|</span><span style='color: #0000FF;'>|</span>&#160;<span style='color: #0000FF;'>!</span><span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><br/>
-&#160;&#160;&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>throw</b></span>&#160;<span style='color: #000099;'><b>new</b></span>&#160;Exception<span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#34;Found&#160;no&#160;command&#160;to&#160;handle&#160;$type&#160;files!&#34;</span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cmd</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>str_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;&#38;_FILE_&#38;&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$file</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>path<span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$cmd</b></span>&#160;&#160;<span style='color: #0000FF;'>=</span>&#160;<span style='color: #ff0000;'>str_replace</span><span style='color: #0000FF;'>(</span><span style='color: #008800;'>&#39;&#38;_DEST_&#38;&#39;</span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$unPackTo</b></span><span style='color: #0000FF;'>,</span>&#160;<span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #990000;'><b>$this</b></span><span style='color: #0000FF;'>-</span><span style='color: #0000FF;'>&#62;</span>_exec<span style='color: #0000FF;'>(</span><span style='color: #990000;'><b>$cmd</b></span><span style='color: #0000FF;'>)</span><span style='color: #0000FF;'>;</span><br/>
-<br/>
-&#160;&#160;&#160;&#160;<span style='color: #000099;'><b>return</b></span>&#160;<span style='color: #990000;'><b>$unPackTo</b></span><span style='color: #0000FF;'>;</span><br/>
-&#160;&#160;<span style='color: #0000FF;'>}</span><br/>
-<span style='color: #0000FF;'>}</span>&#160;<span style='color: #0099CC;'>//&#160;ArchiverUnpack</span><br/>
-<span style='color: #003366;'>?&#62;</span><br/>
