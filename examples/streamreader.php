@@ -33,14 +33,14 @@ while (($char = $sr->read ()) !== false) {
     case "/":
       // It's a comment, skip it
       if ($sr->peek () === '*') {
+        $sr->read (); // consume the *
+
         while (($char = $sr->read ()) !== false) {
           if ($char === '*' && $sr->peek () === '/') {
             $sr->read (); // consume the slash (/) we peeked
-            break;
+            continue 3; // continue outer loop
           }
         }
-
-        continue 2; // continue outer loop
       }
       break;
 

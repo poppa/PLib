@@ -102,9 +102,9 @@ function _low_combine_path (array $paths, $sep=DIRECTORY_SEPARATOR)
     return "";
 
   $path = implode ($sep, $paths);
-  $out = array(); 
+  $out = array();
 
-  foreach (explode($sep, $path) as $i => $p) { 
+  foreach (explode($sep, $path) as $i => $p) {
     if ($p == '' || $p== '.' ) continue;
     if ($p == '..' && $i > 0 && end ($out) != '..')
       array_pop($out);
@@ -157,4 +157,6 @@ function get_default_sqlite ()
   try { return new \PDO ("sqlite:" . PLIB_SQLITE_FILE); }
   catch (\PDOException $e) { throw $e; }
 }
+
+class Object {}
 ?>

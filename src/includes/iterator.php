@@ -6,6 +6,8 @@
  * @version 0.1
  */
 
+namespace PLib;
+
 /**
  * A generic iterator
  *
@@ -15,10 +17,10 @@
 abstract class Iterator
 {
   /**
-   * The array to iterate over
-   * @var array
+   * The array|string to iterate over
+   * @var array|string
    */
-  protected $container = array();
+  protected $container = null;
 
   /**
    * The current index
@@ -31,6 +33,17 @@ abstract class Iterator
    * @var int
    */
   protected $length  = 0;
+
+  /**
+   * Hidden constructor. Can only be called from an inheriting class
+   *
+   * @param mixed $c
+   */
+  protected function __construct ($c)
+  {
+    $this->container = $c;
+    $this->length = $this->length ();
+  }
 
   /**
    * Checks if there's a next index in the array
@@ -112,6 +125,8 @@ abstract class Iterator
   {
     if (is_array ($this->container))
       $this->container = array_reverse ($this->container);
+    else if (is_string ($this->container))
+      $this->container = strrev ($this->container);
   }
 }
 
@@ -121,7 +136,7 @@ abstract class Iterator
  * @author Pontus Östlund <poppanator@gmail.com>
  * @version 0.1
 */
-class PLibIteratorOutOfRangeException extends Exception
+class PLibIteratorOutOfRangeException extends \Exception
 {
   public $message = "The requested index is out of range";
 }
