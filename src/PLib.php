@@ -76,8 +76,7 @@ function import ($which)
  */
 function combine_path ($args)
 {
-  $args = func_get_args ();
-  return realpath (join (DIRECTORY_SEPARATOR, $args));
+  return _low_combine_path (func_get_args ());
 }
 
 /**
@@ -87,8 +86,33 @@ function combine_path ($args)
  */
 function combine_path_unix ($args)
 {
-  $args = func_get_args ();
-  return join ('/', $args);
+  return _low_combine_path (func_get_args (), '/');
+}
+
+/**
+ * Low level path combiner
+ *
+ * @param array $paths
+ * @param string $sep
+ *  Directory separator
+ */
+function _low_combine_path (array $paths, $sep=DIRECTORY_SEPARATOR)
+{
+  if (!$paths || !sizeof ($paths))
+    return "";
+
+  $path = implode ($sep, $paths);
+  $out = array(); 
+
+  foreach (explode($sep, $path) as $i => $p) { 
+    if ($p == '' || $p== '.' ) continue;
+    if ($p == '..' && $i > 0 && end ($out) != '..')
+      array_pop($out);
+    else
+      $out[]= $p;
+  }
+
+  return ($path[0] == '/' ? '/' : '') . join ('/', $out);
 }
 
 /**

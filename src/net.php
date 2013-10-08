@@ -39,7 +39,7 @@ class HTTPRequest
    * Request headers.
    * @var array
    */
-  protected $requestHeaders = array(
+  protected $request_headers = array(
     'User-Agent' => 'PLib HTTPClient (http://plib.poppa.se)',
     'Connection' => 'Close'
   );
@@ -48,19 +48,19 @@ class HTTPRequest
    * HTTP version to use for the request
    * @var string
    */
-  protected $httpVersion = '1.1';
+  protected $http_version = '1.1';
 
   /**
    * Use persistent connection or not.
    * @var bool
    */
-  protected $keepAlive = false;
+  protected $keep_alive = false;
 
   /**
    * How many redirects to follow.
    * @var int
    */
-  protected $maxRedirects = 5;
+  protected $max_redirects = 5;
 
   /**
    * A cookie jar, if we wan't to keep cookie information
@@ -127,11 +127,11 @@ class HTTPRequest
   public function keep_alive ($value=null)
   {
     if (is_bool($value)) {
-      $this->keepAlive = $value;
-      $this->requestHeaders['Connection'] = $value ? 'Keep-Alive' : 'Close';
+      $this->keep_alive = $value;
+      $this->request_headers['Connection'] = $value ? 'Keep-Alive' : 'Close';
     }
 
-    return $this->keepAlive;
+    return $this->keep_alive;
   }
 
   /**
@@ -177,8 +177,8 @@ class HTTPRequest
    */
   public function max_redirects ($max=null)
   {
-    if (is_int ($max)) $this->maxRedirects = $max;
-    return $this->maxRedirects;
+    if (is_int ($max)) $this->max_redirects = $max;
+    return $this->max_redirects;
   }
 
   /**
@@ -232,9 +232,9 @@ class HTTPRequest
     $sock   = null;
     $method = strtoupper ($method);
 
-    if ($this->recursions >= $this->maxRedirects) {
+    if ($this->recursions >= $this->max_redirects) {
       throw new HTTPMaxRedirectException (
-        "Redirect limit ($this->maxRedirects) exceeded!"
+        "Redirect limit ($this->max_redirects) exceeded!"
       );
     }
 
@@ -273,34 +273,37 @@ class HTTPRequest
     //! Default the request path to root
     $path = isset ($request['path']) ? $request['path'] : '/';
 
-    $addHeader = "";
+    $add_header = "";
 
     if (!empty ($headers))
-      $this->requestHeaders = $headers + $this->requestHeaders;
+      $this->request_headers = $headers + $this->request_headers;
 
-    foreach ($this->requestHeaders as $key => $val) {
+    foreach ($this->request_headers as $key => $val) {
       if (!is_string ($key))
         throw new HTTPRequestException ("Malformed header, missing key.");
 
-      if (empty ($val))
+      if (empty ($val)) {
         throw new HTTPRequestException ("Malformed header, missing value " .
                                         "for key \"$key\"");
+      }
+
       //! Due to a bug in PHP5.2?
       if ($key == 'Accept-Encoding')
         continue;
 
-      $addHeader .= "$key: $val\r\n";
+      $add_header .= "$key: $val\r\n";
     }
 
     if ($this->username && $this->password) {
-      $addHeader .= "Authorization: Basic " .
+      $add_header .= "Authorization: Basic " .
                     base64_encode ($this->username . ':' . $this->password);
     }
 
     if ($this->cookie) {
       $c = $this->cookie->create_header (($port==443), $host, $path);
+
       if ($c !== false)
-        $addHeader .= $c;
+        $add_header .= $c;
     }
 
     switch ($method)
@@ -311,23 +314,27 @@ class HTTPRequest
 
       case 'POST':
         $body = empty ($data) ? $query : urlencode ($data);
+
         if (!isset ($this->headers['Content-Type']))
-          $addHeader .= "Content-Type: application/x-www-form-urlencoded\r\n";
-        $addHeader .= "Content-Length: " . strlen ($body) . "\r\n\r\n" . $body;
+          $add_header .= "Content-Type: application/x-www-form-urlencoded\r\n";
+
+        $add_header .= "Content-Length: " . strlen ($body) . "\r\n\r\n" . $body;
         break;
 
       default:
         $body = $data;
+
         if (!isset ($this->headers['Content-Type']))
-          $addHeader .= "Content-Type: text/plain\r\n";
-        $addHeader .= "Content-Length: " . strlen ($body) . "\r\n\r\n" . $body;
+          $add_header .= "Content-Type: text/plain\r\n";
+
+        $add_header .= "Content-Length: " . strlen ($body) . "\r\n\r\n" . $body;
         break;
     }
 
     $header = "$method $path HTTP/$this->version\r\n" .
-              "Host: $host\r\n$addHeader\r\n";
+              "Host: $host\r\n$add_header\r\n";
 
-    //print ($header);
+    // print ($header);
 
     $rawresponse = false;
 
@@ -338,20 +345,30 @@ class HTTPRequest
       $errno = 0;
       $errstr = null;
 
-      // It's an assignment
-      if (!($sock = @fsockopen ($host, $port, $errno, $errstr, $this->timeout)))
+      $proto = 'tcp';
+
+      switch ($protocol)
       {
-        throw new HTTPRequestException (
-          "Couldn't fetch $host! $errstr (errno: $errno)"
-        );
+        case 'https': $proto = 'ssl'; break;
+        case 'ftp': $proto = 'ftp';   break;
+      }
+
+      //echo "+ Request: $proto://$host:$port$path\n";
+
+      if (!($sock = @stream_socket_client("$proto://$host:$port", $errno, 
+                                          $errstr, $this->timeout)))
+      {
+        $m = "Couldn't fetch $host! $errstr (errno: $errno)";
+        throw new HTTPRequestException ($m);
       }
 
       if (!is_resource ($sock))
         throw new HTTPRequestException ("Couldn't connect to $host");
 
-      fputs($sock, $header);
+      fputs ($sock, $header);
 
       $rawresponse = "";
+
       while (!feof ($sock))
         $rawresponse .= fgets ($sock, 512);
     }
@@ -369,8 +386,9 @@ class HTTPRequest
     $status = $resp->status ();
 
     if ($status != 200) {
+      //print_r ($resp);
       if ($status == 302 || $status == 301) {
-        $location = $resp->get_header('location');
+        $location = $resp->get_header ('location');
 
         if ($location != $path && !strpos ($location, '://'))
           $url = $protocol . "://" . $host . $location;
@@ -385,7 +403,7 @@ class HTTPRequest
         $this->recursions++;
         $vars = array();
 
-        print_r($headers);
+        //print_r ($headers);
 
         return $this->do_method ($method, $url, $vars, $headers, $data);
       }
@@ -414,8 +432,8 @@ class HTTPRequest
    */
   public function get ($url, $vars=array(), $headers=array())
   {
-    if (strpos($url, '?') !== false) {
-      list($url, $vars) = explode('?', $url);
+    if (strpos ($url, '?') !== false) {
+      list ($url, $vars) = explode ('?', $url);
       $vars = Net::query_to_array ($vars);
     }
     return $this->do_method ('GET', $url, $vars, $headers);
@@ -521,13 +539,13 @@ class HTTPResponse
    * The raw response, unparsed
    * @var string
    */
-  protected $rawData = null;
+  protected $raw_data = null;
 
   /**
    * The raw header part of the raw response
    * @var string
    */
-  protected $rawHeader = null;
+  protected $raw_header = null;
 
   /**
    * The parsed headers
@@ -561,7 +579,7 @@ class HTTPResponse
    */
   public function __construct($data)
   {
-    $this->rawData = $data;
+    $this->raw_data = $data;
     $this->parse($data);
   }
 
@@ -612,7 +630,7 @@ class HTTPResponse
    */
   public function raw_data ()
   {
-    return $this->rawData;
+    return $this->raw_data;
   }
 
   /**
@@ -622,7 +640,7 @@ class HTTPResponse
    */
   public function raw_header ()
   {
-    return $this->rawHeader;
+    return $this->raw_header;
   }
 
   /**
@@ -673,7 +691,7 @@ class HTTPResponse
     $enc = $this->get_header ('content-encoding');
 
     if ($this->get_header ('transfer-encoding') == 'chunked') {
-      $rd = new PLib\StringReader ($body);
+      $rd = new \PLib\StringReader ($body);
       $body = '';
       $bytes = 0;
       do {
@@ -700,7 +718,7 @@ class HTTPResponse
    */
   protected function parse_header ($header)
   {
-    $this->rawHeader = $header;
+    $this->raw_header = $header;
     $lines = explode ("\r\n", $header);
 
     //! Get the first line with status and such...
@@ -783,7 +801,7 @@ class HTTPCookie
                            "cookies can not be saved");
     }
 
-    $this->cookiejar = PLib\combine_path ($this->path, $this->name);
+    $this->cookiejar = \PLib\combine_path ($this->path, $this->name);
   }
 
   /**
@@ -813,6 +831,8 @@ class HTTPCookie
         continue;
 
       list (, $name, $val) = $m;
+
+      if ($name) $name = strtolower ($name);
 
       if (array_key_exists ($name, $c))
         $c[$name] = $val;
@@ -991,7 +1011,7 @@ class HTTPCookie
    */
   public function __toString ()
   {
-    return "HTTPCookie($this->cookiejar)";
+    return get_class($this) . "(\"$this->cookiejar\")";
   }
 }
 
