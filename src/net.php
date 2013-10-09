@@ -10,11 +10,6 @@
 namespace PLib\Net;
 
 /**
- * The {@see HTTPResponse} needs the {@link StringReader} class.
- */
-require_once PLIB_PATH . '/string.php';
-
-/**
  * Class for handling HTTP Queries
  *
  * @author Pontus Östlund <poppanator@gmail.com>
@@ -40,7 +35,7 @@ class HTTPRequest
    * @var array
    */
   protected $request_headers = array(
-    'User-Agent' => 'PLib HTTPClient (http://plib.poppa.se)',
+    'User-Agent' => 'PLib HTTPClient (https://github.com/poppa/PLib)',
     'Connection' => 'Close'
   );
 
@@ -690,25 +685,8 @@ class HTTPResponse
 
     $enc = $this->get_header ('content-encoding');
 
-    if ($this->get_header ('transfer-encoding') === 'chunked') {
-
-      //file_put_contents("tmp.html", $body);
-
-      $rd = new \PLib\StringReader ($body);
-      $body = '';
-      $bytes = 0;
-      do {
-        $ln = $rd->read_line ("\r\n");
-
-        // It's an assignment
-        if (((int) ($bytes = hexdec ($ln)) === 0))
-          break;
-
-        $body .= $this->decode ($rd->read ((int) $bytes), $enc);
-      } while (!$rd->end ());
-
-      $rd->dispose ();
-    }
+    if ($this->get_header ('transfer-encoding') === 'chunked')
+      $body = http_chunked_decode ($body);
 
     $this->data = $body;
     unset ($body, $header);
@@ -749,6 +727,54 @@ class HTTPResponse
     }
     return $data;
   }
+}
+
+if (!function_exists ('http-chunked-decode')) { 
+  /** 
+   * dechunk an http 'transfer-encoding: chunked' message 
+   * 
+   * @param string $chunk the encoded message 
+   * @return string the decoded message.  
+   *  If $chunk wasn't encoded properly it will be returned unmodified. 
+   */ 
+  function http_chunked_decode ($chunk) 
+  {
+    $pos = 0;
+    $len = strlen ($chunk);
+    $dechunk = null;
+
+    while(($pos < $len)
+        && ($chunk_len_hex = substr ($chunk, $pos,
+                                    ($nl_at = strpos ($chunk, "\n", $pos+1)
+                                    )-$pos)))
+    {
+      if (!is_hex ($chunk_len_hex)) {
+        trigger_error ('Value is not properly chunk encoded', E_USER_WARNING);
+        return $chunk;
+      }
+
+      $pos = $nl_at + 1;
+      $chunk_len = hexdec (rtrim ($chunk_len_hex, "\r\n"));
+      $dechunk .= substr ($chunk, $pos, $chunk_len);
+      $pos = strpos ($chunk, "\n", $pos + $chunk_len) + 1;
+    } 
+
+    return $dechunk; 
+  } 
+
+  /** 
+   * determine if a string can represent a number in hexadecimal 
+   * 
+   * @param string $hex 
+   * @return boolean true if the string is a hex, otherwise false 
+   */ 
+  function is_hex($hex) 
+  {
+    $hex = strtolower (trim (ltrim ($hex, "0"))); 
+    if (empty ($hex)) $hex = 0; 
+    $dec = hexdec ($hex); 
+    return $hex == dechex ($dec); 
+  } 
 }
 
 /**

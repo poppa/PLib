@@ -12,10 +12,9 @@ $head->add_node ('meta', null, array('charset' => 'utf-8'));
 $head->add_node ('title', 'My web site & stuff');
 $head->add_node ('link', null, array('rel' => 'stylesheet', 
                                      'href' => 'style.css'));
-$head->add_node ('script', '
-  if (document.body.length > 0)
-    document.body.write ("This is my life");
-');
+$head->add_node ('script', 
+  'if (document.body.length > 0)
+    document.body.write ("This is my life");');
 
 $body = $root->add_node ('body');
 $body->add_node ('h1', 'Welcome to my site');

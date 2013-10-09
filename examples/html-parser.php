@@ -14,7 +14,7 @@ $html = '
     <script src="script.js"></script>
     <script>
       $(function () {
-        $("#mydiv").html ("Some shit man");
+        $("#mydiv").html ("<h2>Some shit man</h2>");
       });
     </script>
   </head>
@@ -45,6 +45,7 @@ $p->add_tags (array(
   },
 
   '#text' => function (DOMNode $node, $value) {
+    // Remove empty or whitespace only text nodes
     if (trim ($value) === "")
       $node->parentNode->removeChild ($node);
   },

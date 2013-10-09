@@ -14,6 +14,7 @@ require_once PLIB_PATH . '/xml/qname.php';
  * Type constant for XMLNode
  */
 define ('XML_BUILDER_NODE',     1);
+
 /**
  * Type constant for XMLDocument
  */
@@ -82,8 +83,10 @@ class XMLNode
     $n  = $this->node ? new self ($this->owner) : $this;
     $e  = $this->doc->createElement ((string)$name);
 
-    if ($value)
-      $e->appendChild ($this->doc->createTextNode (html_entity_decode ($value)));
+    if ($value) {
+      $e->appendChild (
+        $this->doc->createTextNode (html_entity_decode ($value)));
+    }
 
     if ($this->node)
       $n->node = $this->node->appendChild ($e);
@@ -257,14 +260,14 @@ class XMLNode
    * @throws Exception
    * @param DOMElement|XMLNode $to
    */
-  public function replace ($to)
+  public function replace_with ($to)
   {
     if ($to instanceof XMLNode)
       $to = $to->node;
 
     if (!($to instanceof DOMElement)) {
       throw new \Exception (
-        "The node given to <strong>XMLNode::replace()</strong> is not " .
+        "The node given to \"XMLNode::replace_with()\" is not " .
         "a DOMNode object"
       );
     }
@@ -323,6 +326,16 @@ class XMLNode
   }
 
   /**
+   * Render the current node to a string as HTML
+   * 
+   * @return string
+   */
+  public function render_html ()
+  {
+    return $this->doc->saveHTML ($this->node);
+  }
+
+  /**
    * Returns the contents of the node without the node it self.
    *
    * @return string
@@ -332,6 +345,20 @@ class XMLNode
     $str = '';
     foreach ($this->node->childNodes as $cn)
       $str .= $this->doc->saveXML ($cn);
+
+    return $str;
+  }
+
+  /**
+   * Returns the contents of the node without the node it self as HTML.
+   *
+   * @return string
+   */
+  public function inner_html ()
+  {
+    $str = '';
+    foreach ($this->node->childNodes as $cn)
+      $str .= $this->doc->saveHTML ($cn);
 
     return $str;
   }
@@ -416,12 +443,26 @@ class XMLDocument extends XMLNode
    *  Format the output (i.e. indentation)
    * @return string
    */
-  public function render ($html=false, $format=false, $declaration=true)
+  public function render ($html=false, $format=null, $declaration=true)
   {
-    $this->doc->formatOutput = $format;
+    if ($format !== null)
+      $this->doc->formatOutput = $format;
 
-    if ($html)
-      return $this->doc->saveHTML ();
+    if ($html) {
+      $ret = null;
+
+      if ($format === true) {
+        $d = new \DOMDocument ();
+        $d->preserveWhiteSpace = true;
+        $d->loadXML ($this->doc->saveXML ());
+        $d->formatOutput = true;
+        $ret = $d->saveHTML ();
+      }
+      else
+        $ret = $this->doc->saveHTML ();
+
+      return $ret;
+    }
 
     if (!$declaration) {
       $r = explode("\n", $this->doc->saveXML ());
@@ -471,7 +512,7 @@ class HTMLDocument extends XMLDocument
    *
    * @param bool $format_output
    */
-  public function render ($format_output=false)
+  public function render ($format_output=null)
   {
     return parent::render (true, $format_output, false);
   }
@@ -864,7 +905,7 @@ class Ent
   }
 
   /**
-   * replace all HTML entities in $text with the XML counter parts
+   * Replace all HTML entities in $text with the XML counter parts
    * @param string $text
    * @return string
    */

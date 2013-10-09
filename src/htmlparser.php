@@ -97,6 +97,9 @@ class Parser
    */
   protected $doctype_callback;
 
+  /**
+   * Callback lookup cache
+   */
   private $cbcache;
 
   /**
@@ -184,15 +187,23 @@ class Parser
    */
   public function render ($format=null)
   {
-    // The formatting of HTML is beyond bad. This is a little hack that makes
-    // it at least a little bit better.
-    $this->doc->formatOutput = $format !== false;
-    $html = $this->doc->saveXML ();
-    $xml = new \DOMDocument ();
-    $xml->preserveWhiteSpace = $format !== false ? true : $format;
-    $xml->formatOutput = $format;
-    $xml->loadXML ($html);
-    return $xml->saveHTML ();
+    if ($format !== false) {
+      $xml = new \DOMDocument ();
+      // The formatting of HTML is beyond bad. This is a little hack that makes
+      // it at least a little bit better.
+      if ($format === false) {
+        $this->doc->formatOutput = false;
+        $xml->preserveWhiteSpace = false;
+        $xml->formatOutput = false;
+      }
+      else
+        $this->doc->formatOutput = true;
+
+      $xml->loadXML ($this->doc->saveXML ());
+      return $xml->saveHTML ();
+    }
+
+    return $this->doc->saveHTML ();
   }
 
   /**
@@ -247,7 +258,12 @@ class Parser
     }
   }
 
-  private function getcb ($tag)
+  /**
+   * Get callback for `$tag`
+   *
+   * @param DOMNode $tag
+   */
+  private function getcb (\DOMNode $tag)
   {
     $cb = null;
     $type = $tag->nodeType;
@@ -266,15 +282,15 @@ class Parser
       case XML_TEXT_NODE:
         if (array_key_exists ($tag, $this->tags))
           $cb = $this->tags[$tag];
-        elseif ($cb = $this->data_callback)
-          ;
+        else
+          $cb = $this->data_callback;
         break;
 
       default:
         if (array_key_exists ($tag, $this->tags))
           $cb = $this->tags[$tag];
-        elseif ($cb = $this->tag_callback)
-          ;
+        else
+          $cb = $this->tag_callback;
         break;
     }
 
@@ -299,10 +315,11 @@ class Parser
   }
 }
 
+/**
+ * Internal class used for callback lookup cache in @see{Parser}.
+ */
 class Object
 {
-  private $container = array();
-
   public function __get ($k) {
     if (isset ($this->{$k}))
       return $this->{$k};
