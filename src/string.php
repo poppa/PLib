@@ -191,7 +191,11 @@ class StringReader implements IStream
    */
   public function read_line ($nl="\n")
   {
-    return $this->read_to_char ($nl);
+    $pos = strpos ($this->string, $nl, $this->cursor);
+    if (!$pos) $pos = $this->length;
+    $str = substr ($this->string, $this->cursor, $pos - $this->cursor);
+    $this->cursor = $pos+strlen($nl);
+    return $str;
   }
 
   /**
@@ -208,7 +212,7 @@ class StringReader implements IStream
     $s = '';
     $c = null;
     while ($this->cursor < $this->length &&
-          ($c = $this->string[$this->cursor++]) != $char)
+          ($c = $this->string[$this->cursor++]) !== $char)
 
     {
       $s .= $c;

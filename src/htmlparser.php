@@ -188,7 +188,7 @@ class Parser
     // it at least a little bit better.
     $this->doc->formatOutput = $format !== false;
     $html = $this->doc->saveXML ();
-    $xml = new \DOMDocument();
+    $xml = new \DOMDocument ();
     $xml->preserveWhiteSpace = $format !== false ? true : $format;
     $xml->formatOutput = $format;
     $xml->loadXML ($html);
@@ -259,19 +259,19 @@ class Parser
     switch ($type)
     {
       case XML_COMMENT_NODE:
-        if (array_key_exists($tag, $this->tags))
+        if (array_key_exists ($tag, $this->tags))
           $cb = $this->tags[$tag];
         break;
 
       case XML_TEXT_NODE:
-        if (array_key_exists($tag, $this->tags))
+        if (array_key_exists ($tag, $this->tags))
           $cb = $this->tags[$tag];
         elseif ($cb = $this->data_callback)
           ;
         break;
 
       default:
-        if (array_key_exists($tag, $this->tags))
+        if (array_key_exists ($tag, $this->tags))
           $cb = $this->tags[$tag];
         elseif ($cb = $this->tag_callback)
           ;

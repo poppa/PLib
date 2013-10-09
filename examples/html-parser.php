@@ -21,6 +21,11 @@ $html = '
   <body>
     <div id="mydiv">
       <p><span id="myspan">Hello world &bull; Hello universe</span></p>
+      <ul>
+        <li>List item 1</li>
+        <li>List item 2</li>
+        <li>List item <i>3</i></li>
+      </ul>
       <!-- A picture of me -->
       <!-- A picture of me indeed -->
       <img src="myimage.jpg" alt="A picture of me">
@@ -42,6 +47,12 @@ $p->add_tags (array(
   '#text' => function (DOMNode $node, $value) {
     if (trim ($value) === "")
       $node->parentNode->removeChild ($node);
+  },
+
+  'i' => function (DOMNode $node, $tag, $attr, $data) {
+    // Replace i tags with em tags
+    $e = $node->ownerDocument->createElement ('em', $data);
+    $node->parentNode->replaceChild ($e, $node);
   },
 
   'div' => function (DOMNode $node, $tag, $attr, $data) {

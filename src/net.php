@@ -355,7 +355,7 @@ class HTTPRequest
 
       //echo "+ Request: $proto://$host:$port$path\n";
 
-      if (!($sock = @stream_socket_client("$proto://$host:$port", $errno, 
+      if (!($sock = @stream_socket_client("$proto://$host:$port", $errno,
                                           $errstr, $this->timeout)))
       {
         $m = "Couldn't fetch $host! $errstr (errno: $errno)";
@@ -690,18 +690,21 @@ class HTTPResponse
 
     $enc = $this->get_header ('content-encoding');
 
-    if ($this->get_header ('transfer-encoding') == 'chunked') {
+    if ($this->get_header ('transfer-encoding') === 'chunked') {
+
+      //file_put_contents("tmp.html", $body);
+
       $rd = new \PLib\StringReader ($body);
       $body = '';
       $bytes = 0;
       do {
-        $ln = $rd->read_line ();
+        $ln = $rd->read_line ("\r\n");
 
         // It's an assignment
-        if (((int)($bytes = hexdec ($ln)) === 0))
+        if (((int) ($bytes = hexdec ($ln)) === 0))
           break;
 
-        $body .= $this->decode ($rd->read ((int)$bytes), $enc);
+        $body .= $this->decode ($rd->read ((int) $bytes), $enc);
       } while (!$rd->end ());
 
       $rd->dispose ();
