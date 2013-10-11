@@ -3,7 +3,7 @@
  * Version class
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
+ * @license GPL License 3
  */
 
 namespace PLib;

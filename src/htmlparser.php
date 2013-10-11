@@ -63,7 +63,6 @@ namespace PLib\HTML;
  * </pre>
  *
  * @author  Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
  */
 class Parser
 {

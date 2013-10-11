@@ -30,7 +30,6 @@ namespace PLib;
  * file path is sent as argument.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.4.1
  */
 class File extends IO
 {
@@ -132,7 +131,7 @@ class File extends IO
       $this->mtime    = filemtime ($this->file);
       $this->ctime    = filectime ($this->file);
       $this->name     = basename ($this->file);
-      $this->nicesize = IO::nice_size ($this->size);
+      $this->nicesize = parent::_nice_size ($this->size);
       preg_match ('/(?:\.(tar))?\.([a-z0-9]+)$/i', $this->file, $m);
 
       if (isset ($m[2])) {
@@ -204,6 +203,11 @@ class File extends IO
 
     unset ($fh);
     return false;
+  }
+
+  public function nice_size ($decimals=1)
+  {
+    return parent::_nice_size ($this->size, $decimals);
   }
 
   /**
@@ -590,7 +594,6 @@ class Dir extends IO
  * Abstract IO class
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @package IO
  */
 abstract class IO
 {
@@ -651,7 +654,7 @@ abstract class IO
    * @param int $decimals
    * @return string
    */
-  public static function nice_size ($size, $decimals=1)
+  public static function _nice_size ($size, $decimals=1)
   {
     if ($size < File::Kb)
       $size = $size . "b";

@@ -21,7 +21,10 @@ you want.
 
     // Makes a copy of the image, crops it around the center and turns it into
     // grayscale
-    $img->copy ('path/to/image-copy.jpg')->crop_center (300, 300)->grayscale ();
+    $img2 = $img->copy ('path/to/image-copy.jpg')->crop_center (300, 300)->grayscale ();
+    
+    // Save the changes
+    $img2->save ();
 
 There might be some more examples in the [example](https://github.com/poppa/PLib/tree/master/examples)
 directory.

@@ -4,7 +4,6 @@
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  * @license GPL License 3
- * @version 0.1
  */
 
 namespace PLib;
@@ -32,7 +31,6 @@ define ('HAS_PNG_QUALITY', version_compare (phpversion (), '5.2.0', '>'));
  * Master class for graphics
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
  */
 abstract class Graphics
 {
@@ -161,7 +159,6 @@ abstract class Graphics
  * Exception
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
  */
 class GraphicsException extends \Exception
 {

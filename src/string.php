@@ -4,7 +4,6 @@
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  * @license GPL License 3
- * @version 0.2
  */
 
 namespace PLib;

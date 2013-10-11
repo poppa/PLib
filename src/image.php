@@ -4,7 +4,6 @@
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  * @license GPL License 3
- * @version 0.3
  * @todo
  *   When converting a PNG image with alpha channels to a JPEG image
  *   we need to fill the background or else it will look like crap!
@@ -23,7 +22,6 @@ use PLib\File;
  * The image class makes it easy to manipulate images.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @package Graphics
  */
 class Image extends Graphics
 {
@@ -70,6 +68,11 @@ class Image extends Graphics
    */
   public function __construct ($src)
   {
+    $this->__init ($src);
+  }
+
+  protected function __init ($src)
+  {
     if ($src instanceof File)
       $this->src = $src;
     else
@@ -85,20 +88,31 @@ class Image extends Graphics
       case 'png':
         if (!HAS_PNG) throw new GraphicsException ('PNG support is missing!');
         $this->type = 'png';
-        $this->resource = @imagecreatefrompng ($this->src->path);
+
+        if (!$this->resource)
+          $this->resource = @imagecreatefrompng ($this->src->path);
+
         break;
 
       case 'gif':
         if (!HAS_GIF) throw new GraphicsException ('GIF support is missing!');
+
         $this->type = 'gif';
-        $this->resource = @imagecreatefromgif ($this->src->path);
+
+        if (!$this->resource)
+          $this->resource = @imagecreatefromgif ($this->src->path);
+
         break;
 
       case 'jpg':
       case 'jpeg':
         if (!HAS_JPG) throw new GraphicsException ('JPEG support is missing!');
+
         $this->type = 'jpeg';
-        $this->resource = @imagecreatefromjpeg ($this->src->path);
+
+        if (!$this->resource)
+          $this->resource = @imagecreatefromjpeg ($this->src->path);
+
         break;
 
       default:
@@ -109,6 +123,8 @@ class Image extends Graphics
 
     $this->width  = imagesx ($this->resource);
     $this->height = imagesy ($this->resource);
+
+    return $this; 
   }
 
   /**
@@ -170,7 +186,9 @@ class Image extends Graphics
         break;
     }
 
-    return new self ($filename);
+    //return new self ($filename);
+
+    return $this->__init ($filename);
   }
 
   /**
@@ -247,27 +265,15 @@ class Image extends Graphics
           case 'png':
             if ($useAlpha)
               @imagesavealpha ($tmp, true);
-
-            @imagepng ($tmp, $this->src->path, self::$PNG_QUALITY);
             break;
-
-          case 'gif':
-            @imagegif ($tmp, $this->src->path);
-            break;
-
-          case 'jpg':
-          case 'jpeg':
-            @imagejpeg ($tmp, $this->src->path, self::$JPEG_QUALITY);
-            break;
-
-          default:
-            throw new GraphicsException ("Bad image type: {$this->type}!");
         }
 
-        @imagedestroy ($tmp);
+        @imagedestroy ($this->resource);
+        $this->resource = $tmp;
       }
 
-      return new self ($this->src->path);
+      //return new self ($this->src->path);
+      return $this->__init ($this->src->path);
     }
 
     return $this;
@@ -312,12 +318,12 @@ class Image extends Graphics
    */
   public function rename ($newname)
   {
-    $newname = $this->src->dir () . basename ($newname);
+    $newname = combine_path ($this->src->dir (), basename ($newname));
+
     if (!@rename ($this->src->path, $newname))
       throw new GraphicsException ("Couldn't rename \"{$this->src->path}\" " .
                                    "to \"$newname\"!");
-    $this->src->path = $newname;
-    $this->src->name = basename ($newname);
+    $this->src = new File ($newname);
     return $this;
   }
 
@@ -336,22 +342,11 @@ class Image extends Graphics
   {
     if (function_exists ('imagerotate')) {
       imagerotate ($this->resource, $angle, $bgcolor, $ignoreTransparent);
-      return $this;
+      return $this->__init ($this->src->path);
     }
 
     throw new GraphicsException ("imagerotate() is not supported in this " .
                                  "compilation of PHP!");
-  }
-
-  /**
-   * Returns the File object of the image
-   *
-   * @since 0.3
-   * @return File
-   */
-  public function file ()
-  {
-    return $this->src;
   }
 
   /**
@@ -372,27 +367,6 @@ class Image extends Graphics
   public function filename ()
   {
     return $this->src->name;
-  }
-
-  /**
-   * Returns the filesize of the image in bytes
-   *
-   * @return int
-   */
-  public function size ()
-  {
-    return $this->src->size;
-  }
-
-  /**
-   * Returns the filesize human readable like 43Kb
-   *
-   * @param int $decimals
-   * @return string
-   */
-  public function nice_size ($decimals=1)
-  {
-    return $this->src->nice_size ($decimals);
   }
 
   /**
@@ -467,9 +441,10 @@ class Image extends Graphics
       list (,$this->type) = explode ('/', $info['mime']);
     }
 
-    if (!parent::is_supported ($this->type))
+    if (!parent::is_supported ($this->type)) {
       throw new GraphicsException ("Images of type \"{$this->type}\" is not" .
                                    "supported");
+    }
 
     return $this->type;
   }
@@ -494,13 +469,23 @@ class Image extends Graphics
    */
   public function grayscale ()
   {
-    $r = clone $this;
-    $r = $r->resource ();
-    imagecopymergegray ($r, $this->resource, 0, 0, 0, 0, $this->width,
-                        $this->height, 0);
+    imagefilter ($this->resource, IMG_FILTER_GRAYSCALE);
+    return $this->__init ($this->src->path);
+  }
 
-    $this->create_image_from_type ($r);
-    return new self ($this->src->path);
+  /**
+   * Gives the image a sepia tone
+   *
+   * @param array $rgb
+   *  Define your own colors if you like. Default is r:112, g:66, b:20
+   *
+   * @return Image
+   */
+  public function sepia (array $rgb=array(112, 66, 20))
+  {
+    $this->grayscale ();
+    imagefilter ($this->resource, IMG_FILTER_COLORIZE, $rgb[0], $rgb[1], $rgb[2]);
+    return $this->__init ($this->src->path);
   }
 
   /**
@@ -522,11 +507,9 @@ class Image extends Graphics
     $r = imagecreatetruecolor ($width, $height);
     imagecopyresampled ($r, $this->resource, 0, 0, $x, $y, $width, $height,
                         $width, $height);
-
-    $this->create_image_from_type ($r);
-    imagedestroy ($r);
-    unset ($r);
-    return new self ($this->src->path);
+    imagedestroy ($this->resource);
+    $this->resource = $r;
+    return $this->__init ($this->src->path);
   }
 
   /**
@@ -546,14 +529,12 @@ class Image extends Graphics
   }
 
   /**
-   * Saves a new image of $resource from the current image type.
-   *
-   * @param resource $resource
+   * Save changes
    */
-  public function save_image_from_resource ($resource)
+  public function save ()
   {
-    $this->create_image_from_type ($resource);
-    return new self ($this->src->path);
+    $this->create_image_from_type ($this->resource, $this->src->path);
+    return $this->__init ($this->src->path);
   }
 
   /**
@@ -563,7 +544,7 @@ class Image extends Graphics
    * @param string $path
    * @return bool
    */
-  public static function alpha_png ($path)
+  public static function is_alpha_png ($path)
   {
     if (!is_readable ($path))
       return false;
@@ -587,12 +568,12 @@ class Image extends Graphics
   public function __toString ()
   {
     return
-    get_class ($this) . "(\n" .
-    "  Path:   {$this->src->path},\n" .
-    "  Width:  {$this->width},\n"     .
-    "  Height: {$this->height},\n"    .
-    "  Type:   {$this->type}\n"       .
-    ")";
+      get_class ($this) . "(\n" .
+      "  Path:   {$this->src->path},\n" .
+      "  Width:  {$this->width},\n"     .
+      "  Height: {$this->height},\n"    .
+      "  Type:   {$this->type}\n"       .
+      ")";
   }
 
   /**
@@ -632,26 +613,44 @@ class Image extends Graphics
   }
 
   /**
+   * Returns a new image handler with the same size as the current image
+   */
+  protected function new_image_handler ()
+  {
+    return imagecreatetruecolor ($this->width, $this->height);
+  }
+
+  /**
    * Creates a new image from the current image type
    *
    * @since 0.2
    * @param resource $resource
    */
-  protected function create_image_from_type ($resource)
+  protected function create_image_from_type ($resource=null, $path=null)
   {
-    switch ($this->type) {
+    if (!$resource)
+      $resource = $this->resource;
+
+    if (!$path)
+      $path = $this->src->path;
+
+    switch ($this->type) 
+    {
       case 'jpeg':
-        imagejpeg ($resource, $this->src->path, Graphics::$JPEG_QUALITY);
+        imagejpeg ($resource, $path, Graphics::$JPEG_QUALITY);
         break;
 
       case 'png':
-        imagepng ($resource, $this->src->path, Graphics::$PNG_QUALITY);
+        imagepng ($resource, $path, Graphics::$PNG_QUALITY);
         break;
 
       case 'gif':
-        imagegif ($resource, $this->src->path);
+        imagegif ($resource, $path);
         break;
     }
+
+    if ($resource != $this->resource)
+      $this->resource = $resource;
   }
 
   /**
@@ -661,7 +660,7 @@ class Image extends Graphics
    */
   protected function use_alpha_blending ()
   {
-    if ($this->type == 'png' && self::alpha_png ($this->src->path))
+    if ($this->type == 'png' && self::is_alpha_png ($this->src->path))
       return true;
 
     return false;
@@ -695,7 +694,6 @@ class Image extends Graphics
  * Creates an {@see Image} object from a string
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @package Graphics
  */
 class StringImage extends Image
 {
@@ -721,6 +719,7 @@ class StringImage extends Image
   {
     $this->data = $data;
     $this->resource = imagecreatefromstring ($data);
+
     if (!is_resource ($this->resource))
       throw new GraphicsException ("Couldn't create an image from data!");
 
@@ -763,7 +762,7 @@ class StringImage extends Image
   /**
    * @since 0.2
    * Destructor. Removes the temporary file and calls
-   * {@see Image::__desctruct()}
+   * {@see Image::__destruct()}
    */
   public function __destruct ()
   {

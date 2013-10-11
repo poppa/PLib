@@ -3,7 +3,7 @@
  * Stream reader
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.3
+ * @license GPL License 3
  */
 
 namespace PLib;

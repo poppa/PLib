@@ -3,7 +3,7 @@
  * Iterator
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
+ * @license GPL License 3
  */
 
 namespace PLib;
@@ -12,7 +12,6 @@ namespace PLib;
  * A generic iterator
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
  */
 abstract class Iterator
 {
@@ -134,8 +133,7 @@ abstract class Iterator
  * Generic exception when the iterator is out of range
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
-*/
+ */
 class PLibIteratorOutOfRangeException extends \Exception
 {
   public $message = "The requested index is out of range";

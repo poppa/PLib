@@ -3,8 +3,7 @@
  * Various net related classes.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 2
- * @version 0.3
+ * @license GPL License 3
  */
 
 namespace PLib\Net;
@@ -13,8 +12,6 @@ namespace PLib\Net;
  * Class for handling HTTP Queries
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
- * @since 0.3
  */
 class HTTPRequest
 {
@@ -525,8 +522,6 @@ class HTTPRequest
  * Class that parses a raw HTTP response.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
- * @since 0.3
  */
 class HTTPResponse
 {
@@ -1048,7 +1043,6 @@ class HTTPCookie
  * Helper class for network stuff
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.2.1
  */
 class Net
 {

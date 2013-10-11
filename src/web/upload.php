@@ -17,8 +17,6 @@ require_once PLIB_PATH . '/includes/iterator.php';
  * A simple upload class.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.1
- * @package Web
  */
 class Upload extends PLib\Iterator
 {

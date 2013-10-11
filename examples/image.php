@@ -10,9 +10,9 @@ PLib\import ('image');
 $img1 = new PLib\Image ('assets/feet.jpg');
 
 // Copy the image
-// Scale it to max width 400 or max height 400
-// Crop it around the center to a size of 300x300 pixels
-$img2 = $img1->copy ('feet2.jpg')->scale (400, 400)->crop_center (300, 300);
+// Scale it to max width 700 or max height 700
+// Crop it around the center to a size of 500x500 pixels
+$img2 = $img1->copy ('feet2.jpg')->scale (700, 700)->crop_center (500, 500);
 
 // Now lets manipulate the image outside of the object with some standalone
 // PHP image functions.
@@ -29,12 +29,12 @@ $text  = 'Summertime';
 $white = imagecolorallocate ($ih, 255, 255, 255);
 $black = imagecolorallocate ($ih, 0, 0, 0);
 
-imagettftext ($ih, 18.0, 0.0, 11, 31, $black, $font, $text);
-imagettftext ($ih, 18.0, 0.0, 10, 30, $white, $font, $text);
+imagettftext ($ih, 24.0, 0.0, 21, 51, $black, $font, $text);
+imagettftext ($ih, 24.0, 0.0, 20, 50, $white, $font, $text);
 
-// Save the manipulations back to the object
-$img2 = $img2->save_image_from_resource ($ih);
+// And while we're at it, make it sepia
+$img2->sepia ();
 
-// And while we're at it, make it grayscale
-$img2 = $img2->grayscale ();
+// And save the changes
+$img2->save ();
 ?>

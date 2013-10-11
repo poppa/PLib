@@ -14,7 +14,6 @@ require_once dirname (__FILE__) . '/PLib.php';
  * Reads from stdin, i.e. the keyboard in most cases.
  *
  * @author Pontus Östlund <spam@poppa.se>
- * @version 0.1
  * @example
  *  $stdin = new Stdin ();
  *  $continue = null;
