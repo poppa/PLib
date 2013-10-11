@@ -302,9 +302,11 @@ class Image extends Graphics
    */
   public function copy ($new_name)
   {
-    if (!@copy ($this->src->path, $new_name))
+    if (!@copy ($this->src->path, $new_name)) {
       throw new GraphicsException ("Couldn\'t copy \"{$this->src->path}\" " .
                                    "to \"$new_name\"!");
+    }
+
     return new self ($new_name);
   }
 
@@ -320,10 +322,13 @@ class Image extends Graphics
   {
     $newname = combine_path ($this->src->dir (), basename ($newname));
 
-    if (!@rename ($this->src->path, $newname))
+    if (!@rename ($this->src->path, $newname)) {
       throw new GraphicsException ("Couldn't rename \"{$this->src->path}\" " .
                                    "to \"$newname\"!");
+    }
+
     $this->src = new File ($newname);
+
     return $this;
   }
 
@@ -550,6 +555,7 @@ class Image extends Graphics
       return false;
 
     $fh = @fopen ($path, 'rb');
+
     if (!is_resource ($fh))
       return false;
 
@@ -736,7 +742,6 @@ class StringImage extends Image
   /**
    * Saves the file to dist.
    *
-   * @since 0.2
    * @param string $filename
    *  The full path to the new image. You don't need to add the extension
    *  since that will be added dynamically depending on what type of image
@@ -747,13 +752,20 @@ class StringImage extends Image
    */
   public function save ($filename, $mode=0666)
   {
+    if (!$filename)
+      return parent::save ();
+
     if (!$this->type)
       $this->image_type ();
 
     $name = $filename . '.' . $this->type;
+
     if (@copy ($this->src->path, $name)) {
       @chmod ($name, $mode);
-      return true;
+
+      $this->__init ($name);
+      parent::save ();
+      return $this;
     }
 
     return false;
