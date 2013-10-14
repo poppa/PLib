@@ -2,8 +2,11 @@
 /**
  * Misc string classes
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @link      https://github.com/poppa/PLib
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib
  */
 
 namespace PLib;
@@ -23,13 +26,14 @@ class String
   /**
    * Implodes an array by joining with `$glue`
    *
-   * @example
+   * <pre>
    *  $list = array('One', 'Two', 'Three', 'Four');
    *  echo String::implode_nicely($list);
    *  // One, Two, Three and Four
    *
    *  echo String::implode_nicely($list, 'or');
    *  // One, Two, Three or Four
+   * </pre>
    *
    * @param array $a
    * @param string $glue

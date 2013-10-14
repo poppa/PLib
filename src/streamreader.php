@@ -4,6 +4,7 @@
  *
  * @copyright 2013 Pontus Östlund
  * @author    Pontus Östlund <poppanator@gmail.com>
+ * @link      https://github.com/poppa/PLib
  * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
  * @package   PLib
  */

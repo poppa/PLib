@@ -2,13 +2,15 @@
 /**
  * The image class makes it easy to manipulate images.
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license http://opensource.org/licenses/GPL-3.0 GPL License 3
- * @package PLib
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @link      https://github.com/poppa/PLib
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib
  *
  * @todo
- *   When converting a PNG image with alpha channels to a JPEG image
- *   we need to fill the background or else it will look like crap!
+ *  When converting a PNG image with alpha channels to a JPEG image
+ *  we need to fill the background or else it will look like crap!
  */
 
 namespace PLib;

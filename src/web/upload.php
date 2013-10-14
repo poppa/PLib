@@ -2,8 +2,11 @@
 /**
  * Upload
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @link      https://github.com/poppa/PLib
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib\Web
  */
 
 namespace PLib\Web;
@@ -18,7 +21,7 @@ require_once PLIB_PATH . '/includes/iterator.php';
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  */
-class Upload extends PLib\Iterator
+class Upload extends \PLib\Iterator
 {
   /**
    * Total size of the upload
@@ -117,8 +120,7 @@ class Upload extends PLib\Iterator
   /**
    * Returns the next file
    *
-   * @return string
-   *  The path to the file
+   * @return string The path to the file
    */
   public function next ()
   {
@@ -425,8 +427,7 @@ class Upload extends PLib\Iterator
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  */
-class UploadException extends Exception
+class UploadException extends \Exception
 {
-  public $message;
 }
 ?>

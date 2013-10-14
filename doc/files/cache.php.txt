@@ -4,6 +4,7 @@
  *
  * @copyright 2013 Pontus Östlund
  * @author    Pontus Östlund <poppanator@gmail.com>
+ * @link      https://github.com/poppa/PLib
  * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
  * @package   PLib
  */
@@ -93,14 +94,12 @@ class Cache
 {
   /**
    * If returned from a remove callback function the cached entry will be kept.
-   * @var bool
    */
   const KEEP = true;
 
   /**
    * 10 years ahead in time. Use as third argument to {@see Cache::add()} to
    * add non-expireing cache (10 years must be seen as persistent)
-   * @var int
    */
   const PERSISTENT = 315360000;
 
@@ -122,7 +121,7 @@ class Cache
   /**
    * @var string The name of the cache table
    */
-  protected static $tableName = 'plib_cache';
+  protected static $tablename = 'plib_cache';
 
   /**
    * @var string SQLite table layout
@@ -200,7 +199,7 @@ class Cache
 
     $date  = date ($this->date_fmt, time () + $lifetime);
     $now   = date ($this->date_fmt, time ());
-    $table = self::$tableName;
+    $table = self::$tablename;
 
     $this->remove ($key);
 
@@ -234,7 +233,7 @@ class Cache
   public function get ($key, $return_expired=true)
   {
     $sql = sprintf ("SELECT * FROM %s WHERE ckey = %s",
-                    self::$tableName, $this->dbh->quote ($key));
+                    self::$tablename, $this->dbh->quote ($key));
 
     if ($p = $this->dbh->query ($sql)) {
       $p->setFetchMode (\PDO::FETCH_INTO, new CacheResult ());
@@ -274,7 +273,7 @@ class Cache
 
     if (!$keep) {
       $sql = sprintf ("DELETE FROM %s WHERE ckey = %s",
-                      self::$tableName, $this->dbh->quote ($key));
+                      self::$tablename, $this->dbh->quote ($key));
       $this->dbh->query ($sql);
     }
   }
@@ -284,7 +283,7 @@ class Cache
    */
   public function clear ()
   {
-    $this->dbh->query ("DELETE FROM " . self::$tableName);
+    $this->dbh->query ("DELETE FROM " . self::$tablename);
   }
 
   /**
@@ -293,11 +292,11 @@ class Cache
   protected function init_sqlite ()
   {
     $sql = sprintf ("SELECT * FROM sqlite_master WHERE name = '%s' " .
-                    "AND type = 'table'", self::$tableName);
+                    "AND type = 'table'", self::$tablename);
 
     if ($p = $this->dbh->query ($sql)) {
       if (!$p->fetch (\PDO::FETCH_ASSOC)) {
-        $sql = sprintf (self::$s_table, self::$tableName);
+        $sql = sprintf (self::$s_table, self::$tablename);
 
         if (!($p = $this->dbh->query ($sql)))
           throw new \Exception ('Unable to create cache table!\n');
