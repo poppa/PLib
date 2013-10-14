@@ -3,9 +3,12 @@
  * PLib (Poppa PHP Library) is a set of PHP classes and functions to make
  * everyday PHP programming a little bit easier.
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
- * @version 2.0
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @link      https://github.com/poppa/PLib
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @version   2.0
+ * @package   PLib
  */
 
 namespace PLib;
@@ -23,14 +26,14 @@ define ('PLIB_VERSION', '2.0');
 /**
  * The path to PLib it self
  */
-define ('PLIB_PATH', dirname(__FILE__));
+define ('PLIB_PATH', __DIR__);
 
 if (!defined ('PLIB_TMP_DIR')) {
   /**
-   * The path to the temp dir used by PLib. By default it's created a subdir
+   * The path to the temp dir used by PLib. By default it's created as a subdir
    * to PLib it self.
    *
-   * To overwrite this define PLIB_TMP_DIR prior to including PLib.php
+   * To overwrite this define {@link PLIB_TMP_DIR} prior to including PLib.php
    */
   define ('PLIB_TMP_DIR', PLIB_PATH . DIRECTORY_SEPARATOR . 'tmp');
 }
@@ -38,7 +41,7 @@ if (!defined ('PLIB_TMP_DIR')) {
 if (!defined ('PLIB_SQLITE_FILE')) {
   /**
    * The path to the default SQLite file to use for internal PLib stuff.
-   * To overwrite this define PLIB_SQLITE_FILE prior to including PLib.php
+   * To overwrite this define `PLIB_SQLITE_FILE` prior to including PLib.php
    */
   define ('PLIB_SQLITE_FILE', PLIB_TMP_DIR.DIRECTORY_SEPARATOR.'plib.sqlite');
 }
@@ -52,6 +55,8 @@ if (!is_dir (PLIB_TMP_DIR)) {
 
 /**
  * Include PLib file $which
+ *
+ * @api
  *
  * @param string $which
  */
@@ -72,7 +77,9 @@ function import ($which)
 /**
  * Combine paths with OS directory separator
  *
- * @param string ... $args
+ * @api
+ *
+ * @param string $args This is a `vararg`, i.e it takes any numer of arguments.
  */
 function combine_path ($args)
 {
@@ -82,7 +89,9 @@ function combine_path ($args)
 /**
  * Combine paths with forward slashes
  *
- * @param string ... $args
+ * @api
+ *
+ * @param string $args This is a `vararg`, i.e it takes any numer of arguments.
  */
 function combine_path_unix ($args)
 {
@@ -91,6 +100,8 @@ function combine_path_unix ($args)
 
 /**
  * Low level path combiner
+ *
+ * @internal
  *
  * @param array $paths
  * @param string $sep
@@ -112,11 +123,13 @@ function _low_combine_path (array $paths, $sep=DIRECTORY_SEPARATOR)
       $out[]= $p;
   }
 
-  return ($path[0] == '/' ? '/' : '') . join ('/', $out);
+  return ($path[0] === $sep ? $sep : '') . join ($sep, $out);
 }
 
 /**
  * Checks if `$str` ends with `$tail`
+ *
+ * @api
  *
  * @param string $str
  * @param string $tail
@@ -125,11 +138,13 @@ function _low_combine_path (array $paths, $sep=DIRECTORY_SEPARATOR)
 function has_suffix ($str, $tail)
 {
   return is_string ($str) &&
-         substr ($str, strlen ($str) - strlen ($tail)) == $tail;
+         substr ($str, strlen ($str) - strlen ($tail)) === $tail;
 }
 
 /**
  * Checks if `$str` starts with `$head`
+ *
+ * @api
  *
  * @param string $str
  * @param string $head
@@ -137,17 +152,20 @@ function has_suffix ($str, $tail)
  */
 function has_prefix ($str, $head)
 {
-  return is_string ($str) && substr ($str, 0, strlen ($head)) == $head;
+  return is_string ($str) && substr ($str, 0, strlen ($head)) === $head;
 }
 
 /**
- * Returns a SQLite PDO instace for the default SQLite db.
+ * Returns a SQLite PDO instance for the default SQLite db.
  *
- * @throws
- *  An exception if no SQLite driver is avilable or if the
- *  instantiation fails.
+ * @api
  *
- * @return PDO
+ * @throws \Exception
+ *  If no SQLite driver is avilable
+ * @throws \PDOException
+ *  If the instantiation fails.
+ *
+ * @return \PDO
  */
 function get_default_sqlite ()
 {
@@ -158,5 +176,10 @@ function get_default_sqlite ()
   catch (\PDOException $e) { throw $e; }
 }
 
+/**
+ * Just an empty object, pretty much as a stdClass
+ *
+ * @api
+ */
 class Object {}
 ?>

@@ -2,8 +2,11 @@
 /**
  * Iterator
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @link      https://github.com/poppa/PLib
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib
  */
 
 namespace PLib;
@@ -47,6 +50,7 @@ abstract class Iterator
   /**
    * Checks if there's a next index in the array
    *
+   * @api
    * @return bool
    */
   abstract public function has_next ();
@@ -54,6 +58,7 @@ abstract class Iterator
   /**
    * Returns the next item in the array
    *
+   * @api
    * @return mixed
    */
   abstract public function next ();
@@ -61,6 +66,7 @@ abstract class Iterator
   /**
    * Returns the length of the array
    *
+   * @api
    * @return int
    */
   public function length ()
@@ -80,6 +86,7 @@ abstract class Iterator
   /**
    * Checks if the next item is the first item
    *
+   * @api
    * @return bool
    */
   public function first ()
@@ -90,6 +97,7 @@ abstract class Iterator
   /**
    * Checks if the current item is the last item
    *
+   * @api
    * @return bool
    */
   public function last ()
@@ -100,6 +108,7 @@ abstract class Iterator
   /**
    * Checks if the current item is the next last item
    *
+   * @api
    * @return bool
    */
   public function next_last ()
@@ -110,6 +119,7 @@ abstract class Iterator
   /**
    * Returns the current index we're at
    *
+   * @api
    * @return int
    */
   public function pointer ()
@@ -119,6 +129,8 @@ abstract class Iterator
 
   /**
    * Reverses the iterator
+   *
+   * @api
    */
   public function reverse ()
   {
@@ -134,8 +146,12 @@ abstract class Iterator
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  */
-class PLibIteratorOutOfRangeException extends \Exception
+class IteratorOutOfRangeException extends \Exception
 {
+  /**
+   * Default message
+   * @var string
+   */
   public $message = "The requested index is out of range";
 }
 ?>

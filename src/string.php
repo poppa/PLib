@@ -53,8 +53,6 @@ class String
  * String reader that mimics the {@see StreamReader} class.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
- * @version 0.3
- * @since 0.2
  */
 class StringReader implements IStream
 {
@@ -185,15 +183,16 @@ class StringReader implements IStream
 
   /**
    * Read one line at a time
-   *
-   * @since 0.2
    */
   public function read_line ($nl="\n")
   {
     $pos = strpos ($this->string, $nl, $this->cursor);
+
     if (!$pos) $pos = $this->length;
+
     $str = substr ($this->string, $this->cursor, $pos - $this->cursor);
-    $this->cursor = $pos+strlen($nl);
+    $this->cursor = $pos + strlen($nl);
+
     return $str;
   }
 
@@ -288,8 +287,6 @@ class StringReader implements IStream
 
   /**
    * Has the pointer reached the end of the file?
-   *
-   * @since 0.2
    */
   public function end ()
   {
@@ -299,7 +296,6 @@ class StringReader implements IStream
   /**
    * Returns the entire content
    *
-   * @since 0.3
    * @return string
    */
   public function get ()
@@ -318,8 +314,6 @@ class StringReader implements IStream
 
   /**
    * Cast to string. Returns the content.
-   *
-   * @since 0.3
    */
   public function __toString ()
   {

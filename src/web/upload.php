@@ -118,7 +118,7 @@ class Upload extends PLib\Iterator
    * Returns the next file
    *
    * @return string
-   *   The path to the file
+   *  The path to the file
    */
   public function next ()
   {

@@ -2,13 +2,19 @@
 /**
  * Simple cache
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib
  */
 
 namespace PLib;
 
-// Internal function
+/**
+ * Internal function for retreiving a "global" {@link Cache} object.
+ *
+ * @internal
+ */
 function __cache ()
 {
   static $c;
@@ -17,17 +23,21 @@ function __cache ()
 }
 
 /**
- * Convenience function for Cache::add();
+ * Convenience function for {@link Cache::add()}.
+ *
+ * @api
  *
  * @param string $key
+ *  The cache key
  * @param string $value
+ *  The cache value
  * @param int $lifetime
  *  Number of seconds the cache should exist
  * @param string $hash
  * @param mixed $rm_callback
  *  If set this function will be called prior to the cache being removed
  *
- * @return
+ * @return bool
  *  Returns true if success, false otherwise
  */
 function cache_add ($key, $value, $lifetime=0, $hash=null, $rm_callback=null)
@@ -36,9 +46,11 @@ function cache_add ($key, $value, $lifetime=0, $hash=null, $rm_callback=null)
 }
 
 /**
- * Convenience function for Cache::get ()
+ * Convenience function for {@link Cache::get()}.
  *
- * @param string key
+ * @api
+ *
+ * @param string $key
  * @param bool $return_expired
  *  If false expired results will not be returned
  *
@@ -50,7 +62,9 @@ function cache_get ($key, $return_expired=true)
 }
 
 /**
- * Convenience function for Cache::remove ();
+ * Convenience function for {@link Cache::remove()}
+ *
+ * @api
  *
  * @param string $key
  */
@@ -60,7 +74,9 @@ function cache_remove ($key)
 }
 
 /**
- * Convenience function for Cache::clear ()
+ * Convenience function for {@link Cache::clear()}
+ *
+ * @api
  */
 function cache_clear ()
 {
@@ -68,9 +84,10 @@ function cache_clear ()
 }
 
 /**
- * Simple cache class
+ * Simple cache class. Has support for SQLite databases.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
+ * @todo Add support for MySQL
  */
 class Cache
 {
@@ -81,37 +98,32 @@ class Cache
 
   /**
    * 10 years ahead in time. Use as third argument to {@see Cache::add()} to
-   * add non-expireing cache (10 years must be seen as persistent ;)
-   * @var int
+   * add non-expireing cache (10 years must be seen as persistent)
    */
   const PERSISTENT = 315360000;
 
   /**
-   * Database driver object
-   * @var PDO
+   * @var \PDO Database driver object
    */
   private $dbh = null;
 
   /**
-   * Database driver name
-   * @var string
+   * @var string Database driver name
    */
   private $driver = null;
 
   /**
-   * Date format
+   * @var string Date format
    */
   private $date_fmt = 'Y-m-d H:i:s';
 
   /**
-   * The name of the cache table
-   * @var string
+   * @var string The name of the cache table
    */
-  protected static $tableName = 'plib_cache';
+  protected static $tablename = 'plib_cache';
 
   /**
-   * SQLite table layout
-   * @var string
+   * @var string SQLite table layout
    */
   protected static $s_table = 'CREATE TABLE %s (
                                 ckey VARCHAR(255),
@@ -123,8 +135,7 @@ class Cache
                               )';
 
   /**
-   * MySQL table layout
-   * @var string
+   * @var string MySQL table layout
    */
   protected static $m_table = 'CREATE TABLE IF NOT EXISTS %s (
                                 id INT(11) PRIMARY KEY AUTO_INCREMENT,
@@ -138,6 +149,9 @@ class Cache
 
   /**
    * Creates a new Cache object
+   *
+   * @throws \Exception
+   *  If the given driver isn't supported
    *
    * @param PDO $db
    *  If not given the default SQLite file in PLib will be used
@@ -158,16 +172,20 @@ class Cache
   /**
    * Add to cache
    *
+   * @api
+   *
    * @param string $key
+   *  The cache key
    * @param string $value
+   *  The cache value
    * @param int $lifetime
    *  Number of seconds the cache should exist. If not given the cache will be
    *  kept for 24 hours.
    * @param string $hash
-   * @param mixed $rm_callback
+   * @param string|callback $rm_callback
    *  If set this function will be called prior to the cache being removed
    *
-   * @return
+   * @return bool
    *  Returns true if success, false otherwise
    */
   public function add ($key, $value, $lifetime=0, $hash=null, $rm_callback=null)
@@ -180,7 +198,7 @@ class Cache
 
     $date  = date ($this->date_fmt, time () + $lifetime);
     $now   = date ($this->date_fmt, time ());
-    $table = self::$tableName;
+    $table = self::$tablename;
 
     $this->remove ($key);
 
@@ -203,6 +221,8 @@ class Cache
   /**
    * Get cache
    *
+   * @api
+   *
    * @param string key
    * @param bool $return_expired
    *  If false expired results will not be returned
@@ -212,7 +232,7 @@ class Cache
   public function get ($key, $return_expired=true)
   {
     $sql = sprintf ("SELECT * FROM %s WHERE ckey = %s",
-                    self::$tableName, $this->dbh->quote ($key));
+                    self::$tablename, $this->dbh->quote ($key));
 
     if ($p = $this->dbh->query ($sql)) {
       $p->setFetchMode (\PDO::FETCH_INTO, new CacheResult ());
@@ -232,7 +252,11 @@ class Cache
   /**
    * Remove cache
    *
+   * @api
+   *
    * @param string $key
+   * @param CacheResult $c
+   *  This is an internal argument and should never be given from outside
    */
   public function remove ($key, CacheResult $c=null)
   {
@@ -248,7 +272,7 @@ class Cache
 
     if (!$keep) {
       $sql = sprintf ("DELETE FROM %s WHERE ckey = %s",
-                      self::$tableName, $this->dbh->quote ($key));
+                      self::$tablename, $this->dbh->quote ($key));
       $this->dbh->query ($sql);
     }
   }
@@ -258,7 +282,7 @@ class Cache
    */
   public function clear ()
   {
-    $this->dbh->query ("DELETE FROM " . self::$tableName);
+    $this->dbh->query ("DELETE FROM " . self::$tablename);
   }
 
   /**
@@ -267,11 +291,11 @@ class Cache
   protected function init_sqlite ()
   {
     $sql = sprintf ("SELECT * FROM sqlite_master WHERE name = '%s' " .
-                    "AND type = 'table'", self::$tableName);
+                    "AND type = 'table'", self::$tablename);
 
     if ($p = $this->dbh->query ($sql)) {
       if (!$p->fetch (\PDO::FETCH_ASSOC)) {
-        $sql = sprintf (self::$s_table, self::$tableName);
+        $sql = sprintf (self::$s_table, self::$tablename);
 
         if (!($p = $this->dbh->query ($sql)))
           throw new \Exception ('Unable to create cache table!\n');
@@ -281,49 +305,49 @@ class Cache
 }
 
 /**
- * Cache result class
+ * Cache result class. This class should never be instantiated from the
+ * outside.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
  */
 class CacheResult
 {
   /**
-   * Cache key
-   * @var string
+   * @var string Cache key
    */
   public $ckey = null;
 
   /**
-   * Creation date
-   * @var string
+   * @var string Creation date
    */
   public $created = null;
 
   /**
-   * Expiration date
-   * @var string
+   * @var string Expiration date
    */
   public $expires = null;
   /**
-   * Data
-   * @var string
+   * @var string The cache data
    */
   public $data = null;
 
   /**
-   * Hash of data (MD5 sum)
-   * @var string
+   * @var string Hash of data (MD5 sum)
    */
   public $hash = null;
 
   /**
-   * Remove callback function
-   * @var string
+   * @var string On remove callback function
    */
   public $remove_callback = null;
 
   /**
    * Getter for the remove callback function
+   *
+   * @api
+   *
+   * @return string
+   *  Returns the on remove callback function if it's set or null otherwise
    */
   public function get_rm_callback ()
   {
@@ -333,6 +357,10 @@ class CacheResult
 
   /**
    * Is the cache expired or not
+   *
+   * @api
+   *
+   * @return bool
    */
   public function is_expired ()
   {

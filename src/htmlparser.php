@@ -3,7 +3,8 @@
  * HTML parser class
  *
  * @author  Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
+ * @license http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package PLib\HTML
  */
 
 namespace PLib\HTML;
@@ -28,7 +29,7 @@ namespace PLib\HTML;
  *  // The second argument is the node attributes. And the third argument is
  *  // the node value, if any.
  *
- *  $p->add_callback ('div', function (DOMNode $node, $attr, $data) {
+ *  $p->add_callback ('div', function (DOMNode $node, $tagname, $attr, $data) {
  *    $node->setAttribute ('class', 'my-div');
  *  });
  *
@@ -37,11 +38,11 @@ namespace PLib\HTML;
  *  // by defining #comment or/and #text as indices in the array
  *
  *  $p->add_tags (array(
- *    'div' => function (DOMNode $node, $attr, $data) {
+ *    'div' => function (DOMNode $node, $tagname, $attr, $data) {
  *      // handle div tags
  *    },
  *
- *    'script' => function (DOMNode $node, $attr, $data) {
+ *    'script' => function (DOMNode $node, $tagname, $attr, $data) {
  *      // handle script
  *    }
  *  ));
@@ -67,37 +68,34 @@ namespace PLib\HTML;
 class Parser
 {
   /**
-   * Dom document
-   * @var DOMDocument
+   * @var \DOMDocument The DOM document
    */
   protected $doc;
 
   /**
-   * Container for named tag callbacks
+   * Assoc container for named tag callbacks where the key is the tag and the
+   * value is the callback function for that tag.
    * @var array
    */
   protected $tags = array();
 
   /**
-   * Data callback
-   * @var function
+   * @var callback Data callback
    */
   protected $data_callback;
 
   /**
-   * Tag callback
-   * @var function
+   * @var callback Tag callback
    */
   protected $tag_callback;
 
   /**
-   * Doctype callback
-   * @var function
+   * @var callback Doctype callback
    */
   protected $doctype_callback;
 
   /**
-   * Callback lookup cache
+   * @var \PLib\HTML\Object Callback lookup cache
    */
   private $cbcache;
 
@@ -112,11 +110,18 @@ class Parser
   }
 
   /**
-   * Add a callback for tag `$tag`.
-   * NOTE: This will take precedence over @see{set_tag_callback()}.
+   * Add a callback for tag `$tag`
+   *
+   * NOTE: This will take precedence over {@link Parser::set_tag_callback()}.
+   *
+   * @api
    *
    * @param string $tag
-   * @param function $callback
+   * @param callback $callback
+   *  The callback will be called like:
+   *  <code>callback(DOMElement $node, string $tagname, array $attributes,
+   *           string $data)</code>;
+   *  If the callback returns false no childnodes of the tag will be processed
    */
   public function add_tag ($tag, $callback)
   {
@@ -124,12 +129,14 @@ class Parser
   }
 
   /**
-   * Add tag callbacks
-   * NOTE: This will take precedence over @see{set_tag_callback()}.
+   * Add tag callbacks.
+   * NOTE: This will take precedence over {@link Parser::set_tag_callback()}.
+   *
+   * @api
    *
    * @param array $tag
    *  Associative array where the indices are the tag names to add callbacks
-   *  for, and the values are the actual callbacks
+   *  for, and the values are the actual callbacks. {@link Parser::add_tag()}.
    */
   public function add_tags (array $tags)
   {
@@ -137,9 +144,13 @@ class Parser
   }
 
   /**
-   * Add a callback for all data nodes
+   * Add a callback for all data nodes. This funtion will be called for every
+   * tag that's found unless the tag has a callback defined by
+   * {@link Parser::add_tag()} or {@link Parser::add_tags()}.
    *
-   * @param function $func
+   * @api
+   *
+   * @param callback $func
    */
   public function set_data_callback ($func)
   {
@@ -149,7 +160,10 @@ class Parser
   /**
    * Add a callback for all tag nodes
    *
-   * @param function $func
+   * @api
+   *
+   * @param callback $func
+   *  If the callback returns false no childnodes of the tag will be processed
    */
   public function set_tag_callback ($func)
   {
@@ -159,7 +173,9 @@ class Parser
   /**
    * Add a callback for the doctype node
    *
-   * @param function $func
+   * @api
+   *
+   * @param callback $func
    */
   public function set_doctype_callback ($func)
   {
@@ -169,8 +185,10 @@ class Parser
   /**
    * Parse the HTML
    *
+   * @api
+   *
    * @param string $html
-   * @return The object being called
+   * @return Parser Returns the object being called
    */
   public function parse ($html)
   {
@@ -182,7 +200,11 @@ class Parser
   /**
    * Render the parsed HTML to string
    *
+   * @api
+   *
    * @param bool $format
+   *  Format the output
+   * @return string The HTML document as a string
    */
   public function render ($format=null)
   {
@@ -207,6 +229,8 @@ class Parser
 
   /**
    * Internal low level function
+   *
+   * @param \DOMNodeList $children
    */
   protected function low_parse (\DOMNodeList $children)
   {
@@ -260,7 +284,8 @@ class Parser
   /**
    * Get callback for `$tag`
    *
-   * @param DOMNode $tag
+   * @param \DOMNode $tag
+   * @return callback
    */
   private function getcb (\DOMNode $tag)
   {
@@ -302,7 +327,8 @@ class Parser
   /**
    * Internal function. Converts an attribute node list into an array.
    *
-   * @param DOMNamedNodeMap $attr
+   * @param \DOMNamedNodeMap $attr
+   * @return array
    */
   protected function attr2array (\DOMNamedNodeMap $attr)
   {
@@ -315,10 +341,15 @@ class Parser
 }
 
 /**
- * Internal class used for callback lookup cache in @see{Parser}.
+ * Internal class used for callback lookup cache in {@link Parser}.
+ *
+ * @internal
  */
 class Object
 {
+  /**
+   * @ignore
+   */
   public function __get ($k) {
     if (isset ($this->{$k}))
       return $this->{$k};
@@ -326,6 +357,9 @@ class Object
     return false;
   }
 
+  /**
+   * @ignore
+   */
   public function __set ($k, $v) {
     $this->{$k} = $v;
   }

@@ -2,19 +2,20 @@
 /**
  * Classes for command line interface usage
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL3
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib
  */
 
 namespace PLib;
 
-require_once dirname (__FILE__) . '/PLib.php';
+require_once __DIR__ . '/PLib.php';
 
 /**
  * Reads from stdin, i.e. the keyboard in most cases.
  *
- * @author Pontus Östlund <spam@poppa.se>
- * @example
+ * <pre>
  *  $stdin = new Stdin ();
  *  $continue = null;
  *
@@ -28,12 +29,14 @@ require_once dirname (__FILE__) . '/PLib.php';
  *
  *    break;
  *  }
+ * </pre>
+ *
+ * @author Pontus Östlund <spam@poppa.se>
  */
 class Stdin
 {
   /**
-   * The file handler resource
-   * @var resource
+   * @var resource The file resource handle
    */
   protected $fh;
 
@@ -59,7 +62,7 @@ class Stdin
   }
 
   /**
-   * Destructor. Closes the file handler resource
+   * Destructor. Closes the file resource handle
    */
   public function __destruct ()
   {
@@ -69,7 +72,7 @@ class Stdin
 }
 
 /**
- * Convenience function for Stdin
+ * Convenience function for {@link Stdin}
  */
 function stdin ()
 {
@@ -104,7 +107,7 @@ class Options
   private $context = null;
 
   /**
-   * The default help @see{Option} object.
+   * The default help {@link Option} object.
    * @var Option
    */
   private $help = null;
@@ -129,7 +132,7 @@ class Options
   }
 
   /**
-   * Append a new @see{Option} object to this object.
+   * Append a new {@link Option} object to this object.
    *
    * @see Option
    *
@@ -138,10 +141,10 @@ class Options
    * @param string $opt
    *  The short opt, eg `-o`.
    * @param int $flag
-   *  One of the constants in @see{Option} which defines if the option
+   *  One of the constants in {@link Option} which defines if the option
    *  is required or not.
    * @param int $type
-   *  One of the constants in @see{Argument} which defines if the option
+   *  One of the constants in {@link Argument} which defines if the option
    *  requires an argument or not, or if it may have an argument.
    * @param string $description
    *  The description of the option
@@ -149,12 +152,13 @@ class Options
    *  This variable will be assigned the value of the option from the
    *  command line.
    *
-   * @return
+   * @return Options
    *  Returns the object being called.
    */
   function option ($longopt, $opt, $flag, $type, $description, &$out=null)
   {
     $a = new Option ($longopt, $opt, $flag, $type, $description, $out);
+
     if ($longopt == 'help')
       $this->help = $a;
     else {
@@ -166,11 +170,11 @@ class Options
   }
 
   /**
-   * Add an @see{Option} to this object
+   * Add an {@link Option} to this object
    *
    * @param Option $arg
    *
-   * @return
+   * @return Options
    *  Returns the object being called
    */
   function add_option (Option $arg)
@@ -184,6 +188,7 @@ class Options
    *
    * @param bool $return
    *  If true the usage details will be returned rather than printed
+   * @return string|void
    */
   function usage ($return=false)
   {
@@ -407,7 +412,7 @@ class Options
    * @param string $name
    *
    * @return
-   *  An @see{Option} object if found, null otherwise.
+   *  An {@link Option} object if found, null otherwise.
    */
   function find_option ($name)
   {
@@ -430,23 +435,23 @@ class Options
  * Pretty much an enum. Only contains constants to be used for stateing
  * if an option needs an argument or not, or if it may have an argument.
  *
- * @author Pontus Östlund <pontus@poppa.se>
+ * @author Pontus Östlund <poppanator@gmail.com>
  */
 class Argument
 {
   /**
    * Option doesn't take an argument
-   * @const int
+   * @var int
    */
   const NONE = 1;
   /**
    * Option needs an argument
-   * @const int
+   * @var int
    */
   const REQUIRED = 2;
   /**
    * Option may have an argument
-   * @const int
+   * @var int
    */
   const OPTIONAL = 3;
 }
@@ -454,19 +459,35 @@ class Argument
 /**
  * Class representing an option on the command line
  *
- * @author Pontus Östlund <pontus@poppa.se>
+ * @author Pontus Östlund <poppanator@gmail.com>
+ *
+ * @property-read string $longopt
+ *  The long option eg `--longopt`
+ * @property-read string $opt
+ *  The short option eg `-o`
+ * @property-read int $flag
+ *  Is the option required or not? {@link Option::OPTIONAL} and
+ *  {@link Option::REQUIRED}
+ * @property-read int $type
+ *  Does the option take, or may it take, an argument.
+ *  {@link Argument::REQUIRED}, {@link Argument::OPTIONAL} and
+ *  {@link Argument::NONE}
+ * @property-read string $description
+ *  The description of the option
+ * @property bool $is_set
+ *  Is the option set in the command line
  */
 class Option
 {
   /**
    * Constant stating option is optional
-   * @const int
+   * @var int
    */
   const OPTIONAL = 1;
 
   /**
    * Constant stating option is required
-   * @const int
+   * @var int
    */
   const REQUIRED = 2;
 
@@ -483,21 +504,22 @@ class Option
   private $opt;
 
   /**
-   * Is th option required or not
-   * @see{Option::OPTIONAL} and @see{Option::REQUIRED}
+   * Is the option required or not
+   * {@link Option::OPTIONAL} and {@link Option::REQUIRED}
    * @var int
    */
   private $flag;
 
   /**
    * Does the option take, or may it take, an argument.
-   * @see{Argument::REQUIRED},@see{Argument::OPTIONAL} and @see{Argument::NONE}
+   * {@link Argument::REQUIRED}, {@link Argument::OPTIONAL} and
+   * {@link Argument::NONE}
    * @var int
    */
   private $type;
 
   /**
-   * HM
+   * Does the option have a value
    */
   private $haveValue;
 
@@ -515,7 +537,7 @@ class Option
   private $refarg;
 
   /**
-   * Hm
+   * Is the option set
    */
   private $is_set = false;
 
@@ -547,11 +569,11 @@ class Option
    * @param string $opt
    * @param int $flag
    *  Is the option required or not.
-   *  @see{Option::REQUIRED} and @see{Option::OPTIONAL}
+   *  {@link Option::REQUIRED} and {@link Option::OPTIONAL}
    * @param int $type
    *  Can the option take an argument.
-   *  @see{Argument::OPTIONAL}, @see{Argument::REQUIRED} and
-   *  @see{Argument::NONE}
+   *  {@link Argument::OPTIONAL}, {@link Argument::REQUIRED} and
+   *  {@link Argument::NONE}
    * @param string $desc
    *  The description of the option
    * @param mixed $refarg
@@ -571,6 +593,7 @@ class Option
   /**
    * Setter for the value of the option
    *
+   * @api
    * @param mixed $value
    */
   function set_value ($value)
@@ -580,6 +603,8 @@ class Option
 
   /**
    * Returns a string representation of the longopt and opt of this option
+   *
+   * @api
    */
   function get_opt_names ()
   {
@@ -589,7 +614,12 @@ class Option
     return implode ($r, ', ');
   }
 
-  /* Internal method for setting the opt
+  /**
+   * Internal method for setting the opt
+   *
+   * @internal
+   *
+   * @param string $n
    */
   function __opt ($n)
   {
@@ -632,8 +662,7 @@ class Option
   }
 
   /**
-   * String representation of the object.
-   * Only for debugging purposes
+   * String representation of the object. Only for debugging purposes
    */
   function __toString ()
   {
@@ -654,14 +683,12 @@ class Option
 /**
  * Options exception
  *
- * @author Pontus Östlund <pontus@poppa.se>
+ * @author Pontus Östlund <poppanator@gmail.com>
  */
 class OptionsException extends \Exception {}
 
-if (function_exists ('plib\main')) {
+if (function_exists ('plib\main'))
   exit (call_user_func_array ('plib\main', array(count ($argv), $argv)));
-}
-elseif (function_exists ('\main')) {
-  exit (call_user_func_array ('main', array(count ($argv), $argv)));
-}
+elseif (function_exists ('\main'))
+  exit (call_user_func_array ('\main', array(count ($argv), $argv)));
 ?>

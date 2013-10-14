@@ -2,8 +2,10 @@
 /**
  * Stream reader
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib
  */
 
 namespace PLib;
@@ -14,7 +16,7 @@ namespace PLib;
 require_once PLIB_PATH . '/includes/istream.php';
 
 /**
- * Uses PLib\File
+ * Uses {@see PLib\File}
  */
 require_once PLIB_PATH . '/io.php';
 
@@ -23,32 +25,32 @@ require_once PLIB_PATH . '/io.php';
  * The file it self will never be read into memory wich makes this class
  * handy when dealing with large files.
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @example
+ * <pre>
  *  $reader = new PLib\StreamReader ('/really/large/file.log');
  *  while (false !== ($line = $reader->read_line ()))
  *    echo $line;
+ * </pre>
+ *
+ * @author Pontus Östlund <poppanator@gmail.com>
  */
 class StreamReader implements IStream
 {
   /**
-   * The file currently being used
-   * @var string
+   * @var string The path to the file currently being used
    */
   protected $file;
 
   /**
-   * The file resource pointer
-   * @var resource
+   * @var resource The file resource handle
    */
   protected $resource;
 
   /**
    * Constructor.
    *
-   * @param string $file
-   * @throws Exception
-   *  If $file doesn't exist or isn't readable
+   * @param string|\PLib\File $file
+   * @throws \Exception
+   *  If `$file` doesn't exist or isn't readable
    */
   public function __construct ($file)
   {
@@ -71,8 +73,11 @@ class StreamReader implements IStream
    * Read `$bytes` number of bytes. If no argument is given `1` byte at a time
    * will be read.
    *
-   * @param int $bytes
+   * @api
+   *
+   * @param int $byte
    * @return string|bool
+   *  Returns `false` when at end of stream
    */
   public function read ($bytes=1)
   {
@@ -85,8 +90,12 @@ class StreamReader implements IStream
   /**
    * Rewinds the stream `$bytes` number of bytes
    *
+   * @api
+   *
    * @param int $bytes
    * @return bool
+   *  If trying to read before zero byte the file will be rewinded to position
+   *  zero and false will be returned
    */
   public function unread ($bytes=1)
   {
@@ -104,6 +113,8 @@ class StreamReader implements IStream
   /**
    * Reads upto the first occurance of `$char` or reads to the end if `$char`
    * is not found
+   *
+   * @api
    *
    * @param string $char
    * @return string
@@ -125,6 +136,8 @@ class StreamReader implements IStream
   /**
    * Reads upto the first occurance of any of the characters in `$chars` or
    * reads to the end if no match is found
+   *
+   * @api
    *
    * @param array $chars
    *  Array of characters
@@ -150,6 +163,8 @@ class StreamReader implements IStream
 
   /**
    * Reads `$offset` number of bytes starting at `$begin`.
+   *
+   * @api
    *
    * @param int $begin
    * @param int $offset
@@ -185,6 +200,8 @@ class StreamReader implements IStream
   /**
    * Reads one line at a time from the file resource
    *
+   * @api
+   *
    * @return string
    */
   public function read_line ()
@@ -208,10 +225,13 @@ class StreamReader implements IStream
   /**
    * Seek to offset
    *
+   * @api
+   *
    * @param int $offset
    * @param int $whence
    *  `SEEK_SET`, `SEEK_CUR` or `SEEK_END`. See {@link fseek fseek()}.
-   * @return int (0 on success, -1 otherwise)
+   * @return int
+   *  0 on success, -1 otherwise
    */
   public function seek ($offset, $whence=SEEK_SET)
   {
@@ -251,7 +271,6 @@ class StreamReader implements IStream
   /**
    * Returns the current offset
    *
-   * @since 0.3
    * @return int
    */
   public function position ()

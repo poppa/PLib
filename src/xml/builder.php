@@ -103,7 +103,7 @@ class XMLNode
 
   /**
    * Returns the {@see DOMNode} of this object.
-   * 
+   *
    * @return DOMNode
    */
   public function get_node ()
@@ -284,6 +284,7 @@ class XMLNode
   public function remove_node_by_name ($which)
   {
     $nodes = $this->doc->getElementsByTagName ($which);
+
     if (sizeof ($nodes))
       foreach ($nodes as $node)
         $node->parentNode->removeChild ($node);
@@ -317,7 +318,7 @@ class XMLNode
 
   /**
    * Render the current node to a string
-   * 
+   *
    * @return string
    */
   public function render ()
@@ -327,7 +328,7 @@ class XMLNode
 
   /**
    * Render the current node to a string as HTML
-   * 
+   *
    * @return string
    */
   public function render_html ()
@@ -365,7 +366,7 @@ class XMLNode
 
   /**
    * Cast this object to string.
-   * 
+   *
    * @see XMLNode::render()
    * @return string
    */
@@ -436,7 +437,7 @@ class XMLDocument extends XMLNode
 
   /**
    * render the object to XML
-   * 
+   *
    * @param bool $html
    *  render into HTML format
    * @param bool $format
@@ -475,7 +476,7 @@ class XMLDocument extends XMLNode
 
   /**
    * Returns the encoding
-   * 
+   *
    * @return string
    */
   public function encoding ()
@@ -867,7 +868,7 @@ class Ent
 
   /**
    * Return all entities
-   * 
+   *
    * @return array
    */
   public static function all_entities ()

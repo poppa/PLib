@@ -1,0 +1,367 @@
+<?php
+/**
+ * HTML parser class
+ *
+ * @author  Pontus Östlund <poppanator@gmail.com>
+ * @license http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package PLib\HTML
+ */
+
+namespace PLib\HTML;
+
+/**
+ * A simple HTML parser class. This is still work in progress.
+ *
+ * This parser will operate on callbacks. There are a number of different
+ * ways to set callbacks:
+ *
+ * NOTE: If the callback functions returns `false` no eventual child nodes
+ *       will be processed.
+ *
+ * <pre>
+ *  $p = new Parser ();
+ *
+ *  // This callback will be called for every DIV that's found.
+ *  //
+ *  // The first argument is the actual DOMNode. If it's manipulated the
+ *  // resulting output will be manipulated accordingly.
+ *  //
+ *  // The second argument is the node attributes. And the third argument is
+ *  // the node value, if any.
+ *
+ *  $p->add_callback ('div', function (DOMNode $node, $tagname, $attr, $data) {
+ *    $node->setAttribute ('class', 'my-div');
+ *  });
+ *
+ *  // You can also set many callbacks at once. The array index will match
+ *  // the tags DOMNode name. So you can match comment and text nodes here
+ *  // by defining #comment or/and #text as indices in the array
+ *
+ *  $p->add_tags (array(
+ *    'div' => function (DOMNode $node, $tagname, $attr, $data) {
+ *      // handle div tags
+ *    },
+ *
+ *    'script' => function (DOMNode $node, $tagname, $attr, $data) {
+ *      // handle script
+ *    }
+ *  ));
+ *
+ *  // If you wish to capture every tag do this:
+ *  $p->set_tag_callback (function (DOMNode $node, $tagname, $attr, $data) {
+ *    // Handle
+ *  });
+ *
+ *  // Or capture all text nodes
+ *  $p->set_data_callback (function (DOMNode $node, $text) {
+ *    // Handle data
+ *  });
+ *
+ *  // And there's a special callback to add for doctypes
+ *  $p->set_doctype_callback (function (DOMNode $node) {
+ *    // Handle doctype
+ *  });
+ * </pre>
+ *
+ * @author  Pontus Östlund <poppanator@gmail.com>
+ */
+class Parser
+{
+  /**
+   * @var \DOMDocument The DOM document
+   */
+  protected $doc;
+
+  /**
+   * Assoc container for named tag callbacks where the key is the tag and the
+   * value is the callback function for that tag.
+   * @var array
+   */
+  protected $tags = array();
+
+  /**
+   * @var callback Data callback
+   */
+  protected $data_callback;
+
+  /**
+   * @var callback Tag callback
+   */
+  protected $tag_callback;
+
+  /**
+   * @var callback Doctype callback
+   */
+  protected $doctype_callback;
+
+  /**
+   * @var \PLib\HTML\Object Callback lookup cache
+   */
+  private $cbcache;
+
+  /**
+   * Constructor
+   */
+  public function __construct ()
+  {
+    $this->doc = new \DOMDocument ();
+    $this->doc->recover = true;
+    $this->cbcache = new Object;
+  }
+
+  /**
+   * Add a callback for tag `$tag`
+   *
+   * NOTE: This will take precedence over {@link Parser::set_tag_callback()}.
+   *
+   * @api
+   *
+   * @param string $tag
+   * @param callback $callback
+   *  The callback will be called like:
+   *  <code>callback(DOMElement $node, string $tagname, array $attributes,
+   *           string $data)</code>;
+   *  If the callback returns false no childnodes of the tag will be processed
+   */
+  public function add_tag ($tag, $callback)
+  {
+    $this->tags[$tag] = $callback;
+  }
+
+  /**
+   * Add tag callbacks.
+   * NOTE: This will take precedence over {@link Parser::set_tag_callback()}.
+   *
+   * @api
+   *
+   * @param array $tag
+   *  Associative array where the indices are the tag names to add callbacks
+   *  for, and the values are the actual callbacks. {@link Parser::add_tag()}.
+   */
+  public function add_tags (array $tags)
+  {
+    $this->tags += $tags;
+  }
+
+  /**
+   * Add a callback for all data nodes. This funtion will be called for every
+   * tag that's found unless the tag has a callback defined by
+   * {@link Parser::add_tag()} or {@link Parser::add_tags()}.
+   *
+   * @api
+   *
+   * @param callback $func
+   */
+  public function set_data_callback ($func)
+  {
+    $this->data_callback = $func;
+  }
+
+  /**
+   * Add a callback for all tag nodes
+   *
+   * @api
+   *
+   * @param callback $func
+   *  If the callback returns false no childnodes of the tag will be processed
+   */
+  public function set_tag_callback ($func)
+  {
+    $this->tag_callback = $func;
+  }
+
+  /**
+   * Add a callback for the doctype node
+   *
+   * @api
+   *
+   * @param callback $func
+   */
+  public function set_doctype_callback ($func)
+  {
+    $this->doctype_callback = $func;
+  }
+
+  /**
+   * Parse the HTML
+   *
+   * @api
+   *
+   * @param string $html
+   * @return Parser Returns the object being called
+   */
+  public function parse ($html)
+  {
+    @$this->doc->loadHTML ($html);
+    $this->low_parse ($this->doc->childNodes);
+    return $this;
+  }
+
+  /**
+   * Render the parsed HTML to string
+   *
+   * @api
+   *
+   * @param bool $format
+   *  Format the output
+   * @return string The HTML document as a string
+   */
+  public function render ($format=null)
+  {
+    if ($format !== false) {
+      $xml = new \DOMDocument ();
+      // The formatting of HTML is beyond bad. This is a little hack that makes
+      // it at least a little bit better.
+      if ($format === false) {
+        $this->doc->formatOutput = false;
+        $xml->preserveWhiteSpace = false;
+        $xml->formatOutput = false;
+      }
+      else
+        $this->doc->formatOutput = true;
+
+      $xml->loadXML ($this->doc->saveXML ());
+      return $xml->saveHTML ();
+    }
+
+    return $this->doc->saveHTML ();
+  }
+
+  /**
+   * Internal low level function
+   *
+   * @param \DOMNodeList $children
+   */
+  protected function low_parse (\DOMNodeList $children)
+  {
+    $len = $children->length;
+
+    for ($i = $len-1; $i >= 0; --$i) {
+      if (!($child = $children->item ($i)))
+        continue;
+
+      $cb = null;
+      $cont = true;
+
+      switch ($child->nodeType)
+      {
+        case XML_PI_NODE:
+        case XML_ENTITY_REF_NODE:
+        case XML_ENTITY_NODE:
+        case XML_HTML_DOCUMENT_NODE:
+          break;
+
+        case XML_TEXT_NODE:
+          if ($cb = $this->getcb ($child))
+            $cont = $cb ($child, $child->data);
+          break;
+
+        case XML_DOCUMENT_TYPE_NODE:
+          if ($cb = $this->doctype_callback)
+            $cont = $cb ($child);
+          break;
+
+        case XML_COMMENT_NODE:
+          if ($cb = $this->getcb ($child))
+            $cont = $cb ($child, $child->nodeValue);
+          break;
+
+        default:
+          if ($cb = $this->getcb ($child)) {
+            $cont = $cb ($child, $child->nodeName,
+                         $this->attr2array ($child->attributes),
+                         $child->nodeValue);
+          }
+
+          break;
+      }
+
+      if ($cont !== false && sizeof ($child->childNodes))
+        $this->low_parse ($child->childNodes);
+    }
+  }
+
+  /**
+   * Get callback for `$tag`
+   *
+   * @param \DOMNode $tag
+   * @return callback
+   */
+  private function getcb (\DOMNode $tag)
+  {
+    $cb = null;
+    $type = $tag->nodeType;
+    $tag = $tag->nodeName;
+
+    if ($cb = $this->cbcache->{$tag . $type})
+      return $cb;
+
+    switch ($type)
+    {
+      case XML_COMMENT_NODE:
+        if (array_key_exists ($tag, $this->tags))
+          $cb = $this->tags[$tag];
+        break;
+
+      case XML_TEXT_NODE:
+        if (array_key_exists ($tag, $this->tags))
+          $cb = $this->tags[$tag];
+        else
+          $cb = $this->data_callback;
+        break;
+
+      default:
+        if (array_key_exists ($tag, $this->tags))
+          $cb = $this->tags[$tag];
+        else
+          $cb = $this->tag_callback;
+        break;
+    }
+
+    if ($cb) {
+      $this->cbcache->{$tag . $type} = $cb;
+      return $cb;
+    }
+  }
+
+  /**
+   * Internal function. Converts an attribute node list into an array.
+   *
+   * @param \DOMNamedNodeMap $attr
+   * @return array
+   */
+  protected function attr2array (\DOMNamedNodeMap $attr)
+  {
+    $a = array();
+    foreach ($attr as $k => $v)
+      $a[$v->name] = $v->value;
+
+    return $a;
+  }
+}
+
+/**
+ * Internal class used for callback lookup cache in {@link Parser}.
+ *
+ * @internal
+ */
+class Object
+{
+  /**
+   * @ignore
+   */
+  public function __get ($k) {
+    if (isset ($this->{$k}))
+      return $this->{$k};
+
+    return false;
+  }
+
+  /**
+   * @ignore
+   */
+  public function __set ($k, $v) {
+    $this->{$k} = $v;
+  }
+}
+?>

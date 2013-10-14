@@ -2,3 +2,5 @@
 tmp
 src/tmp
 nbproject
+doc/phpdoc-cache-*
+phpdoc-*.log

@@ -2,8 +2,10 @@
 /**
  * Base class for the Graphics module.
  *
- * @author Pontus Östlund <poppanator@gmail.com>
- * @license GPL License 3
+ * @copyright 2013 Pontus Östlund
+ * @author    Pontus Östlund <poppanator@gmail.com>
+ * @license   http://opensource.org/licenses/GPL-3.0 GPL License 3
+ * @package   PLib
  */
 
 namespace PLib;
@@ -35,6 +37,21 @@ define ('HAS_PNG_QUALITY', version_compare (phpversion (), '5.2.0', '>'));
 abstract class Graphics
 {
   /**
+   * Image type PNG.
+   */
+  const TYPE_PNG = 1;
+
+  /**
+   * Image type JPEG
+   */
+  const TYPE_JPEG = 2;
+
+  /**
+   * Image type GIF
+   */
+  const TYPE_GIF = 4;
+
+  /**
    * JPEG quality (0-100)
    * @var int
    */
@@ -54,23 +71,25 @@ abstract class Graphics
 
   /**
    * Hidden constructor. This class can not be instantiated
+   *
+   * @ignore
    */
   private function __construct () {}
 
   /**
    * Validate whether $what is supported or not
    *
-   * @param string $what
+   * @param int $what
+   *  Graphics::TYPE_*
    * @return bool
    */
   public static function is_supported ($what)
   {
-    switch (strtolower ($what))
+    switch ($what)
     {
-      case 'png':  return HAS_PNG;
-      case 'gif':  return HAS_GIF;
-      case 'jpg':
-      case 'jpeg': return HAS_JPG;
+      case self::TYPE_PNG:  return HAS_PNG;
+      case self::TYPE_GIF:  return HAS_GIF;
+      case self::TYPE_JPEG: return HAS_JPG;
     }
 
     return false;
@@ -79,7 +98,7 @@ abstract class Graphics
   /**
    * From PHP.net {@link http://php.net/manual/sv/function.imagettfbbox.php}
    *
-   * @param array $bbox {@see imagettfbbox()}
+   * @param array $bbox {@link imagettfbbox()}
    * @return array
    */
   public static function convert_bounding_box (array $bbox)
@@ -162,6 +181,9 @@ abstract class Graphics
  */
 class GraphicsException extends \Exception
 {
+  /**
+   * @ignore
+   */
   public $message = "Error in image";
 }
 ?>

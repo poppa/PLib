@@ -83,6 +83,7 @@ class Qname
 
   /**
    * Getter/setter for the namespace prefix
+   *
    * @param string $prefix
    * @return string
    */
@@ -122,7 +123,7 @@ class Qname
 
   /**
    * Cast to string. Same as {@see Qname::fqn()}
-   * 
+   *
    * @return string
    */
   public function __toString ()

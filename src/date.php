@@ -221,7 +221,6 @@ class Date
    *
    * @param int $num
    * @return Date
-   * @since 0.2
    */
   public function add_years ($num)
   {
@@ -237,7 +236,6 @@ class Date
    *
    * @param int $num
    * @return Date
-   * @since 0.2
    */
   public function add_months ($num)
   {
@@ -250,7 +248,6 @@ class Date
    *
    * @param int $num
    * @return Date
-   * @since 0.2
    */
   public function add_days ($num)
   {
@@ -263,7 +260,6 @@ class Date
    *
    * @param int $num
    * @return Date
-   * @since 0.2
    */
   public function add_hours ($num)
   {
@@ -276,7 +272,6 @@ class Date
    *
    * @param int $num
    * @return Date
-   * @since 0.2
    */
   public function add_minutes ($num)
   {
@@ -289,7 +284,6 @@ class Date
    *
    * @param int $num
    * @return Date
-   * @since 0.2
    */
   public function add_seconds ($num)
   {

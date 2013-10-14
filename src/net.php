@@ -724,15 +724,15 @@ class HTTPResponse
   }
 }
 
-if (!function_exists ('http-chunked-decode')) { 
-  /** 
-   * dechunk an http 'transfer-encoding: chunked' message 
-   * 
-   * @param string $chunk the encoded message 
-   * @return string the decoded message.  
-   *  If $chunk wasn't encoded properly it will be returned unmodified. 
-   */ 
-  function http_chunked_decode ($chunk) 
+if (!function_exists ('http-chunked-decode')) {
+  /**
+   * dechunk an http 'transfer-encoding: chunked' message
+   *
+   * @param string $chunk the encoded message
+   * @return string the decoded message.
+   *  If $chunk wasn't encoded properly it will be returned unmodified.
+   */
+  function http_chunked_decode ($chunk)
   {
     $pos = 0;
     $len = strlen ($chunk);
@@ -752,24 +752,24 @@ if (!function_exists ('http-chunked-decode')) {
       $chunk_len = hexdec (rtrim ($chunk_len_hex, "\r\n"));
       $dechunk .= substr ($chunk, $pos, $chunk_len);
       $pos = strpos ($chunk, "\n", $pos + $chunk_len) + 1;
-    } 
+    }
 
-    return $dechunk; 
-  } 
+    return $dechunk;
+  }
 
-  /** 
-   * determine if a string can represent a number in hexadecimal 
-   * 
-   * @param string $hex 
-   * @return boolean true if the string is a hex, otherwise false 
-   */ 
-  function is_hex($hex) 
+  /**
+   * determine if a string can represent a number in hexadecimal
+   *
+   * @param string $hex
+   * @return boolean true if the string is a hex, otherwise false
+   */
+  function is_hex($hex)
   {
-    $hex = strtolower (trim (ltrim ($hex, "0"))); 
-    if (empty ($hex)) $hex = 0; 
-    $dec = hexdec ($hex); 
-    return $hex == dechex ($dec); 
-  } 
+    $hex = strtolower (trim (ltrim ($hex, "0")));
+    if (empty ($hex)) $hex = 0;
+    $dec = hexdec ($hex);
+    return $hex == dechex ($dec);
+  }
 }
 
 /**
@@ -1211,7 +1211,6 @@ class Net
    *
    * @throws Exception
    *  If headers are already sent
-   * @since 0.2.2
    * @param int $code
    */
   public static function server_exit ($code)
@@ -1243,7 +1242,6 @@ class Net
   /**
    * Converts a query string into an associativ array
    *
-   * @since 0.2.1
    * @param string $querystring
    * @return array
    */

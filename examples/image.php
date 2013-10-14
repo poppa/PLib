@@ -32,9 +32,7 @@ $black = imagecolorallocate ($ih, 0, 0, 0);
 imagettftext ($ih, 24.0, 0.0, 21, 51, $black, $font, $text);
 imagettftext ($ih, 24.0, 0.0, 20, 50, $white, $font, $text);
 
-// And while we're at it, make it sepia
-$img2->sepia ();
+// And while we're at it, make it sepia and save it all
+$img2->sepia ()->save ();
 
-// And save the changes
-$img2->save ();
 ?>
