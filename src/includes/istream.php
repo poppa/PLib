@@ -18,6 +18,8 @@ namespace PLib;
  */
 interface IStream
 {
+  const EOF = false;
+
   /**
    * Read `$bytes` number of bytes. If no argument is given `1` byte at a time
    * will be read.

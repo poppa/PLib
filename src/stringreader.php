@@ -17,43 +17,6 @@ namespace PLib;
 require_once PLIB_PATH . '/includes/istream.php';
 
 /**
- * General string class
- *
- * @author Pontus Östlund <poppanator@gmail.com>
- */
-class String
-{
-  /**
-   * Implodes an array by joining with `$glue`
-   *
-   * <pre>
-   *  $list = array('One', 'Two', 'Three', 'Four');
-   *  echo String::implode_nicely($list);
-   *  // One, Two, Three and Four
-   *
-   *  echo String::implode_nicely($list, 'or');
-   *  // One, Two, Three or Four
-   * </pre>
-   *
-   * @param array $a
-   * @param string $glue
-   * @return string
-   */
-  public static function implode_nicely (array $a, $glue='and')
-  {
-    if (empty ($a))
-      return null;
-
-    if (sizeof ($a) == 1)
-      return $a[0];
-
-    $last = array_pop ($a);
-    $s = implode (', ', $a);
-    return $s . ' ' . trim ($glue) . ' ' . $last;
-  }
-}
-
-/**
  * String reader that mimics the {@see StreamReader} class.
  *
  * @author Pontus Östlund <poppanator@gmail.com>
@@ -322,6 +285,11 @@ class StringReader implements IStream
   public function __toString ()
   {
     return $this->string;
+  }
+
+  public function __destruct ()
+  {
+    $this->dispose();
   }
 }
 ?>

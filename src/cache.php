@@ -367,5 +367,13 @@ class CacheResult
   {
     return strtotime ('now') > strtotime ($this->expires);
   }
+
+  /**
+   * To string converter. Returns the @link{$data} member.
+   */
+  public function __toString()
+  {
+    return $this->data;
+  }
 }
 ?>

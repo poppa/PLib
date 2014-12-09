@@ -69,7 +69,7 @@ class Upload extends \PLib\Iterator
    * @param string $location
    *   Where to put the upload
    * @param array $allowedFileTypes
-   *   Allowed file extesions to upload. Empty mean no restrictions.
+   *   Allowed file extesions to upload. Empty means no restrictions.
    * @param string $maxsize
    *   Max upload size. Suffixes are K, M, G
    * @param string $checkMimeType
@@ -139,7 +139,7 @@ class Upload extends \PLib\Iterator
   }
 
   /**
-   * Check if the there are any messages
+   * Check if there are any messages
    *
    * @return bool
    */

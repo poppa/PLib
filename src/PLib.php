@@ -54,6 +54,11 @@ if (!is_dir (PLIB_TMP_DIR)) {
 }
 
 /**
+ * Are we running CLI or not
+ */
+define ('PLIB_IS_CLI', PHP_SAPI == 'cli');
+
+/**
  * Include PLib file $which
  *
  * @api
@@ -68,7 +73,7 @@ function import ($which)
   $org = $which;
   $which = combine_path (PLIB_PATH, $which);
 
-  if (!$which)
+  if (!file_exists($which))
     throw new \Exception ("PLib file \"$org\" doesn't exist!\n");
 
   require_once $which;
@@ -120,7 +125,7 @@ function _low_combine_path (array $paths, $sep=DIRECTORY_SEPARATOR)
     if ($p == '..' && $i > 0 && end ($out) != '..')
       array_pop($out);
     else
-      $out[]= $p;
+      $out[] = $p;
   }
 
   return ($path[0] === $sep ? $sep : '') . join ($sep, $out);
@@ -177,9 +182,71 @@ function get_default_sqlite ()
 }
 
 /**
+ * General string class
+ *
+ * @author Pontus Östlund <poppanator@gmail.com>
+ */
+class String
+{
+  /**
+   * Implodes an array by joining with `$glue`
+   *
+   * <pre>
+   *  $list = array('One', 'Two', 'Three', 'Four');
+   *  echo String::implode_nicely($list);
+   *  // One, Two, Three and Four
+   *
+   *  echo String::implode_nicely($list, 'or');
+   *  // One, Two, Three or Four
+   * </pre>
+   *
+   * @param array $a
+   * @param string $glue
+   * @return string
+   */
+  public static function implode_nicely (array $a, $glue='and')
+  {
+    if (empty ($a))
+      return null;
+
+    if (sizeof ($a) == 1)
+      return $a[0];
+
+    $last = array_pop ($a);
+    $s = implode (', ', $a);
+    return $s . ' ' . trim ($glue) . ' ' . $last;
+  }
+}
+
+/**
  * Just an empty object, pretty much as a stdClass
  *
  * @api
  */
 class Object {}
+
+function debug ()
+{
+  $bt = debug_backtrace();
+  $b = isset($bt[0]['file']) ? $bt[0] : $bt[2];
+  $out = $b['file'] . ':' . $b['line'] . ': ';
+
+  ob_start();
+
+  foreach (func_get_args() as $arg) {
+    if (is_scalar($arg))
+      echo $arg;
+    else {
+      print_r($arg);
+    }
+  }
+
+  return $out . ob_get_clean();
+}
+
+function wdebug()
+{
+  $res = call_user_func_array("\PLib\debug", func_get_args());
+  echo $res . "\n";
+}
 ?>
