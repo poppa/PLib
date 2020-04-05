@@ -1,4 +1,4 @@
-PLib (Poppa PHP Library)
+PLib (Poppa PHP Library) [ARCHIVED - LEGACY CODE]
 ================================================================================
 
 This is a set of classes and functions to make everyday PHP programming a
